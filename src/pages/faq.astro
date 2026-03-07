@@ -1,0 +1,68 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const faqs = [
+  {
+    q: '¿Cuánto tiempo tarda en hacer efecto?',
+    a: 'Los resultados varían según la persona, pero la mayoría empieza a notar cambios entre 2-4 semanas de escucha consistente. Para resultados profundos, recomendamos 90 días.',
+  },
+  {
+    q: '¿Puedo escuchar mientras duermo?',
+    a: 'Sí. De hecho, escuchar mientras duermes es una de las formas más efectivas, ya que la mente consciente está inactiva y el subconsciente es más receptivo.',
+  },
+  {
+    q: '¿Son seguros los audios subliminales?',
+    a: 'Completamente seguros. Solo contienen afirmaciones positivas. No hay hipnosis, tonos dañinos ni mensajes negativos. Son adecuados para toda la familia.',
+  },
+  {
+    q: '¿En qué formato recibiré los archivos?',
+    a: 'Recibirás los archivos en MP3 320kbps y FLAC (sin pérdida de calidad) mediante un enlace de descarga enviado a tu email inmediatamente tras la compra.',
+  },
+  {
+    q: '¿Qué pasa si no veo resultados?',
+    a: 'Ofrecemos garantía de devolución de 30 días sin preguntas. Si no estás satisfecho por cualquier motivo, te devolvemos el dinero completamente.',
+  },
+  {
+    q: '¿Necesito creer en los subliminales para que funcionen?',
+    a: 'No necesariamente. Los subliminales trabajan a nivel subconsciente, por lo que no es imprescindible creer conscientemente en ellos. Sin embargo, una mente abierta potencia los resultados.',
+  },
+  {
+    q: '¿Puedo escuchar varios programas a la vez?',
+    a: 'Sí, aunque recomendamos no más de 2-3 programas simultáneamente para no saturar el subconsciente. Prioriza los más importantes para ti.',
+  },
+  {
+    q: '¿Cuántas veces al día debo escuchar?',
+    a: 'Recomendamos al menos una sesión diaria de 30-60 minutos. Puedes escuchar varias veces al día para potenciar los resultados.',
+  },
+];
+---
+
+<Layout title="Preguntas Frecuentes" description="Respuestas a las preguntas más comunes sobre nuestros audios subliminales.">
+  <section class="bg-hero-gradient border-b border-dark-border py-16">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+      <h1 class="font-display font-black text-5xl text-white mb-4">Preguntas Frecuentes</h1>
+      <p class="text-gray-400 text-xl">Todo lo que necesitas saber antes de empezar.</p>
+    </div>
+  </section>
+
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-4">
+    {faqs.map((faq, i) => (
+      <details class="card group">
+        <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
+          <h3 class="font-semibold text-white group-open:text-primary-300 transition-colors pr-4">{faq.q}</h3>
+          <svg class="w-5 h-5 text-gray-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </summary>
+        <div class="px-6 pb-6">
+          <p class="text-gray-400 leading-relaxed">{faq.a}</p>
+        </div>
+      </details>
+    ))}
+
+    <div class="text-center pt-8">
+      <p class="text-gray-500 mb-4">¿Tienes otra pregunta?</p>
+      <a href="/contacto" class="btn-secondary">Contáctanos</a>
+    </div>
+  </div>
+</Layout>

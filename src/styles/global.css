@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Raleway:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-dark text-white font-sans antialiased;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           bg-gradient-to-r from-primary-600 to-accent
+           text-white font-semibold rounded-xl
+           hover:from-primary-500 hover:to-accent-light
+           transition-all duration-300 ease-out
+           shadow-lg hover:shadow-accent/30 hover:shadow-xl
+           transform hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           border border-primary-700/50 text-primary-300 font-semibold rounded-xl
+           hover:bg-primary-900/50 hover:border-primary-500
+           transition-all duration-300 ease-out;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2
+           text-gray-400 font-medium rounded-lg
+           hover:text-white hover:bg-white/5
+           transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-dark-card border border-dark-border rounded-2xl
+           hover:border-primary-700/50 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-lg hover:shadow-primary-900/30
+           hover:-translate-y-1 transform transition-all duration-300;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-900/50 text-primary-300 border border-primary-700/30;
+  }
+
+  .badge-accent {
+    @apply badge bg-accent/20 text-accent-light border border-accent/30;
+  }
+
+  .badge-success {
+    @apply badge bg-green-900/50 text-green-300 border border-green-700/30;
+  }
+
+  .section-title {
+    @apply font-display font-bold text-3xl sm:text-4xl text-white;
+  }
+
+  .section-subtitle {
+    @apply text-gray-400 text-lg mt-3;
+  }
+
+  .price-tag {
+    @apply font-display font-bold text-2xl text-white;
+  }
+
+  .price-original {
+    @apply text-gray-500 line-through text-lg;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 bg-dark-card border border-dark-border rounded-xl
+           text-white placeholder-gray-500
+           focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50
+           transition-colors duration-200;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-300 via-accent-light to-accent bg-clip-text text-transparent;
+  }
+
+  .border-gradient {
+    background: linear-gradient(var(--tw-gradient-from), var(--tw-gradient-to)) border-box;
+    border: 1px solid transparent;
+  }
+
+  .glass {
+    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Animaciones personalizadas */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Partículas de fondo */
+.particles-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particles-bg::before,
+.particles-bg::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  filter: blur(80px);
+  animation: float 8s ease-in-out infinite;
+}
+
+.particles-bg::before {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #5c6aff, transparent);
+  top: -100px;
+  left: -100px;
+}
+
+.particles-bg::after {
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, #a855f7, transparent);
+  bottom: -50px;
+  right: -50px;
+  animation-delay: -4s;
+}
