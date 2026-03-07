@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { products, categories, getProductsByCategory } from '../data/products';
+
+const selectedCat = Astro.url.searchParams.get('cat') || 'all';
+const filteredProducts = getProductsByCategory(selectedCat);
+---
+
+<Layout title="Tienda — Todos los Programas Subliminales" description="Explora nuestra colección completa de audios subliminales. Autoestima, abundancia, salud, éxito y más.">
+  <!-- Header -->
+  <section class="bg-hero-gradient border-b border-dark-border py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1 class="font-display font-black text-4xl sm:text-5xl text-white mb-3">
+        Tienda
+      </h1>
+      <p class="text-gray-400 text-lg">
+        {products.length} programas subliminales para transformar tu vida
+      </p>
+    </div>
+  </section>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Categories filter -->
+    <div class="flex flex-wrap gap-2 mb-10">
+      {categories.map(cat => (
+        <a
+          href={cat.id === 'all' ? '/tienda' : `/tienda?cat=${cat.id}`}
+          class={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            selectedCat === cat.id
+              ? 'bg-primary-600 text-white shadow-lg shadow-primary-900/30'
+              : 'bg-dark-card border border-dark-border text-gray-400 hover:text-white hover:border-primary-700/50'
+          }`}
+        >
+          <span>{cat.icon}</span>
+          {cat.name}
+        </a>
+      ))}
+    </div>
+
+    <!-- Results count -->
+    <p class="text-gray-500 text-sm mb-6">
+      Mostrando {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''}
+      {selectedCat !== 'all' && ` en "${categories.find(c => c.id === selectedCat)?.name}"`}
+    </p>
+
+    <!-- Grid -->
+    {filteredProducts.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredProducts.map(product => (
+          <ProductCard product={product} />
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-24">
+        <p class="text-5xl mb-4">🔍</p>
+        <h3 class="font-display font-bold text-xl text-white mb-2">Sin resultados</h3>
+        <p class="text-gray-500 mb-6">No hay productos en esta categoría aún.</p>
+        <a href="/tienda" class="btn-primary">Ver todos</a>
+      </div>
+    )}
+  </div>
+</Layout>

@@ -1,0 +1,236 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { getFeaturedProducts, getBestsellers, categories } from '../data/products';
+
+const featured = getFeaturedProducts().slice(0, 4);
+const bestsellers = getBestsellers().slice(0, 4);
+---
+
+<Layout title="Inicio — Audios Subliminales para Transformar tu Vida">
+  <!-- Hero -->
+  <section class="relative overflow-hidden bg-hero-gradient">
+    <div class="particles-bg"></div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
+      <div class="inline-flex items-center gap-2 badge-primary mb-6 text-sm py-2 px-4">
+        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+        Más de 10.000 clientes transformados
+      </div>
+
+      <h1 class="font-display font-black text-5xl sm:text-6xl lg:text-7xl text-white leading-tight mb-6">
+        Transforma tu mente.<br/>
+        <span class="text-gradient">Transforma tu vida.</span>
+      </h1>
+
+      <p class="text-gray-400 text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+        Audios subliminales de alta frecuencia diseñados para reprogramar tu subconsciente
+        y manifestar la vida que mereces.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="/tienda" class="btn-primary text-lg px-8 py-4">
+          Explorar Tienda
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+        <a href="/como-funciona" class="btn-secondary text-lg px-8 py-4">
+          Cómo Funciona
+        </a>
+      </div>
+
+      <!-- Stats -->
+      <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto mt-16 pt-10 border-t border-white/10">
+        <div class="text-center">
+          <p class="font-display font-bold text-3xl text-white">10k+</p>
+          <p class="text-gray-500 text-sm">Clientes</p>
+        </div>
+        <div class="text-center border-x border-white/10">
+          <p class="font-display font-bold text-3xl text-white">50+</p>
+          <p class="text-gray-500 text-sm">Programas</p>
+        </div>
+        <div class="text-center">
+          <p class="font-display font-bold text-3xl text-white">4.9★</p>
+          <p class="text-gray-500 text-sm">Valoración</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-10">
+      <h2 class="section-title">Explora por Categoría</h2>
+      <p class="section-subtitle">Encuentra el programa perfecto para tus objetivos</p>
+    </div>
+    <div class="flex flex-wrap justify-center gap-3">
+      {categories.filter(c => c.id !== 'all').map(cat => (
+        <a
+          href={`/tienda?cat=${cat.id}`}
+          class="flex items-center gap-2 px-5 py-3 card hover:border-primary-600/50 rounded-xl transition-all group"
+        >
+          <span class="text-xl group-hover:scale-110 transition-transform">{cat.icon}</span>
+          <span class="font-medium text-gray-300 group-hover:text-white transition-colors">{cat.name}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <h2 class="section-title">Productos Destacados</h2>
+        <p class="section-subtitle">Los más populares de nuestra colección</p>
+      </div>
+      <a href="/tienda" class="btn-ghost text-sm hidden sm:flex">
+        Ver todos →
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {featured.map(product => (
+        <ProductCard product={product} />
+      ))}
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="bg-dark-card border-y border-dark-border my-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-12">
+        <h2 class="section-title">¿Cómo Funcionan?</h2>
+        <p class="section-subtitle">Ciencia detrás de la transformación</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {[
+          {
+            step: '01',
+            icon: '🎵',
+            title: 'Escucha',
+            desc: 'Reproduce el audio subliminal mientras trabajas, duermes o te relajas. No requiere concentración activa.',
+          },
+          {
+            step: '02',
+            icon: '🧠',
+            title: 'Penetra',
+            desc: 'Las afirmaciones positivas a frecuencia subliminal penetran directamente en tu mente subconsciente.',
+          },
+          {
+            step: '03',
+            icon: '✨',
+            title: 'Transforma',
+            desc: 'Con escucha consistente, tus patrones de pensamiento cambian y ves resultados reales en tu vida.',
+          },
+        ].map(item => (
+          <div class="text-center p-6">
+            <div class="relative inline-block mb-6">
+              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-600/30 to-accent/30 border border-primary-700/30 flex items-center justify-center text-3xl mx-auto">
+                {item.icon}
+              </div>
+              <span class="absolute -top-2 -right-2 font-display font-bold text-xs text-primary-400 bg-dark-card border border-primary-700/30 rounded-full w-6 h-6 flex items-center justify-center">
+                {item.step}
+              </span>
+            </div>
+            <h3 class="font-display font-bold text-xl text-white mb-3">{item.title}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="text-center mt-10">
+        <a href="/como-funciona" class="btn-secondary">Saber más sobre la ciencia</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bestsellers -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex items-end justify-between mb-8">
+      <div>
+        <h2 class="section-title">🔥 Más Vendidos</h2>
+        <p class="section-subtitle">Lo que eligen nuestros clientes</p>
+      </div>
+      <a href="/tienda" class="btn-ghost text-sm hidden sm:flex">
+        Ver todos →
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {bestsellers.map(product => (
+        <ProductCard product={product} />
+      ))}
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="text-center mb-12">
+      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+      <p class="section-subtitle">Historias reales de transformación</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {[
+        {
+          name: 'María G.',
+          role: 'Emprendedora',
+          text: 'Después de 30 días escuchando el subliminal de Abundancia, conseguí mis primeros clientes de alto valor. ¡Increíble!',
+          rating: 5,
+          product: 'Imán de Abundancia',
+        },
+        {
+          name: 'Carlos M.',
+          role: 'Estudiante',
+          text: 'Mi autoestima era por los suelos. Tras 3 semanas de escuchar el audio antes de dormir, me siento completamente diferente.',
+          rating: 5,
+          product: 'Autoestima Inquebrantable',
+        },
+        {
+          name: 'Laura P.',
+          role: 'Profesora',
+          text: 'El subliminal de Paz Interior ha transformado mi relación con el estrés. Duermo mejor y me siento más equilibrada.',
+          rating: 5,
+          product: 'Paz Interior Profunda',
+        },
+      ].map(t => (
+        <div class="card p-6">
+          <div class="flex gap-1 mb-4">
+            {Array(t.rating).fill(0).map(() => (
+              <span class="text-yellow-400">★</span>
+            ))}
+          </div>
+          <p class="text-gray-300 text-sm leading-relaxed mb-5 italic">"{t.text}"</p>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-semibold text-white text-sm">{t.name}</p>
+              <p class="text-gray-500 text-xs">{t.role}</p>
+            </div>
+            <span class="badge-primary text-xs">{t.product}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-900 via-primary-800 to-accent-dark p-8 sm:p-12 text-center">
+      <div class="particles-bg"></div>
+      <div class="relative">
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-white mb-4">
+          Comienza tu transformación hoy
+        </h2>
+        <p class="text-primary-200 text-lg mb-8 max-w-xl mx-auto">
+          Acceso inmediato tras la compra. Descarga en MP3 y FLAC de alta calidad.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/tienda" class="btn-primary text-lg px-8 py-4 bg-white text-primary-900 hover:bg-primary-50">
+            Ver todos los programas
+          </a>
+          <a href="/producto/pack-transformacion-total" class="btn-secondary text-lg px-8 py-4 border-white/30 text-white hover:border-white/60">
+            Pack completo — 40% desc.
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>

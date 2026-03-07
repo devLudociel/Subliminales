@@ -1,0 +1,157 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Checkout — Finalizar Compra">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <h1 class="font-display font-black text-4xl text-white mb-10">Finalizar Compra</h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+      <!-- Form -->
+      <div class="lg:col-span-3 space-y-6">
+        <!-- Contact -->
+        <div class="card p-6">
+          <h2 class="font-semibold text-white mb-4">Información de Contacto</h2>
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Nombre</label>
+                <input type="text" placeholder="Juan" class="input-field" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Apellidos</label>
+                <input type="text" placeholder="García" class="input-field" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">Email</label>
+              <input type="email" placeholder="juan@email.com" class="input-field" />
+              <p class="text-xs text-gray-500 mt-1.5">Recibirás el enlace de descarga aquí</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment -->
+        <div class="card p-6">
+          <h2 class="font-semibold text-white mb-4">Método de Pago</h2>
+          <div class="space-y-3">
+            {[
+              { id: 'card', label: 'Tarjeta de crédito/débito', icon: '💳' },
+              { id: 'paypal', label: 'PayPal', icon: '🅿️' },
+              { id: 'bizum', label: 'Bizum', icon: '📱' },
+            ].map((method, i) => (
+              <label class={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${i === 0 ? 'border-primary-500 bg-primary-900/20' : 'border-dark-border hover:border-primary-700/50'}`}>
+                <input type="radio" name="payment" value={method.id} checked={i === 0} class="accent-primary-500" />
+                <span class="text-xl">{method.icon}</span>
+                <span class="text-gray-300 font-medium">{method.label}</span>
+              </label>
+            ))}
+          </div>
+
+          <!-- Card form (shown by default) -->
+          <div class="mt-4 space-y-4" id="card-form">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">Número de tarjeta</label>
+              <input type="text" placeholder="1234 5678 9012 3456" class="input-field" maxlength="19" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Caducidad</label>
+                <input type="text" placeholder="MM/AA" class="input-field" maxlength="5" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">CVV</label>
+                <input type="text" placeholder="123" class="input-field" maxlength="4" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="w-full btn-primary text-lg py-4">
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+          Pagar de forma segura
+        </button>
+
+        <p class="text-center text-gray-500 text-xs">
+          🔒 Pago 100% seguro con encriptación SSL. Tu información está protegida.
+        </p>
+      </div>
+
+      <!-- Order summary (React component for live cart) -->
+      <div class="lg:col-span-2">
+        <div class="card p-6 sticky top-20">
+          <h2 class="font-semibold text-white mb-4">Resumen del pedido</h2>
+          <div id="cart-summary" class="space-y-3 mb-4">
+            <p class="text-gray-500 text-sm text-center py-4">Cargando carrito...</p>
+          </div>
+          <div class="border-t border-dark-border pt-4 space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-400">Subtotal</span>
+              <span id="subtotal" class="text-white">—</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-400">IVA (21%)</span>
+              <span id="tax" class="text-white">—</span>
+            </div>
+            <div class="flex justify-between font-bold text-lg pt-2 border-t border-dark-border">
+              <span class="text-white">Total</span>
+              <span id="total" class="text-gradient">—</span>
+            </div>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="mt-6 pt-4 border-t border-dark-border">
+            <div class="flex flex-wrap gap-3 justify-center">
+              <span class="text-xs text-gray-500 flex items-center gap-1">⚡ Descarga inmediata</span>
+              <span class="text-xs text-gray-500 flex items-center gap-1">✅ Garantía 30 días</span>
+              <span class="text-xs text-gray-500 flex items-center gap-1">🔒 Pago seguro</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { cartItems, cartTotal } from '../store/cart';
+
+  function updateSummary() {
+    const items = cartItems.get();
+    const total = cartTotal.get();
+    const tax = total * 0.21;
+    const subtotal = total;
+
+    const summaryEl = document.getElementById('cart-summary');
+    const subtotalEl = document.getElementById('subtotal');
+    const taxEl = document.getElementById('tax');
+    const totalEl = document.getElementById('total');
+
+    if (summaryEl) {
+      if (items.length === 0) {
+        summaryEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Tu carrito está vacío</p>';
+      } else {
+        summaryEl.innerHTML = items.map(item => `
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-primary-900/50 flex items-center justify-center shrink-0 text-sm">🎵</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-white truncate">${item.name}</p>
+              <p class="text-xs text-gray-500">×${item.quantity}</p>
+            </div>
+            <span class="text-sm font-medium text-white">${(item.price * item.quantity).toFixed(2)}€</span>
+          </div>
+        `).join('');
+      }
+    }
+
+    if (subtotalEl) subtotalEl.textContent = `${subtotal.toFixed(2)}€`;
+    if (taxEl) taxEl.textContent = `${tax.toFixed(2)}€`;
+    if (totalEl) totalEl.textContent = `${(subtotal + tax).toFixed(2)}€`;
+  }
+
+  cartItems.subscribe(updateSummary);
+  updateSummary();
+</script>

@@ -1,0 +1,116 @@
+---
+import type { Product } from '../data/products';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const discount = product.originalPrice
+  ? Math.round((1 - product.price / product.originalPrice) * 100)
+  : null;
+---
+
+<div class="card-hover flex flex-col overflow-hidden group">
+  <!-- Image -->
+  <a href={`/producto/${product.slug}`} class="relative block overflow-hidden bg-gradient-to-br from-primary-900/50 to-dark aspect-[4/3]">
+    <div class="absolute inset-0 flex items-center justify-center">
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-primary-500/30 to-accent/30 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300">
+        {product.category === 'autoestima' && '💪'}
+        {product.category === 'abundancia' && '💰'}
+        {product.category === 'amor' && '❤️'}
+        {product.category === 'salud' && '🌿'}
+        {product.category === 'exito' && '🏆'}
+        {product.category === 'paz' && '🧘'}
+        {product.category === 'sueno' && '🌙'}
+      </div>
+    </div>
+
+    <!-- Badges -->
+    <div class="absolute top-3 left-3 flex flex-col gap-1.5">
+      {product.bestseller && (
+        <span class="badge-accent text-xs">⭐ Bestseller</span>
+      )}
+      {discount && (
+        <span class="badge bg-red-900/70 text-red-300 border border-red-700/30">-{discount}%</span>
+      )}
+    </div>
+
+    <!-- Duration badge -->
+    <div class="absolute bottom-3 right-3">
+      <span class="badge bg-black/60 text-gray-300 border-0 backdrop-blur-sm">
+        🎵 {product.duration}
+      </span>
+    </div>
+  </a>
+
+  <!-- Content -->
+  <div class="flex flex-col flex-1 p-5">
+    <!-- Category -->
+    <span class="badge-primary text-xs w-fit mb-3">
+      {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+    </span>
+
+    <!-- Title -->
+    <a href={`/producto/${product.slug}`} class="group/title">
+      <h3 class="font-display font-bold text-lg text-white group-hover/title:text-primary-300 transition-colors mb-2 leading-tight">
+        {product.name}
+      </h3>
+    </a>
+
+    <!-- Description -->
+    <p class="text-gray-400 text-sm leading-relaxed flex-1 mb-4 line-clamp-2">
+      {product.description}
+    </p>
+
+    <!-- Price + CTA -->
+    <div class="flex items-center justify-between mt-auto">
+      <div>
+        <div class="flex items-baseline gap-2">
+          <span class="price-tag">{product.price.toFixed(2)}€</span>
+          {product.originalPrice && (
+            <span class="price-original">{product.originalPrice.toFixed(2)}€</span>
+          )}
+        </div>
+        <p class="text-gray-500 text-xs mt-0.5">Descarga inmediata</p>
+      </div>
+
+      <button
+        class="add-to-cart btn-primary text-sm py-2 px-4"
+        data-product-id={product.id}
+        data-product-name={product.name}
+        data-product-price={product.price}
+      >
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Añadir
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { addToCart } from '../store/cart';
+
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const el = e.currentTarget as HTMLButtonElement;
+      addToCart({
+        id: el.dataset.productId!,
+        name: el.dataset.productName!,
+        price: parseFloat(el.dataset.productPrice!),
+        image: '',
+      });
+
+      // Visual feedback
+      const original = el.innerHTML;
+      el.innerHTML = '✓ Añadido';
+      el.classList.add('opacity-75');
+      setTimeout(() => {
+        el.innerHTML = original;
+        el.classList.remove('opacity-75');
+      }, 1500);
+    });
+  });
+</script>
