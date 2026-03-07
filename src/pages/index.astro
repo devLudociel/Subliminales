@@ -1,236 +1,334 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
-import { getFeaturedProducts, getBestsellers, categories } from '../data/products';
+import { getFeaturedProducts, categories } from '../data/products';
 
 const featured = getFeaturedProducts().slice(0, 4);
-const bestsellers = getBestsellers().slice(0, 4);
 ---
 
-<Layout title="Inicio — Audios Subliminales para Transformar tu Vida">
-  <!-- Hero -->
-  <section class="relative overflow-hidden bg-hero-gradient">
-    <div class="particles-bg"></div>
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32 text-center">
-      <div class="inline-flex items-center gap-2 badge-primary mb-6 text-sm py-2 px-4">
-        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-        Más de 10.000 clientes transformados
-      </div>
+<Layout title="No todo lo que ves es lo que parece">
 
-      <h1 class="font-display font-black text-5xl sm:text-6xl lg:text-7xl text-white leading-tight mb-6">
-        Transforma tu mente.<br/>
-        <span class="text-gradient">Transforma tu vida.</span>
-      </h1>
+  <!-- ────────────── HERO ────────────── -->
+  <section class="relative min-h-[92vh] flex items-center overflow-hidden bg-bg scanlines">
+    <div class="ambient-bg"></div>
 
-      <p class="text-gray-400 text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-        Audios subliminales de alta frecuencia diseñados para reprogramar tu subconsciente
-        y manifestar la vida que mereces.
-      </p>
+    <!-- Grid decorativo de fondo -->
+    <div class="absolute inset-0 pointer-events-none" style="background-image: linear-gradient(rgba(123,47,247,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(123,47,247,0.06) 1px, transparent 1px); background-size: 60px 60px;"></div>
 
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/tienda" class="btn-primary text-lg px-8 py-4">
-          Explorar Tienda
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-          </svg>
-        </a>
-        <a href="/como-funciona" class="btn-secondary text-lg px-8 py-4">
-          Cómo Funciona
-        </a>
-      </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 w-full">
+      <div class="max-w-4xl">
 
-      <!-- Stats -->
-      <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto mt-16 pt-10 border-t border-white/10">
-        <div class="text-center">
-          <p class="font-display font-bold text-3xl text-white">10k+</p>
-          <p class="text-gray-500 text-sm">Clientes</p>
+        <!-- Label -->
+        <div class="inline-flex items-center gap-3 mb-8">
+          <span class="block w-8 h-px bg-neon"></span>
+          <span class="label-section text-neon">Nueva colección 2025</span>
         </div>
-        <div class="text-center border-x border-white/10">
-          <p class="font-display font-bold text-3xl text-white">50+</p>
-          <p class="text-gray-500 text-sm">Programas</p>
+
+        <!-- Titular con glitch -->
+        <div class="relative mb-4">
+          <h1
+            class="title-hero glitch text-ink"
+            data-text="NO TODO"
+          >NO TODO</h1>
         </div>
-        <div class="text-center">
-          <p class="font-display font-bold text-3xl text-white">4.9★</p>
-          <p class="text-gray-500 text-sm">Valoración</p>
+        <div class="relative mb-4">
+          <h1
+            class="title-hero glitch text-ink"
+            data-text="LO QUE VES"
+          >LO QUE VES</h1>
+        </div>
+        <div class="relative mb-8">
+          <h1 class="title-hero text-brand animate-flicker">ES LO QUE PARECE.</h1>
+        </div>
+
+        <!-- Subtítulo -->
+        <p class="font-alt text-ink-muted text-lg sm:text-xl max-w-xl mb-10 leading-relaxed">
+          Diseños con mensajes ocultos que tu mente descubre.<br/>
+          <span class="text-neon">Mira dos veces.</span>
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/tienda" class="btn-primary text-base px-8 py-4">
+            Descubrir la colección
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+          <a href="#concepto" class="btn-outline text-base px-8 py-4">
+            ¿Qué es Subliminal?
+          </a>
+        </div>
+
+        <!-- Métricas rápidas -->
+        <div class="flex items-center gap-8 mt-16 pt-8 border-t border-white/5">
+          <div>
+            <p class="font-display font-bold text-2xl text-ink">5k+</p>
+            <p class="label-section mt-1">Prendas vendidas</p>
+          </div>
+          <div class="w-px h-8 bg-white/10"></div>
+          <div>
+            <p class="font-display font-bold text-2xl text-ink">12</p>
+            <p class="label-section mt-1">Diseños únicos</p>
+          </div>
+          <div class="w-px h-8 bg-white/10"></div>
+          <div>
+            <p class="font-display font-bold text-2xl text-brand">ES</p>
+            <p class="label-section mt-1">Envíos nacionales</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Línea decorativa derecha -->
+    <div class="absolute right-0 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-brand/40 to-transparent hidden lg:block"></div>
+  </section>
+
+  <!-- ────────────── ¿QUÉ ES SUBLIMINAL? ────────────── -->
+  <section id="concepto" class="py-20 sm:py-28 bg-bg-secondary border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+        <!-- Imagen placeholder (izquierda) -->
+        <div class="reveal relative order-2 lg:order-1">
+          <div class="aspect-[4/5] bg-bg-card border border-white/5 relative overflow-hidden">
+            <!-- Placeholder visual cyberpunk -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center select-none">
+                <div class="font-display font-black text-[80px] leading-none text-white/5">SUB</div>
+                <div class="font-display font-black text-[80px] leading-none text-brand/20">LIM</div>
+                <div class="font-display font-black text-[80px] leading-none text-white/5">INAL</div>
+              </div>
+            </div>
+            <!-- Corner accents -->
+            <span class="absolute top-0 left-0 w-6 h-6 border-t border-l border-neon"></span>
+            <span class="absolute top-0 right-0 w-6 h-6 border-t border-r border-neon"></span>
+            <span class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-neon"></span>
+            <span class="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-neon"></span>
+            <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-bg-secondary to-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Texto (derecha) -->
+        <div class="reveal order-1 lg:order-2">
+          <span class="label-section text-brand block mb-4">El concepto</span>
+          <h2 class="title-section mb-6">
+            Tu mente ya lo vio.<br/>
+            <span class="text-gradient-brand">Pero aún no lo sabe.</span>
+          </h2>
+          <p class="font-alt text-ink-muted text-base leading-relaxed mb-6">
+            Subliminal es una marca de ropa y accesorios con diseños de doble lectura.
+            A simple vista parecen simples gráficos. Pero al mirarlos dos veces, revelan algo más.
+          </p>
+          <p class="font-alt text-ink-muted text-base leading-relaxed mb-8">
+            Mensajes ocultos, tipografías que se transforman, imágenes que cambian de significado.
+            Cada pieza es un experimento de psicología visual.
+          </p>
+
+          <!-- Features inline -->
+          <div class="space-y-3">
+            {[
+              { icon: '◈', text: 'Diseños con mensajes ocultos y doble lectura' },
+              { icon: '◈', text: 'Estética cyberpunk / streetwear urbano' },
+              { icon: '◈', text: 'Prendas de calidad premium' },
+            ].map(f => (
+              <div class="flex items-center gap-3">
+                <span class="text-brand text-lg">{f.icon}</span>
+                <span class="font-alt text-sm text-ink-muted">{f.text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Categories -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="text-center mb-10">
-      <h2 class="section-title">Explora por Categoría</h2>
-      <p class="section-subtitle">Encuentra el programa perfecto para tus objetivos</p>
-    </div>
-    <div class="flex flex-wrap justify-center gap-3">
-      {categories.filter(c => c.id !== 'all').map(cat => (
-        <a
-          href={`/tienda?cat=${cat.id}`}
-          class="flex items-center gap-2 px-5 py-3 card hover:border-primary-600/50 rounded-xl transition-all group"
-        >
-          <span class="text-xl group-hover:scale-110 transition-transform">{cat.icon}</span>
-          <span class="font-medium text-gray-300 group-hover:text-white transition-colors">{cat.name}</span>
+  <!-- ────────────── CATEGORÍAS ────────────── -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-12">
+        <div class="reveal">
+          <span class="label-section text-neon block mb-3">Explora</span>
+          <h2 class="title-section">Por categoría</h2>
+        </div>
+        <a href="/tienda" class="hidden sm:flex btn-ghost text-sm font-alt tracking-wider reveal">
+          Ver todo →
         </a>
-      ))}
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+        {[
+          { id: 'camisetas',  label: 'Camisetas',  sub: 'Mensajes en tu pecho' },
+          { id: 'sudaderas',  label: 'Sudaderas',  sub: 'Warm & hidden' },
+          { id: 'tazas',      label: 'Tazas',      sub: 'Tu mente despierta' },
+          { id: 'termos',     label: 'Termos',      sub: 'Lleva el mensaje' },
+          { id: 'posters',    label: 'Posters',     sub: 'Decora tu mente' },
+        ].map((cat, i) => (
+          <a
+            href={`/tienda?cat=${cat.id}`}
+            class="reveal group relative overflow-hidden bg-bg-card border border-white/5 hover:border-brand/50 p-6 transition-all duration-300 hover:-translate-y-1"
+            style={`transition-delay: ${i * 60}ms`}
+          >
+            <!-- Top accent line on hover -->
+            <span class="absolute top-0 left-0 right-0 h-px bg-brand scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+
+            <p class="font-display font-bold text-base text-ink group-hover:text-brand transition-colors uppercase tracking-wide mb-1">
+              {cat.label}
+            </p>
+            <p class="font-alt text-xs text-ink-faint group-hover:text-ink-muted transition-colors">
+              {cat.sub}
+            </p>
+            <svg class="w-4 h-4 text-brand mt-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+            </svg>
+          </a>
+        ))}
+      </div>
     </div>
   </section>
 
-  <!-- Featured Products -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-end justify-between mb-8">
-      <div>
-        <h2 class="section-title">Productos Destacados</h2>
-        <p class="section-subtitle">Los más populares de nuestra colección</p>
-      </div>
-      <a href="/tienda" class="btn-ghost text-sm hidden sm:flex">
-        Ver todos →
-      </a>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {featured.map(product => (
-        <ProductCard product={product} />
-      ))}
-    </div>
-  </section>
-
-  <!-- How it works -->
-  <section class="bg-dark-card border-y border-dark-border my-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <div class="text-center mb-12">
-        <h2 class="section-title">¿Cómo Funcionan?</h2>
-        <p class="section-subtitle">Ciencia detrás de la transformación</p>
+  <!-- ────────────── COLECCIONES ────────────── -->
+  <section class="py-20 sm:py-28 bg-bg-secondary border-y border-white/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14 reveal">
+        <span class="label-section text-neo block mb-3">Universos</span>
+        <h2 class="title-section">Colecciones</h2>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           {
-            step: '01',
-            icon: '🎵',
-            title: 'Escucha',
-            desc: 'Reproduce el audio subliminal mientras trabajas, duermes o te relajas. No requiere concentración activa.',
+            name: 'MIND CONTROL',
+            desc: 'Quién controla lo que piensas.',
+            color: 'from-brand/20 to-transparent',
+            accent: 'border-brand/40',
+            tag: 'brand',
           },
           {
-            step: '02',
-            icon: '🧠',
-            title: 'Penetra',
-            desc: 'Las afirmaciones positivas a frecuencia subliminal penetran directamente en tu mente subconsciente.',
+            name: 'HIDDEN TRUTH',
+            desc: 'La verdad siempre estuvo ahí.',
+            color: 'from-neon/10 to-transparent',
+            accent: 'border-neon/40',
+            tag: 'neon',
           },
           {
-            step: '03',
-            icon: '✨',
-            title: 'Transforma',
-            desc: 'Con escucha consistente, tus patrones de pensamiento cambian y ves resultados reales en tu vida.',
+            name: 'WAKE UP',
+            desc: 'Abre los ojos. Mira de nuevo.',
+            color: 'from-neo/10 to-transparent',
+            accent: 'border-neo/40',
+            tag: 'neo',
           },
-        ].map(item => (
-          <div class="text-center p-6">
-            <div class="relative inline-block mb-6">
-              <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-600/30 to-accent/30 border border-primary-700/30 flex items-center justify-center text-3xl mx-auto">
-                {item.icon}
-              </div>
-              <span class="absolute -top-2 -right-2 font-display font-bold text-xs text-primary-400 bg-dark-card border border-primary-700/30 rounded-full w-6 h-6 flex items-center justify-center">
-                {item.step}
+          {
+            name: 'DUAL MEANING',
+            desc: 'Dos lecturas. Un solo diseño.',
+            color: 'from-white/5 to-transparent',
+            accent: 'border-white/20',
+            tag: 'white',
+          },
+        ].map((col, i) => (
+          <a
+            href={`/colecciones`}
+            class={`reveal group relative overflow-hidden bg-bg-card border ${col.accent} hover:-translate-y-1 transition-all duration-300 p-8 flex flex-col justify-end min-h-[220px]`}
+            style={`transition-delay: ${i * 80}ms`}
+          >
+            <div class={`absolute inset-0 bg-gradient-to-b ${col.color}`}></div>
+            <!-- Corner decor -->
+            <span class={`absolute top-3 right-3 w-4 h-4 border-t border-r ${col.accent}`}></span>
+
+            <div class="relative">
+              <p class="font-display font-black text-xl text-ink uppercase tracking-wide mb-2 group-hover:text-brand transition-colors">
+                {col.name}
+              </p>
+              <p class="font-alt text-sm text-ink-muted">{col.desc}</p>
+              <span class="inline-block mt-4 text-xs font-alt tracking-widest text-ink-faint group-hover:text-neon transition-colors">
+                VER COLECCIÓN →
               </span>
             </div>
-            <h3 class="font-display font-bold text-xl text-white mb-3">{item.title}</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────── PRODUCTOS DESTACADOS ────────────── -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-12">
+        <div class="reveal">
+          <span class="label-section text-brand block mb-3">Lo más deseado</span>
+          <h2 class="title-section">Productos destacados</h2>
+        </div>
+        <a href="/tienda" class="hidden sm:flex btn-ghost text-sm font-alt tracking-wider reveal">
+          Ver todos →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        {featured.map((product, i) => (
+          <div class="reveal" style={`transition-delay: ${i * 80}ms`}>
+            <ProductCard product={product} />
           </div>
         ))}
       </div>
-
-      <div class="text-center mt-10">
-        <a href="/como-funciona" class="btn-secondary">Saber más sobre la ciencia</a>
-      </div>
     </div>
   </section>
 
-  <!-- Bestsellers -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div class="flex items-end justify-between mb-8">
-      <div>
-        <h2 class="section-title">🔥 Más Vendidos</h2>
-        <p class="section-subtitle">Lo que eligen nuestros clientes</p>
-      </div>
-      <a href="/tienda" class="btn-ghost text-sm hidden sm:flex">
-        Ver todos →
-      </a>
-    </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-      {bestsellers.map(product => (
-        <ProductCard product={product} />
-      ))}
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-    <div class="text-center mb-12">
-      <h2 class="section-title">Lo que dicen nuestros clientes</h2>
-      <p class="section-subtitle">Historias reales de transformación</p>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {[
-        {
-          name: 'María G.',
-          role: 'Emprendedora',
-          text: 'Después de 30 días escuchando el subliminal de Abundancia, conseguí mis primeros clientes de alto valor. ¡Increíble!',
-          rating: 5,
-          product: 'Imán de Abundancia',
-        },
-        {
-          name: 'Carlos M.',
-          role: 'Estudiante',
-          text: 'Mi autoestima era por los suelos. Tras 3 semanas de escuchar el audio antes de dormir, me siento completamente diferente.',
-          rating: 5,
-          product: 'Autoestima Inquebrantable',
-        },
-        {
-          name: 'Laura P.',
-          role: 'Profesora',
-          text: 'El subliminal de Paz Interior ha transformado mi relación con el estrés. Duermo mejor y me siento más equilibrada.',
-          rating: 5,
-          product: 'Paz Interior Profunda',
-        },
-      ].map(t => (
-        <div class="card p-6">
-          <div class="flex gap-1 mb-4">
-            {Array(t.rating).fill(0).map(() => (
-              <span class="text-yellow-400">★</span>
-            ))}
-          </div>
-          <p class="text-gray-300 text-sm leading-relaxed mb-5 italic">"{t.text}"</p>
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="font-semibold text-white text-sm">{t.name}</p>
-              <p class="text-gray-500 text-xs">{t.role}</p>
-            </div>
-            <span class="badge-primary text-xs">{t.product}</span>
-          </div>
-        </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- CTA Banner -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary-900 via-primary-800 to-accent-dark p-8 sm:p-12 text-center">
-      <div class="particles-bg"></div>
-      <div class="relative">
-        <h2 class="font-display font-black text-3xl sm:text-4xl text-white mb-4">
-          Comienza tu transformación hoy
+  <!-- ────────────── STORYTELLING ────────────── -->
+  <section class="py-20 sm:py-28 bg-bg-secondary border-y border-white/5 relative overflow-hidden">
+    <div class="ambient-bg"></div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center relative">
+      <div class="reveal">
+        <span class="label-section text-neon block mb-6">El mensaje</span>
+        <h2 class="font-display font-black text-4xl sm:text-5xl lg:text-6xl text-ink uppercase tracking-tight leading-tight mb-8">
+          El mensaje<br/>
+          <span class="text-gradient-brand">siempre estuvo ahí.</span>
         </h2>
-        <p class="text-primary-200 text-lg mb-8 max-w-xl mx-auto">
-          Acceso inmediato tras la compra. Descarga en MP3 y FLAC de alta calidad.
+        <p class="font-alt text-ink-muted text-lg max-w-2xl mx-auto leading-relaxed mb-4">
+          Cada diseño de Subliminal esconde algo más allá de lo visible.
+          Un mensaje que emerge cuando tu mente está lista para verlo.
+        </p>
+        <p class="font-alt text-ink-faint text-base max-w-xl mx-auto leading-relaxed mb-12">
+          No es ropa. Es una conversación entre tu mente consciente y lo que siempre supo pero nunca dijo.
+        </p>
+
+        <!-- Taglines -->
+        <div class="flex flex-wrap justify-center gap-4 text-xs font-display uppercase tracking-widest">
+          <span class="px-4 py-2 border border-brand/30 text-brand">Mira dos veces.</span>
+          <span class="px-4 py-2 border border-neon/30 text-neon">Tu mente ya lo vio.</span>
+          <span class="px-4 py-2 border border-neo/30 text-neo">El mensaje siempre estuvo ahí.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ────────────── CTA FINAL ────────────── -->
+  <section class="py-20 sm:py-28">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="reveal relative overflow-hidden border border-brand/30 bg-bg-card p-10 sm:p-16 text-center">
+        <!-- Corner accents -->
+        <span class="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-brand"></span>
+        <span class="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-brand"></span>
+        <span class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-brand"></span>
+        <span class="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-brand"></span>
+
+        <span class="label-section text-brand block mb-4">¿Estás listo?</span>
+        <h2 class="font-display font-black text-3xl sm:text-4xl text-ink uppercase tracking-tight mb-4">
+          Descubre lo que<br/>
+          <span class="text-gradient-brand">tu mente ya sabía.</span>
+        </h2>
+        <p class="font-alt text-ink-muted mb-10 max-w-md mx-auto">
+          Envíos a toda España. Devolución gratuita en 30 días.
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="/tienda" class="btn-primary text-lg px-8 py-4 bg-white text-primary-900 hover:bg-primary-50">
-            Ver todos los programas
+          <a href="/tienda" class="btn-primary text-base px-10 py-4">
+            Ver la tienda completa
           </a>
-          <a href="/producto/pack-transformacion-total" class="btn-secondary text-lg px-8 py-4 border-white/30 text-white hover:border-white/60">
-            Pack completo — 40% desc.
+          <a href="/colecciones" class="btn-outline text-base px-10 py-4">
+            Explorar colecciones
           </a>
         </div>
       </div>
     </div>
   </section>
+
 </Layout>

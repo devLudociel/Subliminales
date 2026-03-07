@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Raleway:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,156 +10,271 @@
   }
 
   body {
-    @apply bg-dark text-white font-sans antialiased;
+    @apply bg-bg text-ink font-sans antialiased;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%230B0B0B'/%3E%3Crect width='1' height='1' fill='%23ffffff08'/%3E%3C/svg%3E");
   }
 
   * {
     box-sizing: border-box;
   }
+
+  ::selection {
+    background: rgba(123, 47, 247, 0.5);
+    color: #fff;
+  }
 }
 
 @layer components {
+  /* ── Botones ─────────────────────────────────── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3
-           bg-gradient-to-r from-primary-600 to-primary-500
-           text-white font-semibold rounded-xl
-           hover:from-primary-500 hover:to-primary-400
+           bg-brand text-white font-semibold font-alt uppercase tracking-wider text-sm
+           border border-brand
+           hover:bg-brand-light hover:shadow-brand
            transition-all duration-300 ease-out
-           shadow-lg hover:shadow-primary-600/30 hover:shadow-xl
-           transform hover:-translate-y-0.5 active:translate-y-0;
+           active:scale-95;
   }
 
-  .btn-secondary {
+  .btn-outline {
     @apply inline-flex items-center justify-center gap-2 px-6 py-3
-           border border-primary-700/50 text-primary-300 font-semibold rounded-xl
-           hover:bg-primary-900/50 hover:border-primary-500
-           transition-all duration-300 ease-out;
+           bg-transparent text-brand border border-brand font-semibold font-alt uppercase tracking-wider text-sm
+           hover:bg-brand/10 hover:shadow-brand
+           transition-all duration-300 ease-out
+           active:scale-95;
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2
-           text-gray-400 font-medium rounded-lg
-           hover:text-white hover:bg-white/5
+           text-ink-muted font-medium
+           hover:text-ink hover:text-neon
            transition-all duration-200;
   }
 
+  .btn-neon {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3
+           bg-transparent text-neon border border-neon font-semibold font-alt uppercase tracking-wider text-sm
+           hover:bg-neon/10 hover:shadow-neon
+           transition-all duration-300 ease-out;
+  }
+
+  /* ── Cards ───────────────────────────────────── */
   .card {
-    @apply bg-dark-card border border-dark-border rounded-2xl
-           hover:border-primary-700/50 transition-all duration-300;
+    @apply bg-bg-card border border-white/5
+           hover:border-brand/40 transition-all duration-300 shadow-card;
   }
 
   .card-hover {
-    @apply card hover:shadow-lg hover:shadow-primary-900/30
-           hover:-translate-y-1 transform transition-all duration-300;
+    @apply card hover:shadow-brand hover:-translate-y-1 transform transition-all duration-300;
   }
 
+  /* ── Badges ──────────────────────────────────── */
   .badge {
-    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+    @apply inline-flex items-center px-3 py-1 text-xs font-semibold uppercase tracking-wider;
   }
 
-  .badge-primary {
-    @apply badge bg-primary-900/50 text-primary-300 border border-primary-700/30;
+  .badge-brand {
+    @apply badge bg-brand/15 text-brand border border-brand/30;
   }
 
-  .badge-accent {
-    @apply badge bg-accent/20 text-accent-light border border-accent/30;
+  .badge-neon {
+    @apply badge bg-neon/10 text-neon border border-neon/30;
   }
 
-  .badge-success {
-    @apply badge bg-green-900/50 text-green-300 border border-green-700/30;
+  .badge-neo {
+    @apply badge bg-neo/10 text-neo border border-neo/30;
   }
 
-  .section-title {
-    @apply font-display font-bold text-3xl sm:text-4xl text-white;
+  /* ── Tipografía ──────────────────────────────── */
+  .title-hero {
+    @apply font-display font-black text-5xl sm:text-6xl lg:text-8xl text-ink uppercase tracking-tight leading-none;
   }
 
-  .section-subtitle {
-    @apply text-gray-400 text-lg mt-3;
+  .title-section {
+    @apply font-display font-bold text-2xl sm:text-3xl text-ink uppercase tracking-wide;
   }
 
-  .price-tag {
-    @apply font-display font-bold text-2xl text-white;
+  .label-section {
+    @apply font-alt text-xs uppercase tracking-[0.25em] text-ink-muted;
   }
 
-  .price-original {
-    @apply text-gray-500 line-through text-lg;
-  }
-
+  /* ── Inputs ──────────────────────────────────── */
   .input-field {
-    @apply w-full px-4 py-3 bg-dark-card border border-dark-border rounded-xl
-           text-white placeholder-gray-500
-           focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50
+    @apply w-full px-4 py-3 bg-bg-secondary border border-white/10
+           text-ink placeholder-ink-faint
+           focus:outline-none focus:border-brand/60 focus:ring-1 focus:ring-brand/30
            transition-colors duration-200;
+  }
+
+  /* ── Category card ───────────────────────────── */
+  .cat-card {
+    @apply relative overflow-hidden aspect-square bg-bg-secondary border border-white/5
+           hover:border-brand/40 transition-all duration-300 cursor-pointer;
+  }
+
+  .cat-card:hover .cat-overlay {
+    @apply bg-brand/20;
+  }
+
+  .cat-card:hover .cat-img {
+    @apply scale-110;
+  }
+
+  .cat-overlay {
+    @apply absolute inset-0 bg-bg/60 transition-all duration-300;
+  }
+
+  .cat-img {
+    @apply absolute inset-0 w-full h-full object-cover transition-transform duration-500;
   }
 }
 
 @layer utilities {
-  .text-gradient {
-    @apply bg-gradient-to-r from-primary-300 via-primary-200 to-accent-light bg-clip-text text-transparent;
+  /* Gradientes de texto */
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-brand via-neon to-brand bg-clip-text text-transparent;
+    background-size: 200%;
+    animation: gradientShift 4s ease infinite;
   }
 
-  .border-gradient {
-    background: linear-gradient(var(--tw-gradient-from), var(--tw-gradient-to)) border-box;
-    border: 1px solid transparent;
+  .text-gradient-neon {
+    @apply bg-gradient-to-r from-neon to-brand bg-clip-text text-transparent;
   }
 
-  .glass {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10;
+  /* Glitch effect */
+  .glitch {
+    position: relative;
+  }
+
+  .glitch::before,
+  .glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .glitch::before {
+    color: #00E5FF;
+    animation: glitch 3s infinite;
+    opacity: 0.7;
+  }
+
+  .glitch::after {
+    color: #FF2D95;
+    animation: glitch2 3s infinite;
+    opacity: 0.7;
+  }
+
+  /* Noise overlay */
+  .noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+    mix-blend-mode: overlay;
+  }
+
+  /* Scan lines */
+  .scanlines {
+    position: relative;
+  }
+  .scanlines::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0.02) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Neon underline */
+  .underline-neon {
+    text-decoration: none;
+    border-bottom: 1px solid #00E5FF;
+    padding-bottom: 2px;
   }
 
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
 }
 
-/* Animaciones personalizadas */
-@keyframes shimmer {
-  0% { background-position: -1000px 0; }
-  100% { background-position: 1000px 0; }
+/* ── Keyframes ───────────────────────────────────── */
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% center; }
+  50%       { background-position: 100% center; }
 }
 
-.shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-  background-size: 1000px 100%;
-  animation: shimmer 2s infinite;
+@keyframes glitch {
+  0%, 100%  { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  10%       { clip-path: inset(10% 0 80% 0); transform: translateX(-3px); }
+  20%       { clip-path: inset(30% 0 60% 0); transform: translateX(3px); }
+  30%       { clip-path: inset(50% 0 40% 0); transform: translateX(-3px); }
+  40%       { clip-path: inset(70% 0 10% 0); transform: translateX(3px); }
+  50%       { clip-path: inset(0 0 0 0);    transform: translateX(0); }
 }
 
-/* Partículas de fondo */
-.particles-bg {
+@keyframes glitch2 {
+  0%, 100%  { clip-path: inset(0 0 100% 0); transform: translateX(0); }
+  15%       { clip-path: inset(20% 0 70% 0); transform: translateX(3px); }
+  25%       { clip-path: inset(40% 0 50% 0); transform: translateX(-3px); }
+  35%       { clip-path: inset(60% 0 30% 0); transform: translateX(3px); }
+  45%       { clip-path: inset(80% 0 5% 0);  transform: translateX(-3px); }
+  55%       { clip-path: inset(0 0 0 0);    transform: translateX(0); }
+}
+
+/* ── Reveal on scroll ────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Purple ambient glow BG ──────────────────────── */
+.ambient-bg {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
 }
 
-.particles-bg::before,
-.particles-bg::after {
+.ambient-bg::before {
   content: '';
   position: absolute;
+  width: 600px;
+  height: 600px;
   border-radius: 50%;
-  opacity: 0.15;
-  filter: blur(80px);
-  animation: float 8s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(123,47,247,0.12), transparent 70%);
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.particles-bg::before {
+.ambient-bg::after {
+  content: '';
+  position: absolute;
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, #14b8a6, transparent);
-  top: -100px;
-  left: -100px;
-}
-
-.particles-bg::after {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, #f59e0b, transparent);
-  bottom: -50px;
-  right: -50px;
-  animation-delay: -4s;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,229,255,0.07), transparent 70%);
+  bottom: -100px;
+  right: 10%;
 }

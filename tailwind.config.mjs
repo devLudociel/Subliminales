@@ -4,53 +4,103 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          50:  '#f0fdfa',
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6',
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a',
-          950: '#042f2e',
+        // Fondos
+        bg: {
+          DEFAULT: '#0B0B0B',
+          secondary: '#1A1A1A',
+          card: '#141414',
         },
-        accent: {
-          DEFAULT: '#f59e0b',
-          light: '#fcd34d',
-          dark: '#b45309',
+        // Color primario — morado eléctrico
+        brand: {
+          DEFAULT: '#7B2FF7',
+          light: '#9B5FFF',
+          dark: '#5B10D7',
+          glow: 'rgba(123,47,247,0.35)',
         },
-        dark: {
-          DEFAULT: '#0a1520',
-          card: '#0f1e2d',
-          border: '#1a3040',
+        // Color secundario — azul neón
+        neon: {
+          DEFAULT: '#00E5FF',
+          glow: 'rgba(0,229,255,0.3)',
+        },
+        // Color acento — rosa neón
+        neo: {
+          DEFAULT: '#FF2D95',
+          glow: 'rgba(255,45,149,0.3)',
+        },
+        // Texto
+        ink: {
+          DEFAULT: '#FFFFFF',
+          muted: '#B3B3B3',
+          faint: '#555555',
         },
       },
       fontFamily: {
+        display: ['Orbitron', 'Space Grotesk', 'sans-serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Raleway', 'Inter', 'sans-serif'],
+        alt: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-gradient': 'linear-gradient(135deg, #0a1520 0%, #0f1e2d 50%, #0a1f1e 100%)',
-        'card-gradient': 'linear-gradient(145deg, #0f1e2d, #0a1520)',
-        'teal-glow': 'radial-gradient(circle at center, rgba(20,184,166,0.12) 0%, transparent 70%)',
+        'hero-gradient': 'linear-gradient(135deg, #0B0B0B 0%, #0f0820 50%, #0B0B0B 100%)',
+        'card-gradient': 'linear-gradient(145deg, #141414, #0B0B0B)',
+        'purple-glow': 'radial-gradient(circle at center, rgba(123,47,247,0.15) 0%, transparent 70%)',
+        'neon-glow': 'radial-gradient(circle at center, rgba(0,229,255,0.1) 0%, transparent 70%)',
+        'scan-lines': 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)',
       },
       animation: {
+        'glitch': 'glitch 3s infinite',
+        'glitch-2': 'glitch2 3s infinite',
+        'pulse-brand': 'pulseBrand 2s ease-in-out infinite alternate',
+        'scan': 'scan 8s linear infinite',
+        'flicker': 'flicker 5s infinite',
         'float': 'float 6s ease-in-out infinite',
-        'pulse-slow': 'pulse 4s ease-in-out infinite',
-        'glow': 'glow 2s ease-in-out infinite alternate',
+        'reveal': 'reveal 0.4s ease forwards',
       },
       keyframes: {
+        glitch: {
+          '0%, 100%': { clipPath: 'inset(0 0 100% 0)', transform: 'translateX(0)' },
+          '10%': { clipPath: 'inset(10% 0 80% 0)', transform: 'translateX(-3px)' },
+          '20%': { clipPath: 'inset(30% 0 60% 0)', transform: 'translateX(3px)' },
+          '30%': { clipPath: 'inset(50% 0 40% 0)', transform: 'translateX(-3px)' },
+          '40%': { clipPath: 'inset(70% 0 10% 0)', transform: 'translateX(3px)' },
+          '50%': { clipPath: 'inset(0 0 0 0)', transform: 'translateX(0)' },
+        },
+        glitch2: {
+          '0%, 100%': { clipPath: 'inset(0 0 100% 0)', transform: 'translateX(0)' },
+          '15%': { clipPath: 'inset(20% 0 70% 0)', transform: 'translateX(3px)' },
+          '25%': { clipPath: 'inset(40% 0 50% 0)', transform: 'translateX(-3px)' },
+          '35%': { clipPath: 'inset(60% 0 30% 0)', transform: 'translateX(3px)' },
+          '45%': { clipPath: 'inset(80% 0 5% 0)', transform: 'translateX(-3px)' },
+          '55%': { clipPath: 'inset(0 0 0 0)', transform: 'translateX(0)' },
+        },
+        pulseBrand: {
+          from: { boxShadow: '0 0 10px rgba(123,47,247,0.4), 0 0 20px rgba(123,47,247,0.2)' },
+          to:   { boxShadow: '0 0 20px rgba(123,47,247,0.7), 0 0 40px rgba(123,47,247,0.3)' },
+        },
+        scan: {
+          '0%':   { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '0 100px' },
+        },
+        flicker: {
+          '0%, 95%, 100%': { opacity: '1' },
+          '96%': { opacity: '0.8' },
+          '97%': { opacity: '1' },
+          '98%': { opacity: '0.6' },
+          '99%': { opacity: '1' },
+        },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
+          '50%': { transform: 'translateY(-12px)' },
         },
-        glow: {
-          from: { boxShadow: '0 0 10px rgba(20,184,166,0.25)' },
-          to: { boxShadow: '0 0 25px rgba(20,184,166,0.5)' },
+        reveal: {
+          from: { opacity: '0', transform: 'translateY(8px)' },
+          to:   { opacity: '1', transform: 'translateY(0)' },
         },
+      },
+      boxShadow: {
+        'brand': '0 0 20px rgba(123,47,247,0.5), 0 0 40px rgba(123,47,247,0.2)',
+        'neon': '0 0 20px rgba(0,229,255,0.5), 0 0 40px rgba(0,229,255,0.2)',
+        'neo': '0 0 20px rgba(255,45,149,0.5)',
+        'card': '0 4px 24px rgba(0,0,0,0.6)',
       },
     },
   },
