@@ -21,174 +21,230 @@ const related = getProductsByCategory(product.category)
 const discount = product.originalPrice
   ? Math.round((1 - product.price / product.originalPrice) * 100)
   : null;
-
-const categoryEmojis: Record<string, string> = {
-  autoestima: '💪',
-  abundancia: '💰',
-  amor: '❤️',
-  salud: '🌿',
-  exito: '🏆',
-  paz: '🧘',
-  sueno: '🌙',
-};
 ---
 
 <Layout title={product.name} description={product.description}>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+
     <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8">
-      <a href="/" class="hover:text-gray-300 transition-colors">Inicio</a>
+    <nav class="flex items-center gap-2 text-xs font-alt text-ink-faint mb-10 uppercase tracking-wider">
+      <a href="/" class="hover:text-ink-muted transition-colors">Inicio</a>
       <span>›</span>
-      <a href="/tienda" class="hover:text-gray-300 transition-colors">Tienda</a>
+      <a href="/tienda" class="hover:text-ink-muted transition-colors">Tienda</a>
       <span>›</span>
-      <span class="text-gray-300">{product.name}</span>
+      <a href={`/tienda?cat=${product.category}`} class="hover:text-ink-muted transition-colors capitalize">{product.category}</a>
+      <span>›</span>
+      <span class="text-ink-muted">{product.name}</span>
     </nav>
 
-    <!-- Product -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-      <!-- Visual -->
-      <div class="relative">
-        <div class="aspect-square rounded-3xl bg-gradient-to-br from-primary-900/50 to-dark border border-dark-border flex items-center justify-center">
-          <div class="text-center">
-            <div class="w-32 h-32 rounded-3xl bg-gradient-to-br from-primary-500/30 to-accent/30 flex items-center justify-center text-7xl mx-auto mb-6 animate-float">
-              {categoryEmojis[product.category] || '🎵'}
+    <!-- Product grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+
+      <!-- Galería izquierda -->
+      <div class="space-y-3">
+        <!-- Imagen principal -->
+        <div class="relative aspect-[4/5] bg-bg-card border border-white/5 overflow-hidden">
+          <!-- Placeholder visual -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center select-none">
+              <div class="font-display font-black text-[100px] leading-none text-white/5 mb-2">
+                {product.category === 'camisetas' && '◻'}
+                {product.category === 'sudaderas' && '▣'}
+                {product.category === 'tazas' && '◎'}
+                {product.category === 'termos' && '▥'}
+                {product.category === 'posters' && '▧'}
+                {product.category === 'accesorios' && '◈'}
+              </div>
+              <p class="font-display text-xs text-ink-faint uppercase tracking-widest">
+                {product.name}
+              </p>
             </div>
-            <span class="badge-primary">{product.duration}</span>
+          </div>
+          <!-- Corner accents -->
+          <span class="absolute top-0 left-0 w-6 h-6 border-t border-l border-brand/40"></span>
+          <span class="absolute top-0 right-0 w-6 h-6 border-t border-r border-brand/40"></span>
+          <span class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-brand/40"></span>
+          <span class="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-brand/40"></span>
+          <!-- Badges -->
+          <div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+            {product.isNew && <span class="badge-neon">NEW</span>}
+            {product.bestseller && <span class="badge-brand">TOP</span>}
+            {discount && <span class="badge bg-neo/15 text-neo border border-neo/30">-{discount}%</span>}
           </div>
         </div>
-
-        <!-- Formats badge -->
-        <div class="absolute bottom-4 left-4 right-4 flex gap-2">
-          {product.format.map(f => (
-            <span class="badge bg-black/70 text-gray-300 backdrop-blur-sm text-xs px-3 py-1.5">
-              🎵 {f}
-            </span>
+        <!-- Thumbnails placeholder -->
+        <div class="grid grid-cols-4 gap-2">
+          {[1,2,3,4].map(i => (
+            <div class="aspect-square bg-bg-card border border-white/5 hover:border-brand/40 cursor-pointer transition-colors flex items-center justify-center">
+              <span class="text-ink-faint text-xs font-display">{i}</span>
+            </div>
           ))}
         </div>
       </div>
 
-      <!-- Info -->
+      <!-- Info derecha -->
       <div class="flex flex-col">
-        <!-- Badges -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <span class="badge-primary">{product.category}</span>
-          {product.bestseller && <span class="badge-accent">⭐ Bestseller</span>}
-          {discount && <span class="badge bg-red-900/50 text-red-300 border border-red-700/30">-{discount}% descuento</span>}
-        </div>
 
-        <h1 class="font-display font-black text-4xl text-white mb-4 leading-tight">
+        <!-- Colección -->
+        {product.collection && (
+          <span class="label-section text-brand mb-3">
+            {product.collection.replace('-', ' ').toUpperCase()} — {product.category.toUpperCase()}
+          </span>
+        )}
+
+        <!-- Nombre -->
+        <h1 class="font-display font-black text-4xl sm:text-5xl text-ink uppercase tracking-tight leading-none mb-4">
           {product.name}
         </h1>
 
-        <p class="text-gray-400 text-lg leading-relaxed mb-6">
-          {product.longDescription}
+        <!-- Descripción corta -->
+        <p class="font-alt text-ink-muted text-base leading-relaxed mb-6 italic">
+          "{product.description}"
         </p>
 
-        <!-- Price -->
+        <!-- Precio -->
         <div class="flex items-baseline gap-3 mb-8">
-          <span class="font-display font-black text-4xl text-white">{product.price.toFixed(2)}€</span>
+          <span class="font-display font-black text-4xl text-ink">{product.price.toFixed(2)}€</span>
           {product.originalPrice && (
-            <span class="text-gray-500 line-through text-xl">{product.originalPrice.toFixed(2)}€</span>
+            <span class="font-alt text-ink-faint line-through text-xl">{product.originalPrice.toFixed(2)}€</span>
           )}
           {discount && (
-            <span class="text-green-400 text-sm font-semibold">Ahorras {(product.originalPrice! - product.price).toFixed(2)}€</span>
+            <span class="badge-neo text-xs">Ahorras {(product.originalPrice! - product.price).toFixed(2)}€</span>
           )}
         </div>
 
-        <!-- CTA -->
+        <!-- Selector de talla (si aplica) -->
+        {product.sizes && product.sizes.length > 0 && (
+          <div class="mb-6">
+            <p class="label-section mb-3">Talla</p>
+            <div class="flex flex-wrap gap-2">
+              {product.sizes.map(size => (
+                <button class="px-3 py-2 border border-white/10 text-ink-muted text-sm font-alt hover:border-brand hover:text-brand transition-all duration-150 uppercase tracking-wider">
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- Selector de color (si aplica) -->
+        {product.colors && product.colors.length > 0 && (
+          <div class="mb-8">
+            <p class="label-section mb-3">Color</p>
+            <div class="flex flex-wrap gap-2">
+              {product.colors.map(color => (
+                <button class="px-4 py-2 border border-white/10 text-ink-muted text-sm font-alt hover:border-brand hover:text-brand transition-all duration-150">
+                  {color}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <!-- CTAs -->
         <div class="space-y-3 mb-8">
           <button
             id="add-to-cart"
-            class="w-full btn-primary text-lg py-4"
+            class="w-full btn-primary text-base py-4"
             data-product-id={product.id}
             data-product-name={product.name}
             data-product-price={product.price}
           >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
             </svg>
             Añadir al carrito
           </button>
-          <a href="/checkout" class="w-full btn-secondary text-lg py-4 block text-center" id="buy-now">
+          <a href="/checkout" class="w-full btn-outline text-base py-4 block text-center" id="buy-now">
             Comprar ahora
           </a>
         </div>
 
-        <!-- Guarantees -->
-        <div class="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-dark-card border border-dark-border">
+        <!-- Garantías -->
+        <div class="grid grid-cols-3 gap-3 p-4 bg-bg-card border border-white/5">
           <div class="text-center">
-            <p class="text-2xl mb-1">⚡</p>
-            <p class="text-gray-400 text-xs">Descarga<br/>inmediata</p>
+            <p class="font-display text-base mb-1 text-brand">◎</p>
+            <p class="font-alt text-ink-faint text-xs leading-tight">Envío<br/>nacional</p>
           </div>
-          <div class="text-center border-x border-dark-border">
-            <p class="text-2xl mb-1">🔒</p>
-            <p class="text-gray-400 text-xs">Pago<br/>seguro</p>
+          <div class="text-center border-x border-white/5">
+            <p class="font-display text-base mb-1 text-neon">◈</p>
+            <p class="font-alt text-ink-faint text-xs leading-tight">Pago<br/>seguro</p>
           </div>
           <div class="text-center">
-            <p class="text-2xl mb-1">✅</p>
-            <p class="text-gray-400 text-xs">Garantía<br/>30 días</p>
+            <p class="font-display text-base mb-1 text-neo">◻</p>
+            <p class="font-alt text-ink-faint text-xs leading-tight">30 días<br/>devolución</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Benefits -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-      <div class="card p-8">
-        <h2 class="font-display font-bold text-2xl text-white mb-6">Beneficios</h2>
-        <ul class="space-y-4">
-          {product.benefits.map(benefit => (
-            <li class="flex items-start gap-3">
-              <div class="w-5 h-5 rounded-full bg-green-900/50 border border-green-700/30 flex items-center justify-center shrink-0 mt-0.5">
-                <svg class="w-3 h-3 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                </svg>
-              </div>
-              <span class="text-gray-300">{benefit}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <!-- Descripción larga + Mensaje oculto -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
 
-      <div class="card p-8">
-        <h2 class="font-display font-bold text-2xl text-white mb-6">Detalles</h2>
-        <dl class="space-y-4">
-          <div class="flex justify-between items-center py-2 border-b border-dark-border">
-            <dt class="text-gray-500">Duración</dt>
-            <dd class="text-white font-medium">{product.duration}</dd>
-          </div>
-          <div class="flex justify-between items-center py-2 border-b border-dark-border">
-            <dt class="text-gray-500">Formato</dt>
-            <dd class="text-white font-medium">{product.format.join(', ')}</dd>
-          </div>
-          <div class="flex justify-between items-center py-2 border-b border-dark-border">
-            <dt class="text-gray-500">Categoría</dt>
-            <dd class="text-white font-medium capitalize">{product.category}</dd>
-          </div>
-          <div class="flex justify-between items-center py-2 border-b border-dark-border">
-            <dt class="text-gray-500">Entrega</dt>
-            <dd class="text-green-400 font-medium">Descarga inmediata</dd>
-          </div>
-          <div class="flex justify-between items-center py-2">
-            <dt class="text-gray-500">Garantía</dt>
-            <dd class="text-white font-medium">30 días devolución</dd>
-          </div>
-        </dl>
+      <!-- Descripción -->
+      <div class="bg-bg-card border border-white/5 p-8">
+        <span class="label-section text-neon block mb-4">El diseño</span>
+        <h2 class="font-display font-bold text-xl text-ink uppercase tracking-wide mb-4">
+          Descripción
+        </h2>
+        <p class="font-alt text-ink-muted text-sm leading-relaxed">
+          {product.longDescription}
+        </p>
 
-        <div class="mt-6 flex flex-wrap gap-2">
+        <!-- Tags -->
+        <div class="flex flex-wrap gap-2 mt-6">
           {product.tags.map(tag => (
-            <span class="badge-primary text-xs">#{tag}</span>
+            <span class="badge-brand text-xs">#{tag}</span>
           ))}
+        </div>
+      </div>
+
+      <!-- Interacción mensaje oculto -->
+      <div class="bg-bg-card border border-brand/20 p-8 relative overflow-hidden group">
+        <span class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand to-transparent"></span>
+        <span class="label-section text-brand block mb-4">Psicología visual</span>
+        <h2 class="font-display font-bold text-xl text-ink uppercase tracking-wide mb-4">
+          ¿Ves el mensaje oculto?
+        </h2>
+        <p class="font-alt text-ink-muted text-sm leading-relaxed mb-6">
+          Este diseño contiene un mensaje oculto que se revela cuando observas el gráfico detenidamente.
+          La mayoría de personas lo descubre en segundos.
+        </p>
+
+        <!-- Botón reveal -->
+        <button
+          id="reveal-btn"
+          class="btn-primary text-sm px-6 py-3"
+        >
+          Revelar mensaje
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+        </button>
+
+        <!-- Mensaje revelado (oculto) -->
+        <div id="hidden-message" class="hidden mt-4 p-4 border border-neon/30 bg-neon/5">
+          <p class="font-display text-sm text-neon uppercase tracking-widest text-center">
+            "Tu mente ya lo vio."
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Related -->
+    <!-- Productos relacionados -->
     {related.length > 0 && (
       <div>
-        <h2 class="section-title mb-2">También te puede interesar</h2>
-        <p class="section-subtitle mb-8">Más programas de {product.category}</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="flex items-end justify-between mb-8">
+          <div>
+            <span class="label-section text-brand block mb-2">Puede que te interese</span>
+            <h2 class="title-section">Más de {product.category}</h2>
+          </div>
+          <a href={`/tienda?cat=${product.category}`} class="hidden sm:flex btn-ghost text-sm font-alt tracking-wider">
+            Ver todos →
+          </a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {related.map(p => (
             <ProductCard product={p} />
           ))}
@@ -218,7 +274,7 @@ const categoryEmojis: Record<string, string> = {
     }, 2000);
   });
 
-  // Buy now: add to cart and go to checkout
+  // Buy now
   const buyNow = document.getElementById('buy-now');
   buyNow?.addEventListener('click', (e) => {
     e.preventDefault();
@@ -229,5 +285,15 @@ const categoryEmojis: Record<string, string> = {
       image: '',
     });
     window.location.href = '/checkout';
+  });
+
+  // Reveal hidden message
+  const revealBtn = document.getElementById('reveal-btn');
+  const hiddenMsg = document.getElementById('hidden-message');
+  revealBtn?.addEventListener('click', () => {
+    hiddenMsg?.classList.remove('hidden');
+    hiddenMsg?.classList.add('animate-reveal');
+    revealBtn.textContent = '✓ Lo ves ahora';
+    revealBtn.classList.add('opacity-50', 'pointer-events-none');
   });
 </script>

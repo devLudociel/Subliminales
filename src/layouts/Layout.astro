@@ -11,7 +11,7 @@ interface Props {
 
 const {
   title,
-  description = 'Audios subliminales de alta calidad para transformar tu vida. Autoestima, abundancia, salud, éxito y más.',
+  description = 'Ropa y accesorios con mensajes ocultos. Diseños que revelan algo más cuando los miras dos veces.',
   image = '/og-image.jpg',
 } = Astro.props;
 
@@ -24,7 +24,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#0a1520" />
+    <meta name="theme-color" content="#7B2FF7" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -43,7 +43,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
-    <title>{title} | Subliminal.es</title>
+    <title>{title} | SUBLIMINAL</title>
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />
@@ -51,5 +51,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
+
+    <!-- Reveal on scroll -->
+    <script>
+      const observer = new IntersectionObserver(
+        (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+        { threshold: 0.1 }
+      );
+      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
   </body>
 </html>
