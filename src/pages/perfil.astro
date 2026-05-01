@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Mi Perfil">
+  <div class="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8 min-h-[70vh]">
+    <div class="flex items-center gap-4 mb-10 border-b border-white/5 pb-6">
+      <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center font-display font-black text-2xl text-ink" id="avatar-initial">
+        ?
+      </div>
+      <div>
+        <h1 class="font-display font-black text-3xl text-ink uppercase tracking-wider">Mente Integrada</h1>
+        <p class="font-alt text-ink-muted" id="user-email">Cargando identidad...</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="bg-bg-card border border-white/5 p-6 relative group">
+        <span class="absolute top-0 left-0 w-3 h-3 border-t border-l border-brand"></span>
+        <h2 class="font-display font-bold text-xl mb-4 uppercase tracking-widest text-brand">Historial Cifrado</h2>
+        <p class="text-ink-muted text-sm font-alt">Aún no hay pedidos en tu historial. Despierta y explora la tienda.</p>
+        <a href="/tienda" class="btn-ghost text-xs mt-4 inline-block">IR A LA TIENDA →</a>
+      </div>
+
+      <div class="bg-bg-card border border-white/5 p-6 relative h-fit">
+        <h2 class="font-display font-bold text-xl mb-4 uppercase tracking-widest text-ink">Preferencias</h2>
+        <button id="logout-btn" class="btn-outline border-neon/50 text-neon hover:bg-neon/10 w-full text-left px-4 py-3 text-sm flex justify-between items-center">
+          <span>Desconectar Mente (Cerrar Sesión)</span>
+          <span>×</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { onAuthStateChanged, signOut } from 'firebase/auth';
+  import { auth } from '../lib/firebase/client';
+
+  const userEmail = document.getElementById('user-email');
+  const avatar = document.getElementById('avatar-initial');
+  const logoutBtn = document.getElementById('logout-btn');
+
+  // Verify auth directly to protect page
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if(userEmail) userEmail.textContent = user.email || 'Identidad oculta';
+      if(avatar && user.email) avatar.textContent = user.email.charAt(0).toUpperCase();
+    } else {
+      window.location.href = '/login'; // Redirect if not logged in
+    }
+  });
+
+  logoutBtn?.addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = '/';
+  });
+</script>

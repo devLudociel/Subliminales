@@ -26,7 +26,28 @@ import Layout from '../layouts/Layout.astro';
             <div>
               <label class="block text-sm text-gray-400 mb-1.5">Email</label>
               <input type="email" placeholder="juan@email.com" class="input-field" />
-              <p class="text-xs text-gray-500 mt-1.5">Recibirás el enlace de descarga aquí</p>
+              <p class="text-xs text-gray-500 mt-1.5">Aquí te enviaremos la confirmación del pedido</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Shipping Address -->
+        <div class="card p-6">
+          <h2 class="font-semibold text-white mb-4">Dirección de Envío</h2>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm text-gray-400 mb-1.5">Dirección</label>
+              <input type="text" placeholder="Calle Ejemplo 123, Piso 2" class="input-field" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Ciudad</label>
+                <input type="text" placeholder="Madrid" class="input-field" />
+              </div>
+              <div>
+                <label class="block text-sm text-gray-400 mb-1.5">Código Postal</label>
+                <input type="text" placeholder="28001" class="input-field" />
+              </div>
             </div>
           </div>
         </div>
@@ -48,21 +69,14 @@ import Layout from '../layouts/Layout.astro';
             ))}
           </div>
 
-          <!-- Card form (shown by default) -->
-          <div class="mt-4 space-y-4" id="card-form">
-            <div>
-              <label class="block text-sm text-gray-400 mb-1.5">Número de tarjeta</label>
-              <input type="text" placeholder="1234 5678 9012 3456" class="input-field" maxlength="19" />
-            </div>
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm text-gray-400 mb-1.5">Caducidad</label>
-                <input type="text" placeholder="MM/AA" class="input-field" maxlength="5" />
-              </div>
-              <div>
-                <label class="block text-sm text-gray-400 mb-1.5">CVV</label>
-                <input type="text" placeholder="123" class="input-field" maxlength="4" />
-              </div>
+          <!-- Stripe default -->
+          <div class="mt-4 space-y-4" id="stripe-form">
+            <div class="p-6 border border-brand bg-brand/5 text-center rounded-xl">
+              <svg class="w-8 h-8 mx-auto text-brand mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+              </svg>
+              <h3 class="font-bold text-white mb-1">Pago Encriptado con Stripe</h3>
+              <p class="text-sm text-gray-400">Al confirmar el pedido, serás redirigido de forma segura a la pasarela de Stripe para procesar tu tarjeta de crédito o Apple Pay.</p>
             </div>
           </div>
         </div>
@@ -105,7 +119,7 @@ import Layout from '../layouts/Layout.astro';
           <!-- Trust badges -->
           <div class="mt-6 pt-4 border-t border-dark-border">
             <div class="flex flex-wrap gap-3 justify-center">
-              <span class="text-xs text-gray-500 flex items-center gap-1">⚡ Descarga inmediata</span>
+              <span class="text-xs text-gray-500 flex items-center gap-1">📦 Envío en 24/48h</span>
               <span class="text-xs text-gray-500 flex items-center gap-1">✅ Garantía 30 días</span>
               <span class="text-xs text-gray-500 flex items-center gap-1">🔒 Pago seguro</span>
             </div>
@@ -136,7 +150,7 @@ import Layout from '../layouts/Layout.astro';
       } else {
         summaryEl.innerHTML = items.map(item => `
           <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-primary-900/50 flex items-center justify-center shrink-0 text-sm">🎵</div>
+            <div class="w-8 h-8 rounded-lg bg-primary-900/50 flex items-center justify-center shrink-0 text-sm">📦</div>
             <div class="flex-1 min-w-0">
               <p class="text-sm text-white truncate">${item.name}</p>
               <p class="text-xs text-gray-500">×${item.quantity}</p>

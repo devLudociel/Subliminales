@@ -170,6 +170,26 @@ export const products: Product[] = [
   },
 ];
 
+export async function getProductsFromFirebase(): Promise<Product[]> {
+  try {
+    const { db } = await import('../lib/firebase/client');
+    const { collection, getDocs } = await import('firebase/firestore');
+    
+    // Si tenemos base de datos, extraemos la colección 'products'
+    const querySnapshot = await getDocs(collection(db, "products"));
+    const fbProducts: Product[] = [];
+    querySnapshot.forEach((doc) => {
+      fbProducts.push({ id: doc.id, ...doc.data() } as Product);
+    });
+
+    if(fbProducts.length > 0) return fbProducts;
+    return products; // Fallback a mock data si está vacía
+  } catch (error) {
+    console.error("Error cargando productos, volcando a mock data.", error);
+    return products;
+  }
+}
+
 export function getProductBySlug(slug: string): Product | undefined {
   return products.find(p => p.slug === slug);
 }

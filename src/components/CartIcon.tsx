@@ -50,7 +50,7 @@ export default function CartIcon() {
                 {items.map(item => (
                   <div key={item.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors">
                     <div className="w-10 h-10 rounded-lg bg-primary-900/50 flex items-center justify-center shrink-0">
-                      <span className="text-lg">🎵</span>
+                      <span className="text-lg">📦</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium text-white truncate">{item.name}</p>

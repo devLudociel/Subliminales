@@ -15,7 +15,9 @@ const {
   image = '/og-image.jpg',
 } = Astro.props;
 
+import CookieBanner from '../components/CookieBanner';
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
 ---
 
 <!doctype html>
@@ -24,7 +26,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#7B2FF7" />
+    <meta name="theme-color" content="#E5FF00" />
 
     <!-- Open Graph -->
     <meta property="og:title" content={title} />
@@ -51,6 +53,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
+    
+    <CookieBanner client:load />
 
     <!-- Reveal on scroll -->
     <script>

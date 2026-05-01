@@ -4,18 +4,17 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Fondos
         bg: {
-          DEFAULT: '#0B0B0B',
-          secondary: '#1A1A1A',
-          card: '#141414',
+          DEFAULT: '#0B1120',
+          secondary: '#111827',
+          card: '#1E293B',
         },
-        // Color primario — morado eléctrico
+        // Color primario — neon yellow (ComfyUI)
         brand: {
-          DEFAULT: '#7B2FF7',
-          light: '#9B5FFF',
-          dark: '#5B10D7',
-          glow: 'rgba(123,47,247,0.35)',
+          DEFAULT: '#E5FF00',
+          light: '#F5FF66',
+          dark: '#B3C700',
+          glow: 'rgba(229,255,0,0.35)',
         },
         // Color secundario — azul neón
         neon: {
@@ -40,11 +39,11 @@ export default {
         alt: ['Space Grotesk', 'Inter', 'sans-serif'],
       },
       backgroundImage: {
-        'hero-gradient': 'linear-gradient(135deg, #0B0B0B 0%, #0f0820 50%, #0B0B0B 100%)',
-        'card-gradient': 'linear-gradient(145deg, #141414, #0B0B0B)',
-        'purple-glow': 'radial-gradient(circle at center, rgba(123,47,247,0.15) 0%, transparent 70%)',
+        'hero-gradient': 'linear-gradient(135deg, #0B1120 0%, #11284A 50%, #0B1120 100%)',
+        'card-gradient': 'linear-gradient(145deg, #1E293B, #0B1120)',
+        'purple-glow': 'radial-gradient(circle at center, rgba(229,255,0,0.15) 0%, transparent 70%)',
         'neon-glow': 'radial-gradient(circle at center, rgba(0,229,255,0.1) 0%, transparent 70%)',
-        'scan-lines': 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.015) 2px, rgba(255,255,255,0.015) 4px)',
+        'scan-lines': 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(229,255,0,0.015) 2px, rgba(229,255,0,0.015) 4px)',
       },
       animation: {
         'glitch': 'glitch 3s infinite',
@@ -73,8 +72,8 @@ export default {
           '55%': { clipPath: 'inset(0 0 0 0)', transform: 'translateX(0)' },
         },
         pulseBrand: {
-          from: { boxShadow: '0 0 10px rgba(123,47,247,0.4), 0 0 20px rgba(123,47,247,0.2)' },
-          to:   { boxShadow: '0 0 20px rgba(123,47,247,0.7), 0 0 40px rgba(123,47,247,0.3)' },
+          from: { boxShadow: '0 0 10px rgba(229,255,0,0.4), 0 0 20px rgba(229,255,0,0.2)' },
+          to:   { boxShadow: '0 0 20px rgba(229,255,0,0.7), 0 0 40px rgba(229,255,0,0.3)' },
         },
         scan: {
           '0%':   { backgroundPosition: '0 0' },
@@ -97,7 +96,7 @@ export default {
         },
       },
       boxShadow: {
-        'brand': '0 0 20px rgba(123,47,247,0.5), 0 0 40px rgba(123,47,247,0.2)',
+        'brand': '0 0 20px rgba(229,255,0,0.5), 0 0 40px rgba(229,255,0,0.2)',
         'neon': '0 0 20px rgba(0,229,255,0.5), 0 0 40px rgba(0,229,255,0.2)',
         'neo': '0 0 20px rgba(255,45,149,0.5)',
         'card': '0 4px 24px rgba(0,0,0,0.6)',

@@ -7,7 +7,7 @@ const selectedCat = Astro.url.searchParams.get('cat') || 'all';
 const filteredProducts = getProductsByCategory(selectedCat);
 ---
 
-<Layout title="Tienda — Todos los Programas Subliminales" description="Explora nuestra colección completa de audios subliminales. Autoestima, abundancia, salud, éxito y más.">
+<Layout title="Tienda — Merchandising con Mensajes Ocultos" description="Explora nuestra colección completa de ropa y accesorios con mensajes ocultos. Sudaderas, camisetas, tazas y más.">
   <!-- Header -->
   <section class="bg-hero-gradient border-b border-dark-border py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,7 +15,7 @@ const filteredProducts = getProductsByCategory(selectedCat);
         Tienda
       </h1>
       <p class="text-gray-400 text-lg">
-        {products.length} programas subliminales para transformar tu vida
+        {products.length} prendas y accesorios con mensajes ocultos para explorar
       </p>
     </div>
   </section>
