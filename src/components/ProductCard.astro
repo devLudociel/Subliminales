@@ -3,107 +3,86 @@ import type { Product } from '../data/products';
 
 interface Props {
   product: Product;
+  rotation?: string;
 }
 
-const { product } = Astro.props;
+const { product, rotation = 'rotate(-1deg)' } = Astro.props;
+
 const discount = product.originalPrice
   ? Math.round((1 - product.price / product.originalPrice) * 100)
   : null;
+
+const categoryEmoji: Record<string, string> = {
+  camisetas:  '👕',
+  sudaderas:  '🧥',
+  tazas:      '☕',
+  termos:     '🧃',
+  posters:    '🖼️',
+  accesorios: '🎁',
+};
+
+const btnColors: Record<string, { bg: string; color: string }> = {
+  camisetas:  { bg: '#f72585', color: '#fff' },
+  sudaderas:  { bg: '#4cc9a0', color: '#111' },
+  tazas:      { bg: '#fde8f0', color: '#111' },
+  termos:     { bg: '#111',    color: '#4cc9a0' },
+  posters:    { bg: '#f72585', color: '#fff' },
+  accesorios: { bg: '#4cc9a0', color: '#111' },
+};
+
+const btn = btnColors[product.category] ?? { bg: '#f72585', color: '#fff' };
 ---
 
-<div class="group relative flex flex-col overflow-hidden bg-bg-card border border-white/5 hover:border-brand/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-brand">
-
-  <!-- Imagen -->
-  <a href={`/producto/${product.slug}`} class="relative block overflow-hidden bg-bg aspect-[3/4]">
-
-    <!-- Placeholder visual (hasta que haya imágenes reales) -->
-    <div class="absolute inset-0 flex items-center justify-center bg-bg-secondary">
-      <div class="text-center select-none opacity-20">
-        <span class="font-display font-black text-5xl text-ink block">
-          {product.category === 'camisetas' && '◻'}
-          {product.category === 'sudaderas' && '▣'}
-          {product.category === 'tazas' && '◎'}
-          {product.category === 'termos' && '▥'}
-          {product.category === 'posters' && '▧'}
-          {product.category === 'accesorios' && '◈'}
-        </span>
-      </div>
-    </div>
-
-    <!-- Overlay hover con "Quick View" -->
-    <div class="absolute inset-0 bg-bg/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-      <span class="font-display text-xs text-ink uppercase tracking-[0.2em] border border-ink/40 px-4 py-2 backdrop-blur-sm">
-        Quick view
-      </span>
-    </div>
-
-    <!-- Corner accent top left on hover -->
-    <span class="absolute top-0 left-0 w-5 h-5 border-t border-l border-neon opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-
-    <!-- Badges -->
-    <div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
+<div
+  style={`transform:${rotation}; border:1.5px solid #111; background:#fff; padding:8px; display:flex; flex-direction:column; transition:transform 0.2s;`}
+  class="hover:scale-[1.02]"
+>
+  <!-- Image area -->
+  <a href={`/producto/${product.slug}`} style="display:block; text-decoration:none;">
+    <div class="img-placeholder" style="width:100%; aspect-ratio:3/4; margin-bottom:8px; position:relative; overflow:hidden;">
+      <span style="font-size:32px;">{categoryEmoji[product.category] ?? '📦'}</span>
       {product.isNew && (
-        <span class="badge-neon text-xs">NEW</span>
+        <span style="position:absolute; top:6px; right:6px; background:#4cc9a0; color:#111; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111; transform:rotate(1.5deg);">
+          NEW
+        </span>
       )}
       {product.bestseller && !product.isNew && (
-        <span class="badge-brand text-xs">TOP</span>
+        <span style="position:absolute; top:6px; right:6px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111; transform:rotate(1.5deg);">
+          TOP
+        </span>
       )}
       {discount && (
-        <span class="badge bg-neo/15 text-neo border border-neo/30 text-xs">-{discount}%</span>
+        <span style="position:absolute; top:6px; left:6px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111;">
+          -{discount}%
+        </span>
       )}
     </div>
   </a>
 
-  <!-- Contenido -->
-  <div class="flex flex-col flex-1 p-4">
-
-    <!-- Colección / Categoría -->
-    <div class="flex items-center justify-between mb-2">
-      <span class="label-section text-brand/70 text-[10px]">
-        {product.collection ? product.collection.replace('-', ' ').toUpperCase() : product.category.toUpperCase()}
-      </span>
-      {product.sizes && (
-        <span class="label-section text-ink-faint text-[10px]">
-          {product.sizes.slice(0, 3).join(' · ')}
-          {product.sizes.length > 3 ? ' +' : ''}
-        </span>
-      )}
-    </div>
-
-    <!-- Nombre -->
-    <a href={`/producto/${product.slug}`}>
-      <h3 class="font-display font-bold text-base text-ink group-hover:text-brand transition-colors uppercase tracking-wide mb-1 leading-tight">
-        {product.name}
-      </h3>
-    </a>
-
-    <!-- Descripción -->
-    <p class="font-alt text-xs text-ink-muted leading-relaxed flex-1 mb-4 line-clamp-2">
-      {product.description}
+  <span style="font-family:'Caveat',cursive; font-size:10px; color:#4cc9a0; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">
+    {product.category}
+  </span>
+  <a href={`/producto/${product.slug}`} style="text-decoration:none;">
+    <p style="font-family:'Caveat',cursive; font-size:13px; font-weight:700; color:#111; margin:0 0 4px; line-height:1.2;">
+      {product.name}
     </p>
+  </a>
+  <p style="font-family:'Caveat',cursive; font-size:12px; color:#666; margin:0 0 8px;">
+    {product.price.toFixed(2)}€
+    {product.originalPrice && (
+      <span style="text-decoration:line-through; margin-left:4px; opacity:0.6;">{product.originalPrice.toFixed(2)}€</span>
+    )}
+  </p>
 
-    <!-- Precio + CTA -->
-    <div class="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-      <div class="flex items-baseline gap-2">
-        <span class="font-display font-bold text-lg text-ink">{product.price.toFixed(2)}€</span>
-        {product.originalPrice && (
-          <span class="font-alt text-xs text-ink-faint line-through">{product.originalPrice.toFixed(2)}€</span>
-        )}
-      </div>
-
-      <button
-        class="add-to-cart group/btn flex items-center gap-1.5 px-3 py-2 bg-brand hover:bg-brand-light text-white text-xs font-alt uppercase tracking-wider transition-all duration-200 active:scale-95"
-        data-product-id={product.id}
-        data-product-name={product.name}
-        data-product-price={product.price}
-      >
-        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-        </svg>
-        Añadir
-      </button>
-    </div>
-  </div>
+  <button
+    class="add-to-cart"
+    data-product-id={product.id}
+    data-product-name={product.name}
+    data-product-price={product.price}
+    style={`background:${btn.bg}; color:${btn.color}; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:12px; padding:5px 10px; cursor:pointer; width:100%; text-align:center;`}
+  >
+    🛒 añadir
+  </button>
 </div>
 
 <script>
@@ -118,14 +97,9 @@ const discount = product.originalPrice
         price: parseFloat(el.dataset.productPrice!),
         image: '',
       });
-
-      const original = el.innerHTML;
-      el.innerHTML = '✓ OK';
-      el.classList.add('opacity-75');
-      setTimeout(() => {
-        el.innerHTML = original;
-        el.classList.remove('opacity-75');
-      }, 1500);
+      const orig = el.innerHTML;
+      el.innerHTML = '✓ añadido';
+      setTimeout(() => { el.innerHTML = orig; }, 1500);
     });
   });
 </script>

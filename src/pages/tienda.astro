@@ -5,59 +5,71 @@ import { products, categories, getProductsByCategory } from '../data/products';
 
 const selectedCat = Astro.url.searchParams.get('cat') || 'all';
 const filteredProducts = getProductsByCategory(selectedCat);
+
+const rotations = ['rotate(-1.5deg)', 'rotate(1deg)', 'rotate(-0.5deg)', 'rotate(1.5deg)', 'rotate(-1deg)', 'rotate(0.8deg)'];
+
+const catLabels: Record<string, string> = {
+  all:        '📦 todo',
+  camisetas:  '👕 camisetas',
+  sudaderas:  '🧥 sudaderas',
+  tazas:      '☕ tazas',
+  termos:     '🧃 termos',
+  posters:    '🖼️ posters',
+  accesorios: '🎁 accesorios',
+};
 ---
 
-<Layout title="Tienda — Merchandising con Mensajes Ocultos" description="Explora nuestra colección completa de ropa y accesorios con mensajes ocultos. Sudaderas, camisetas, tazas y más.">
+<Layout title="la tienda — subliminal.es" description="Todos los productos con mensajes de humor y doble sentido.">
+
   <!-- Header -->
-  <section class="bg-hero-gradient border-b border-dark-border py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h1 class="font-display font-black text-4xl sm:text-5xl text-white mb-3">
-        Tienda
-      </h1>
-      <p class="text-gray-400 text-lg">
-        {products.length} prendas y accesorios con mensajes ocultos para explorar
-      </p>
+  <section style="background:#4cc9a0; border-bottom:2px solid #111; padding:16px 20px;">
+    <div style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:10px;">
+      <div>
+        <h1 style="font-family:'Permanent Marker',cursive; font-size:28px; color:#111; margin:0 0 4px;">
+          la tienda
+        </h1>
+        <p style="font-family:'Caveat',cursive; font-size:14px; color:#555; margin:0;">
+          {filteredProducts.length} productos{selectedCat !== 'all' ? ` en ${catLabels[selectedCat] ?? selectedCat}` : ''}
+        </p>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button style="font-family:'Caveat',cursive; font-size:12px; padding:5px 12px; border:1.5px solid #111; background:#fff; color:#111; cursor:pointer;">filtrar ↓</button>
+        <button style="font-family:'Caveat',cursive; font-size:12px; padding:5px 12px; border:1.5px solid #111; background:#fff; color:#111; cursor:pointer;">ordenar ↓</button>
+      </div>
     </div>
   </section>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-    <!-- Categories filter -->
-    <div class="flex flex-wrap gap-2 mb-10">
-      {categories.map(cat => (
+  <!-- Category filters -->
+  <div style="background:#fff; border-bottom:1.5px solid #111; padding:10px 20px; display:flex; gap:8px; flex-wrap:wrap;">
+    {Object.entries(catLabels).map(([id, label]) => {
+      const active = selectedCat === id;
+      return (
         <a
-          href={cat.id === 'all' ? '/tienda' : `/tienda?cat=${cat.id}`}
-          class={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all ${
-            selectedCat === cat.id
-              ? 'bg-primary-600 text-white shadow-lg shadow-primary-900/30'
-              : 'bg-dark-card border border-dark-border text-gray-400 hover:text-white hover:border-primary-700/50'
-          }`}
+          href={id === 'all' ? '/tienda' : `/tienda?cat=${id}`}
+          style={`font-family:'Caveat',cursive; font-size:13px; padding:4px 12px; border:1.5px solid #111; text-decoration:none; display:inline-block; ${active ? 'background:#f72585; color:#fff; box-shadow:2px 2px 0 #111;' : 'background:#fff; color:#111;'}`}
         >
-          <span>{cat.icon}</span>
-          {cat.name}
+          {label}
         </a>
-      ))}
-    </div>
+      );
+    })}
+  </div>
 
-    <!-- Results count -->
-    <p class="text-gray-500 text-sm mb-6">
-      Mostrando {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''}
-      {selectedCat !== 'all' && ` en "${categories.find(c => c.id === selectedCat)?.name}"`}
-    </p>
-
-    <!-- Grid -->
+  <!-- Product grid -->
+  <div style="padding:16px 20px;">
     {filteredProducts.length > 0 ? (
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredProducts.map(product => (
-          <ProductCard product={product} />
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(155px,1fr)); gap:14px;">
+        {filteredProducts.map((product, i) => (
+          <ProductCard product={product} rotation={rotations[i % rotations.length]} />
         ))}
       </div>
     ) : (
-      <div class="text-center py-24">
-        <p class="text-5xl mb-4">🔍</p>
-        <h3 class="font-display font-bold text-xl text-white mb-2">Sin resultados</h3>
-        <p class="text-gray-500 mb-6">No hay productos en esta categoría aún.</p>
-        <a href="/tienda" class="btn-primary">Ver todos</a>
+      <div style="text-align:center; padding:60px 20px;">
+        <p style="font-size:48px; margin:0 0 8px;">🔍</p>
+        <h3 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0 0 8px;">sin resultados</h3>
+        <p style="font-family:'Caveat',cursive; font-size:14px; color:#666; margin:0 0 16px;">No hay productos en esta categoría todavía.</p>
+        <a href="/tienda" class="btn-primary">ver todo</a>
       </div>
     )}
   </div>
+
 </Layout>

@@ -16,110 +16,116 @@ if (!product) {
 
 const related = getProductsByCategory(product.category)
   .filter(p => p.id !== product.id)
-  .slice(0, 4);
+  .slice(0, 3);
 
 const discount = product.originalPrice
   ? Math.round((1 - product.price / product.originalPrice) * 100)
   : null;
+
+const categoryEmoji: Record<string, string> = {
+  camisetas: '👕', sudaderas: '🧥', tazas: '☕',
+  termos: '🧃', posters: '🖼️', accesorios: '🎁',
+};
+
+const relRotations = ['rotate(-1.5deg)', 'rotate(1deg)', 'rotate(-0.5deg)'];
+
+const colorMap: Record<string, string> = {
+  'Negro': '#111', 'Blanco': '#fff', 'Gris oscuro': '#444',
+};
 ---
 
 <Layout title={product.name} description={product.description}>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-    <!-- Breadcrumb -->
-    <nav class="flex items-center gap-2 text-xs font-alt text-ink-faint mb-10 uppercase tracking-wider">
-      <a href="/" class="hover:text-ink-muted transition-colors">Inicio</a>
-      <span>›</span>
-      <a href="/tienda" class="hover:text-ink-muted transition-colors">Tienda</a>
-      <span>›</span>
-      <a href={`/tienda?cat=${product.category}`} class="hover:text-ink-muted transition-colors capitalize">{product.category}</a>
-      <span>›</span>
-      <span class="text-ink-muted">{product.name}</span>
-    </nav>
+  <!-- Breadcrumb -->
+  <nav style="background:#fff; border-bottom:1px solid #eee; padding:8px 20px;">
+    <span style="font-family:'Caveat',cursive; font-size:12px; color:#666;">
+      <a href="/" style="color:#666; text-decoration:none;">inicio</a>
+      {' → '}
+      <a href="/tienda" style="color:#666; text-decoration:none;">tienda</a>
+      {' → '}
+      <a href={`/tienda?cat=${product.category}`} style="color:#666; text-decoration:none;">{product.category}</a>
+      {' → '}
+      <span style="color:#111;">{product.name}</span>
+    </span>
+  </nav>
 
-    <!-- Product grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+  <!-- Main product section -->
+  <div style="padding:20px; max-width:900px; margin:0 auto;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="product-grid">
 
-      <!-- Galería izquierda -->
-      <div class="space-y-3">
-        <!-- Imagen principal -->
-        <div class="relative aspect-[4/5] bg-bg-card border border-white/5 overflow-hidden">
-          <!-- Placeholder visual -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="text-center select-none">
-              <div class="font-display font-black text-[100px] leading-none text-white/5 mb-2">
-                {product.category === 'camisetas' && '◻'}
-                {product.category === 'sudaderas' && '▣'}
-                {product.category === 'tazas' && '◎'}
-                {product.category === 'termos' && '▥'}
-                {product.category === 'posters' && '▧'}
-                {product.category === 'accesorios' && '◈'}
-              </div>
-              <p class="font-display text-xs text-ink-faint uppercase tracking-widest">
-                {product.name}
-              </p>
-            </div>
-          </div>
-          <!-- Corner accents -->
-          <span class="absolute top-0 left-0 w-6 h-6 border-t border-l border-brand/40"></span>
-          <span class="absolute top-0 right-0 w-6 h-6 border-t border-r border-brand/40"></span>
-          <span class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-brand/40"></span>
-          <span class="absolute bottom-0 right-0 w-6 h-6 border-b border-r border-brand/40"></span>
-          <!-- Badges -->
-          <div class="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-            {product.isNew && <span class="badge-neon">NEW</span>}
-            {product.bestseller && <span class="badge-brand">TOP</span>}
-            {discount && <span class="badge bg-neo/15 text-neo border border-neo/30">-{discount}%</span>}
-          </div>
+      <!-- Gallery left -->
+      <div>
+        <!-- Main image -->
+        <div class="img-placeholder" style="width:100%; aspect-ratio:4/5; transform:rotate(-1deg); border:2px solid #111; margin-bottom:10px; position:relative;">
+          <span style="font-size:60px;">{categoryEmoji[product.category] ?? '📦'}</span>
+          {product.isNew && (
+            <span style="position:absolute; top:10px; right:10px; background:#4cc9a0; color:#111; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111; transform:rotate(1.5deg);">
+              NEW
+            </span>
+          )}
+          {product.bestseller && !product.isNew && (
+            <span style="position:absolute; top:10px; right:10px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111; transform:rotate(1.5deg);">
+              TOP
+            </span>
+          )}
+          {discount && (
+            <span style="position:absolute; top:10px; left:10px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111;">
+              -{discount}%
+            </span>
+          )}
         </div>
-        <!-- Thumbnails placeholder -->
-        <div class="grid grid-cols-4 gap-2">
-          {[1,2,3,4].map(i => (
-            <div class="aspect-square bg-bg-card border border-white/5 hover:border-brand/40 cursor-pointer transition-colors flex items-center justify-center">
-              <span class="text-ink-faint text-xs font-display">{i}</span>
+        <!-- Thumbnails -->
+        <div style="display:flex; gap:8px;">
+          {[1,2,3].map(i => (
+            <div class="img-placeholder" style="width:60px; height:60px; cursor:pointer; border:1.5px solid #111;">
+              <span style="font-size:18px;">{categoryEmoji[product.category] ?? '📦'}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <!-- Info derecha -->
-      <div class="flex flex-col">
-
-        <!-- Colección -->
+      <!-- Info right -->
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <!-- Collection tag -->
         {product.collection && (
-          <span class="label-section text-brand mb-3">
-            {product.collection.replace('-', ' ').toUpperCase()} — {product.category.toUpperCase()}
+          <span class="tag tag-mint" style="transform:rotate(-1deg); align-self:flex-start; font-size:11px;">
+            {product.collection.replace('-', ' ')}
           </span>
         )}
 
-        <!-- Nombre -->
-        <h1 class="font-display font-black text-4xl sm:text-5xl text-ink uppercase tracking-tight leading-none mb-4">
+        <!-- Name -->
+        <h1 style="font-family:'Permanent Marker',cursive; font-size:clamp(22px,5vw,32px); color:#111; margin:0; line-height:1.1;">
           {product.name}
         </h1>
 
-        <!-- Descripción corta -->
-        <p class="font-alt text-ink-muted text-base leading-relaxed mb-6 italic">
-          "{product.description}"
+        <!-- Short desc -->
+        <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; margin:0; line-height:1.5;">
+          {product.description}
         </p>
 
-        <!-- Precio -->
-        <div class="flex items-baseline gap-3 mb-8">
-          <span class="font-display font-black text-4xl text-ink">{product.price.toFixed(2)}€</span>
+        <!-- Price -->
+        <div style="display:flex; align-items:baseline; gap:8px;">
+          <span style="font-family:'Caveat',cursive; font-size:22px; font-weight:700; color:#111;">
+            {product.price.toFixed(2)}€
+          </span>
           {product.originalPrice && (
-            <span class="font-alt text-ink-faint line-through text-xl">{product.originalPrice.toFixed(2)}€</span>
-          )}
-          {discount && (
-            <span class="badge-neo text-xs">Ahorras {(product.originalPrice! - product.price).toFixed(2)}€</span>
+            <span style="font-family:'Caveat',cursive; font-size:14px; color:#999; text-decoration:line-through;">
+              {product.originalPrice.toFixed(2)}€
+            </span>
           )}
         </div>
 
-        <!-- Selector de talla (si aplica) -->
-        {product.sizes && product.sizes.length > 0 && (
-          <div class="mb-6">
-            <p class="label-section mb-3">Talla</p>
-            <div class="flex flex-wrap gap-2">
-              {product.sizes.map(size => (
-                <button class="px-3 py-2 border border-white/10 text-ink-muted text-sm font-alt hover:border-brand hover:text-brand transition-all duration-150 uppercase tracking-wider">
+        <!-- Size selector -->
+        {product.sizes && (
+          <div>
+            <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0 0 6px;">talla:</p>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;" id="size-selector">
+              {product.sizes.map((size, idx) => (
+                <button
+                  class="size-btn"
+                  data-size={size}
+                  style={`font-family:'Caveat',cursive; font-size:13px; padding:4px 10px; border:1.5px solid #111; cursor:pointer; ${idx === 0 ? 'background:#f72585; color:#fff;' : 'background:#fff; color:#111;'}`}
+                >
                   {size}
                 </button>
               ))}
@@ -127,137 +133,96 @@ const discount = product.originalPrice
           </div>
         )}
 
-        <!-- Selector de color (si aplica) -->
-        {product.colors && product.colors.length > 0 && (
-          <div class="mb-8">
-            <p class="label-section mb-3">Color</p>
-            <div class="flex flex-wrap gap-2">
-              {product.colors.map(color => (
-                <button class="px-4 py-2 border border-white/10 text-ink-muted text-sm font-alt hover:border-brand hover:text-brand transition-all duration-150">
-                  {color}
-                </button>
+        <!-- Color selector -->
+        {product.colors && (
+          <div>
+            <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0 0 6px;">color:</p>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              {product.colors.map((color) => (
+                <div
+                  style={`width:22px; height:22px; border-radius:50%; background:${colorMap[color] ?? '#ccc'}; border:2px solid #111; cursor:pointer;`}
+                  title={color}
+                ></div>
               ))}
             </div>
           </div>
         )}
 
-        <!-- CTAs -->
-        <div class="space-y-3 mb-8">
+        <!-- Add to cart buttons -->
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
           <button
-            id="add-to-cart"
-            class="w-full btn-primary text-base py-4"
+            id="add-to-cart-btn"
             data-product-id={product.id}
             data-product-name={product.name}
             data-product-price={product.price}
+            style="background:#f72585; color:#fff; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:16px; padding:10px 20px; cursor:pointer; width:100%; text-align:center;"
           >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            Añadir al carrito
+            añadir al carrito 🛒
           </button>
-          <a href="/checkout" class="w-full btn-outline text-base py-4 block text-center" id="buy-now">
-            Comprar ahora
+          <a
+            href="/carrito"
+            style="background:#111; color:#4cc9a0; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:15px; padding:9px 20px; cursor:pointer; width:100%; text-align:center; text-decoration:none; display:block;"
+          >
+            comprar ahora →
           </a>
         </div>
 
-        <!-- Garantías -->
-        <div class="grid grid-cols-3 gap-3 p-4 bg-bg-card border border-white/5">
-          <div class="text-center">
-            <p class="font-display text-base mb-1 text-brand">◎</p>
-            <p class="font-alt text-ink-faint text-xs leading-tight">Envío<br/>nacional</p>
-          </div>
-          <div class="text-center border-x border-white/5">
-            <p class="font-display text-base mb-1 text-neon">◈</p>
-            <p class="font-alt text-ink-faint text-xs leading-tight">Pago<br/>seguro</p>
-          </div>
-          <div class="text-center">
-            <p class="font-display text-base mb-1 text-neo">◻</p>
-            <p class="font-alt text-ink-faint text-xs leading-tight">30 días<br/>devolución</p>
-          </div>
-        </div>
+        <!-- Guarantees -->
+        <p style="font-family:'Caveat',cursive; font-size:12px; color:#666; margin:0;">
+          ✓ envío gratis +50€ · ✓ devolución 30 días
+        </p>
       </div>
     </div>
-
-    <!-- Descripción larga + Mensaje oculto -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-20">
-
-      <!-- Descripción -->
-      <div class="bg-bg-card border border-white/5 p-8">
-        <span class="label-section text-neon block mb-4">El diseño</span>
-        <h2 class="font-display font-bold text-xl text-ink uppercase tracking-wide mb-4">
-          Descripción
-        </h2>
-        <p class="font-alt text-ink-muted text-sm leading-relaxed">
-          {product.longDescription}
-        </p>
-
-        <!-- Tags -->
-        <div class="flex flex-wrap gap-2 mt-6">
-          {product.tags.map(tag => (
-            <span class="badge-brand text-xs">#{tag}</span>
-          ))}
-        </div>
-      </div>
-
-      <!-- Interacción mensaje oculto -->
-      <div class="bg-bg-card border border-brand/20 p-8 relative overflow-hidden group">
-        <span class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand to-transparent"></span>
-        <span class="label-section text-brand block mb-4">Psicología visual</span>
-        <h2 class="font-display font-bold text-xl text-ink uppercase tracking-wide mb-4">
-          ¿Ves el mensaje oculto?
-        </h2>
-        <p class="font-alt text-ink-muted text-sm leading-relaxed mb-6">
-          Este diseño contiene un mensaje oculto que se revela cuando observas el gráfico detenidamente.
-          La mayoría de personas lo descubre en segundos.
-        </p>
-
-        <!-- Botón reveal -->
-        <button
-          id="reveal-btn"
-          class="btn-primary text-sm px-6 py-3"
-        >
-          Revelar mensaje
-          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-            <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-          </svg>
-        </button>
-
-        <!-- Mensaje revelado (oculto) -->
-        <div id="hidden-message" class="hidden mt-4 p-4 border border-neon/30 bg-neon/5">
-          <p class="font-display text-sm text-neon uppercase tracking-widest text-center">
-            "Tu mente ya lo vio."
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Productos relacionados -->
-    {related.length > 0 && (
-      <div>
-        <div class="flex items-end justify-between mb-8">
-          <div>
-            <span class="label-section text-brand block mb-2">Puede que te interese</span>
-            <h2 class="title-section">Más de {product.category}</h2>
-          </div>
-          <a href={`/tienda?cat=${product.category}`} class="hidden sm:flex btn-ghost text-sm font-alt tracking-wider">
-            Ver todos →
-          </a>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          {related.map(p => (
-            <ProductCard product={p} />
-          ))}
-        </div>
-      </div>
-    )}
   </div>
+
+  <!-- Description / el chiste -->
+  <section style="background:#fff; border-top:2px solid #111; border-bottom:2px solid #111; padding:20px; max-width:900px; margin:0 auto;">
+    <h2 style="font-family:'Permanent Marker',cursive; font-size:18px; color:#111; margin:0 0 10px;">
+      el chiste
+    </h2>
+    <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0 0 14px;">
+      {product.longDescription}
+    </p>
+    <!-- Feature tags -->
+    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">100% algodón</span>
+      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">fabricado en España</span>
+      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">lavable a 30°</span>
+      {product.tags.slice(0, 2).map(t => (
+        <span class="tag" style="background:#fde8f0; color:#111; font-size:12px;">{t}</span>
+      ))}
+    </div>
+  </section>
+
+  <!-- Related products -->
+  {related.length > 0 && (
+    <section style="padding:20px; max-width:900px; margin:0 auto;">
+      <h2 style="font-family:'Permanent Marker',cursive; font-size:18px; color:#111; margin:0 0 14px;">
+        también te puede gustar
+      </h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;">
+        {related.map((p, i) => (
+          <ProductCard product={p} rotation={relRotations[i % relRotations.length]} />
+        ))}
+      </div>
+    </section>
+  )}
+
 </Layout>
+
+<style>
+  @media (max-width: 600px) {
+    .product-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
 
 <script>
   import { addToCart } from '../../store/cart';
 
-  const btn = document.getElementById('add-to-cart') as HTMLButtonElement;
+  // Add to cart
+  const btn = document.getElementById('add-to-cart-btn');
   btn?.addEventListener('click', () => {
     addToCart({
       id: btn.dataset.productId!,
@@ -266,34 +231,19 @@ const discount = product.originalPrice
       image: '',
     });
     const orig = btn.innerHTML;
-    btn.innerHTML = '✓ Añadido al carrito';
-    btn.classList.add('opacity-75');
-    setTimeout(() => {
-      btn.innerHTML = orig;
-      btn.classList.remove('opacity-75');
-    }, 2000);
+    btn.innerHTML = '✓ añadido al carrito';
+    setTimeout(() => { btn.innerHTML = orig; }, 1800);
   });
 
-  // Buy now
-  const buyNow = document.getElementById('buy-now');
-  buyNow?.addEventListener('click', (e) => {
-    e.preventDefault();
-    addToCart({
-      id: btn.dataset.productId!,
-      name: btn.dataset.productName!,
-      price: parseFloat(btn.dataset.productPrice!),
-      image: '',
+  // Size selector
+  document.querySelectorAll('.size-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.size-btn').forEach(x => {
+        (x as HTMLButtonElement).style.background = '#fff';
+        (x as HTMLButtonElement).style.color = '#111';
+      });
+      (b as HTMLButtonElement).style.background = '#f72585';
+      (b as HTMLButtonElement).style.color = '#fff';
     });
-    window.location.href = '/checkout';
-  });
-
-  // Reveal hidden message
-  const revealBtn = document.getElementById('reveal-btn');
-  const hiddenMsg = document.getElementById('hidden-message');
-  revealBtn?.addEventListener('click', () => {
-    hiddenMsg?.classList.remove('hidden');
-    hiddenMsg?.classList.add('animate-reveal');
-    revealBtn.textContent = '✓ Lo ves ahora';
-    revealBtn.classList.add('opacity-50', 'pointer-events-none');
   });
 </script>

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner';
 
 interface Props {
   title: string;
@@ -11,13 +12,11 @@ interface Props {
 
 const {
   title,
-  description = 'Ropa y accesorios con mensajes ocultos. Diseños que revelan algo más cuando los miras dos veces.',
+  description = 'Ropa y accesorios con mensajes de humor y doble sentido. Diseños que revelan algo más cuando los miras dos veces.',
   image = '/og-image.jpg',
 } = Astro.props;
 
-import CookieBanner from '../components/CookieBanner';
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-
+const canonicalURL = new URL(Astro.url.pathname, Astro.site ?? 'https://subliminales.vercel.app');
 ---
 
 <!doctype html>
@@ -26,9 +25,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#E5FF00" />
+    <meta name="theme-color" content="#f72585" />
 
-    <!-- Open Graph -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
@@ -36,7 +34,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
 
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -44,8 +41,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <link rel="canonical" href={canonicalURL} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <title>{title} | SUBLIMINAL</title>
+    <!-- Preconnect for fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <title>{title} — subliminal.es</title>
   </head>
   <body class="min-h-screen flex flex-col">
     <Header />
@@ -53,16 +55,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
-    
-    <CookieBanner client:load />
 
-    <!-- Reveal on scroll -->
-    <script>
-      const observer = new IntersectionObserver(
-        (entries) => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-        { threshold: 0.1 }
-      );
-      document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-    </script>
+    <CookieBanner client:load />
   </body>
 </html>

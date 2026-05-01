@@ -1,86 +1,76 @@
 ---
 import CartIcon from './CartIcon';
-import AuthButtons from './AuthButtons';
 ---
 
-<header class="sticky top-0 z-50 bg-bg/90 backdrop-blur-xl border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-16 md:h-18">
+<header class="sticky top-0 z-50">
+  <!-- Level 1: pink bar -->
+  <div style="background:#f72585; border-bottom:2px solid #111; padding:9px 20px; display:flex; justify-content:space-between; align-items:center;">
 
-      <!-- Logo -->
-      <a href="/" class="flex items-center gap-0 group flex-shrink-0">
-        <span class="font-display font-black text-xl sm:text-2xl tracking-[0.12em] text-ink group-hover:text-gradient-brand transition-all duration-300">
-          SUBLIMINAL
-        </span>
-        <span class="font-display font-black text-xl sm:text-2xl tracking-[0.12em] text-brand">.</span>
-        <span class="font-display font-black text-xl sm:text-2xl tracking-[0.12em] text-ink-muted">ES</span>
-      </a>
+    <!-- Logo -->
+    <a href="/" style="font-family:'Permanent Marker',cursive; font-size:18px; color:#fff; text-decoration:none; flex-shrink:0;">
+      SUBLIMINAL.ES
+    </a>
 
-      <!-- Nav desktop -->
-      <nav class="hidden md:flex items-center gap-0">
-        <a href="/" class="btn-ghost text-sm tracking-wider font-alt">Inicio</a>
-        <a href="/tienda?cat=camisetas" class="btn-ghost text-sm tracking-wider font-alt">Camisetas</a>
-        <a href="/tienda?cat=sudaderas" class="btn-ghost text-sm tracking-wider font-alt">Sudaderas</a>
-        <a href="/colecciones" class="btn-ghost text-sm tracking-wider font-alt">Colecciones</a>
-        <a href="/politicas" class="btn-ghost text-sm tracking-wider font-alt">Políticas y Envíos</a>
-      </nav>
+    <!-- Nav (desktop) -->
+    <nav class="hidden md:flex" style="gap:20px; align-items:center;">
+      <a href="/tienda?cat=camisetas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">camisetas</a>
+      <span style="color:rgba(255,255,255,0.4);">·</span>
+      <a href="/tienda?cat=sudaderas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">sudaderas</a>
+      <span style="color:rgba(255,255,255,0.4);">·</span>
+      <a href="/tienda?cat=tazas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">tazas</a>
+      <span style="color:rgba(255,255,255,0.4);">·</span>
+      <a href="/colecciones" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">colecciones</a>
+    </nav>
 
-      <!-- Acciones -->
-      <div class="flex items-center gap-2 sm:gap-3">
+    <!-- Actions -->
+    <div style="display:flex; align-items:center; gap:12px;">
+      <span style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); cursor:pointer;">buscar</span>
+      <CartIcon client:load />
 
-        <!-- Búsqueda -->
-        <button class="p-2 text-ink-muted hover:text-neon transition-colors" aria-label="Buscar">
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"/>
-          </svg>
-        </button>
+      <!-- Mobile hamburger -->
+      <button
+        id="mobile-menu-btn"
+        class="md:hidden"
+        style="background:none; border:none; color:#fff; cursor:pointer; padding:4px;"
+        aria-label="Menú"
+      >
+        <svg id="menu-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+        </svg>
+        <svg id="close-icon" class="hidden" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
 
-        <!-- Cuenta (React Dynamic) -->
-        <AuthButtons client:load />
-
-        <!-- Carrito -->
-        <CartIcon client:load />
-
-        <!-- Mobile menu -->
-        <button
-          id="mobile-menu-btn"
-          class="md:hidden p-2 text-ink-muted hover:text-ink transition-colors"
-          aria-label="Menú"
-        >
-          <svg id="menu-icon" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
-          </svg>
-          <svg id="close-icon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
+  <!-- Level 2: mint ticker -->
+  <div style="background:#4cc9a0; border-bottom:1.5px solid #111; padding:5px 0; overflow:hidden;">
+    <div class="ticker-track">
+      <span style="font-family:'Caveat',cursive; font-size:12px; color:#111; letter-spacing:0.5px; padding:0 20px;">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
+      <span style="font-family:'Caveat',cursive; font-size:12px; color:#111; letter-spacing:0.5px; padding:0 20px;">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
     </div>
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden border-t border-white/5 bg-bg-secondary">
-    <nav class="px-4 py-4 space-y-1">
-      <a href="/" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Inicio</a>
-      <a href="/tienda?cat=camisetas" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Camisetas</a>
-      <a href="/tienda?cat=sudaderas" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Sudaderas</a>
-      <a href="/tienda?cat=accesorios" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Accesorios</a>
-      <a href="/colecciones" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Colecciones</a>
-      <a href="/sobre-nosotros" class="block px-3 py-3 text-ink-muted hover:text-ink hover:bg-white/5 text-sm font-alt tracking-wider uppercase transition-colors">Sobre Nosotros</a>
-    </nav>
+  <div id="mobile-menu" class="hidden md:hidden" style="background:#f72585; border-bottom:2px solid #111; padding:12px 20px; display:flex; flex-direction:column; gap:8px;">
+    <a href="/tienda?cat=camisetas" style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">camisetas</a>
+    <a href="/tienda?cat=sudaderas" style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">sudaderas</a>
+    <a href="/tienda?cat=tazas"     style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">tazas</a>
+    <a href="/colecciones"          style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0;">colecciones</a>
   </div>
 </header>
 
 <script>
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  const menuIcon = document.getElementById('menu-icon');
-  const closeIcon = document.getElementById('close-icon');
+  const btn    = document.getElementById('mobile-menu-btn');
+  const menu   = document.getElementById('mobile-menu');
+  const menuIc = document.getElementById('menu-icon');
+  const closeIc = document.getElementById('close-icon');
 
   btn?.addEventListener('click', () => {
-    const isOpen = !menu?.classList.contains('hidden');
+    const open = !menu?.classList.contains('hidden');
     menu?.classList.toggle('hidden');
-    menuIcon?.classList.toggle('hidden', !isOpen);
-    closeIcon?.classList.toggle('hidden', isOpen);
+    menuIc?.classList.toggle('hidden', !open);
+    closeIc?.classList.toggle('hidden', open);
   });
 </script>

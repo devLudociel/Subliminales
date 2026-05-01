@@ -1,0 +1,90 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="sobre nosotros — subliminal.es">
+
+  <!-- Hero dark -->
+  <section style="background:#111; padding:28px 20px; position:relative; overflow:hidden;">
+    <div style="position:absolute; top:-40px; right:-40px; width:180px; height:180px; border-radius:50%; background:rgba(247,37,133,0.15); filter:blur(40px); pointer-events:none;"></div>
+    <div style="max-width:680px; margin:0 auto; position:relative;">
+      <h1 style="font-family:'Permanent Marker',cursive; font-size:clamp(28px,6vw,42px); color:#fff; margin:0 0 12px; line-height:1.1;">
+        somos / <span style="color:#f72585;">subliminal</span>
+      </h1>
+      <p style="font-family:'Caveat',cursive; font-size:15px; color:rgba(255,255,255,0.7); margin:0; max-width:320px; line-height:1.5;">
+        Un proyecto personal de ropa con humor, doble sentido y poca pretensión.
+        Empezó como un chiste. Sigue siendo un chiste. Pero de los buenos.
+      </p>
+    </div>
+  </section>
+
+  <!-- Cómo empezó -->
+  <section style="background:#fff; border-bottom:2px solid #111; padding:24px 20px;">
+    <div style="max-width:680px; margin:0 auto;">
+      <h2 style="font-family:'Permanent Marker',cursive; font-size:22px; color:#111; margin:0 0 16px;">
+        cómo empezó todo
+      </h2>
+      <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
+        <div class="img-placeholder" style="width:130px; height:150px; flex-shrink:0; transform:rotate(-2deg);">
+          <span style="font-size:48px;">🤔</span>
+        </div>
+        <div style="flex:1; min-width:200px;">
+          <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0 0 10px;">
+            Todo empezó con una camiseta que nadie entendía a primera vista. Esa sensación de que alguien te mira dos veces y luego se ríe solo — eso es lo que intentamos crear.
+          </p>
+          <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0;">
+            Somos un proyecto pequeño, sin pretensiones de gran marca. Solo diseños con chiste y ropa de calidad.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cómo trabajamos -->
+  <section style="background:#e0f7f0; border-bottom:2px solid #111; padding:24px 20px;">
+    <div style="max-width:680px; margin:0 auto;">
+      <h2 style="font-family:'Permanent Marker',cursive; font-size:22px; color:#111; margin:0 0 16px;">
+        cómo trabajamos
+      </h2>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        {[
+          { icon: '🎨', title: 'diseñamos nosotros', desc: 'Cada diseño sale de cero, sin plantillas. Si el chiste no nos hace gracia, no sale.' },
+          { icon: '🏭', title: 'fabricación local',  desc: 'Producimos en pequeñas tiradas para no generar sobrestock. Calidad sobre cantidad.' },
+          { icon: '😂', title: 'humor obligatorio',  desc: 'Si no tiene doble sentido o no provoca una segunda mirada, no lo publicamos.' },
+          { icon: '♻️', title: 'sin sobreproducción', desc: 'Drops limitados. Cuando se acaba, se acaba. Sin reposiciones infinitas.' },
+        ].map(item => (
+          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:#fff; border:1.5px solid #111;">
+            <span style="font-size:22px; flex-shrink:0;">{item.icon}</span>
+            <div>
+              <p style="font-family:'Caveat',cursive; font-size:15px; font-weight:700; color:#111; margin:0 0 2px;">{item.title}</p>
+              <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0; line-height:1.4;">{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ¿Hablamos? -->
+  <section style="background:#fde8f0; border-bottom:2px solid #111; padding:24px 20px;">
+    <div style="max-width:680px; margin:0 auto;">
+      <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0 0 8px;">
+        ¿hablamos?
+      </h2>
+      <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; margin:0 0 14px; line-height:1.5;">
+        Colaboraciones, ideas raras, quejas, chistes malos. Todo bienvenido.
+      </p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a href="/contacto"
+           style="background:#f72585; color:#fff; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:14px; padding:8px 18px; text-decoration:none; display:inline-block;">
+          email →
+        </a>
+        <a href="#"
+           style="background:#111; color:#4cc9a0; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:14px; padding:8px 18px; text-decoration:none; display:inline-block;">
+          instagram →
+        </a>
+      </div>
+    </div>
+  </section>
+
+</Layout>
