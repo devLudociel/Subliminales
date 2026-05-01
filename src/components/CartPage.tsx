@@ -6,21 +6,19 @@ export default function CartPage() {
   const total = useStore(cartTotal);
   const count = useStore(cartCount);
 
-  const rotations = ['rotate(-1deg)', 'rotate(0.5deg)', 'rotate(-0.5deg)', 'rotate(1deg)'];
-
   if (items.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '60px 20px' }}>
-        <p style={{ fontSize: '48px', margin: '0 0 8px' }}>🛒</p>
-        <h2 style={{ fontFamily: '"Permanent Marker", cursive', fontSize: '22px', color: '#111', margin: '0 0 8px' }}>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center py-24 md:py-32">
+        <p className="text-8xl mb-6">🛒</p>
+        <h2 className="font-marker text-4xl md:text-5xl text-dark mb-4">
           carrito vacío
         </h2>
-        <p style={{ fontFamily: 'Caveat, cursive', fontSize: '15px', color: '#666', margin: '0 0 16px' }}>
-          todavía no has añadido nada
+        <p className="font-hand text-2xl md:text-3xl text-mid mb-10">
+          todavía no has añadido nada. ¡Hora de explorar!
         </p>
         <a
           href="/tienda"
-          style={{ background: '#f72585', color: '#fff', border: '1.5px solid #111', fontFamily: 'Caveat, cursive', fontSize: '15px', padding: '8px 20px', textDecoration: 'none', display: 'inline-block' }}
+          className="bg-pink text-white border-2 border-dark font-hand text-2xl px-10 py-4 no-underline inline-block shadow-hard hover:-translate-y-1 transition-all rounded-lg"
         >
           ir a la tienda →
         </a>
@@ -31,54 +29,54 @@ export default function CartPage() {
   const freeShipping = total >= 50;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '700px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col gap-8">
 
       {/* Items */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div className="flex flex-col gap-6">
         {items.map((item, i) => (
           <div
             key={item.id}
-            style={{ transform: rotations[i % rotations.length], border: '1.5px solid #111', background: '#fff', padding: '10px', display: 'flex', gap: '12px', alignItems: 'center' }}
+            className="border-2 border-dark bg-white p-5 md:p-6 flex flex-col sm:flex-row gap-5 items-center shadow-hard rounded-xl"
           >
             {/* Thumbnail */}
-            <div style={{ width: '70px', height: '70px', border: '1.5px solid #111', background: 'repeating-linear-gradient(45deg,rgba(0,0,0,0.05) 0px,rgba(0,0,0,0.05) 1px,transparent 1px,transparent 8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: '28px' }}>
+            <div className="w-20 h-20 md:w-24 md:h-24 border-2 border-dark bg-bg flex items-center justify-center shrink-0 text-4xl md:text-5xl rounded-lg">
               📦
             </div>
 
             {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', fontWeight: 700, color: '#111', margin: '0 0 2px', lineHeight: 1.2 }}>
+            <div className="flex-1 min-w-0 text-center sm:text-left">
+              <p className="font-hand text-2xl md:text-3xl font-bold text-dark mb-1 leading-tight">
                 {item.name}
               </p>
-              <p style={{ fontFamily: 'Caveat, cursive', fontSize: '12px', color: '#666', margin: 0 }}>
+              <p className="font-hand text-xl md:text-2xl text-mid">
                 {item.price.toFixed(2)}€ c/u
               </p>
             </div>
 
             {/* Quantity controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+            <div className="flex items-center gap-3 shrink-0">
               <button
                 onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                style={{ width: '24px', height: '24px', border: '1.5px solid #111', background: '#fff', fontFamily: 'Caveat, cursive', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                className="w-10 h-10 md:w-12 md:h-12 border-2 border-dark bg-white font-hand text-2xl cursor-pointer flex items-center justify-center p-0 shadow-hard hover:bg-bg transition-colors rounded-lg"
               >−</button>
-              <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', color: '#111', minWidth: '20px', textAlign: 'center' }}>
+              <span className="font-hand text-2xl md:text-3xl text-dark min-w-[30px] text-center font-bold">
                 {item.quantity}
               </span>
               <button
                 onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                style={{ width: '24px', height: '24px', border: '1.5px solid #111', background: '#fff', fontFamily: 'Caveat, cursive', fontSize: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 0 }}
+                className="w-10 h-10 md:w-12 md:h-12 border-2 border-dark bg-white font-hand text-2xl cursor-pointer flex items-center justify-center p-0 shadow-hard hover:bg-bg transition-colors rounded-lg"
               >+</button>
             </div>
 
             {/* Price */}
-            <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', fontWeight: 700, color: '#111', minWidth: '55px', textAlign: 'right', flexShrink: 0 }}>
+            <span className="font-marker text-2xl md:text-3xl text-dark min-w-[80px] text-right shrink-0">
               {(item.price * item.quantity).toFixed(2)}€
             </span>
 
             {/* Remove */}
             <button
               onClick={() => removeFromCart(item.id)}
-              style={{ background: 'none', border: 'none', fontFamily: 'Caveat, cursive', fontSize: '16px', color: '#999', cursor: 'pointer', flexShrink: 0 }}
+              className="bg-none border-2 border-dark/20 font-hand text-2xl text-mid cursor-pointer shrink-0 hover:text-pink hover:border-pink transition-colors w-10 h-10 rounded-full flex items-center justify-center"
               aria-label="Eliminar"
             >×</button>
           </div>
@@ -86,39 +84,39 @@ export default function CartPage() {
       </div>
 
       {/* Order summary */}
-      <div style={{ border: '2px solid #111', background: '#fff', padding: '14px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', color: '#666' }}>subtotal ({count} artículos)</span>
-          <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', color: '#111' }}>{total.toFixed(2)}€</span>
+      <div className="border-2 border-dark bg-white p-6 md:p-8 shadow-hard rounded-xl">
+        <div className="flex justify-between mb-4">
+          <span className="font-hand text-2xl text-mid">subtotal ({count} artículos)</span>
+          <span className="font-hand text-2xl text-dark font-bold">{total.toFixed(2)}€</span>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-          <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', color: '#666' }}>envío</span>
-          <span style={{ fontFamily: 'Caveat, cursive', fontSize: '14px', color: freeShipping ? '#4cc9a0' : '#111', fontWeight: freeShipping ? 700 : 400 }}>
+        <div className="flex justify-between mb-4">
+          <span className="font-hand text-2xl text-mid">envío</span>
+          <span className={`font-hand text-2xl ${freeShipping ? 'text-mint font-bold' : 'text-dark'}`}>
             {freeShipping ? 'gratis 🎉' : '4.95€'}
           </span>
         </div>
         {!freeShipping && (
-          <p style={{ fontFamily: 'Caveat, cursive', fontSize: '12px', color: '#999', margin: '0 0 8px' }}>
+          <p className="font-hand text-xl text-mid mb-4">
             añade {(50 - total).toFixed(2)}€ más para envío gratis
           </p>
         )}
 
-        <div style={{ borderTop: '1.5px dashed #111', paddingTop: '10px', marginTop: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-          <span style={{ fontFamily: '"Permanent Marker", cursive', fontSize: '16px', color: '#111' }}>total</span>
-          <span style={{ fontFamily: '"Permanent Marker", cursive', fontSize: '20px', color: '#f72585' }}>
+        <div className="border-t-2 border-dashed border-dark pt-5 mt-2 flex justify-between items-baseline">
+          <span className="font-marker text-3xl text-dark">total</span>
+          <span className="font-marker text-4xl text-pink">
             {(total + (freeShipping ? 0 : 4.95)).toFixed(2)}€
           </span>
         </div>
       </div>
 
       {/* Discount code */}
-      <div style={{ display: 'flex', gap: '8px' }}>
+      <div className="flex gap-4">
         <input
           type="text"
           placeholder="código descuento"
-          style={{ flex: 1, padding: '8px 12px', fontFamily: 'Caveat, cursive', fontSize: '14px', border: '1.5px solid #111', background: '#fff', color: '#111', outline: 'none' }}
+          className="flex-1 px-6 py-4 font-hand text-xl border-2 border-dark bg-white text-dark outline-none focus:shadow-hard transition-all rounded-none"
         />
-        <button style={{ background: '#111', color: '#4cc9a0', border: '1.5px solid #111', fontFamily: 'Caveat, cursive', fontSize: '14px', padding: '8px 16px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+        <button className="bg-dark text-mint border-2 border-dark font-hand text-xl px-8 py-4 cursor-pointer whitespace-nowrap shadow-hard hover:-translate-y-1 transition-all rounded-lg">
           aplicar
         </button>
       </div>
@@ -126,11 +124,11 @@ export default function CartPage() {
       {/* CTA */}
       <a
         href="/checkout"
-        style={{ background: '#f72585', color: '#fff', border: '1.5px solid #111', fontFamily: 'Caveat, cursive', fontSize: '17px', padding: '13px 20px', textDecoration: 'none', display: 'block', textAlign: 'center' }}
+        className="bg-pink text-white border-2 border-dark font-hand text-3xl py-5 no-underline block text-center shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all rounded-lg"
       >
         finalizar compra →
       </a>
-      <p style={{ fontFamily: 'Caveat, cursive', fontSize: '12px', color: '#999', textAlign: 'center', margin: 0 }}>
+      <p className="font-hand text-xl text-mid text-center m-0">
         Stripe · Bizum · PayPal · transferencia
       </p>
     </div>

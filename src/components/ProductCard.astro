@@ -21,65 +21,61 @@ const categoryEmoji: Record<string, string> = {
   accesorios: '🎁',
 };
 
-const btnColors: Record<string, { bg: string; color: string }> = {
-  camisetas:  { bg: '#f72585', color: '#fff' },
-  sudaderas:  { bg: '#4cc9a0', color: '#111' },
-  tazas:      { bg: '#fde8f0', color: '#111' },
-  termos:     { bg: '#111',    color: '#4cc9a0' },
-  posters:    { bg: '#f72585', color: '#fff' },
-  accesorios: { bg: '#4cc9a0', color: '#111' },
+const btnColors: Record<string, { bg: string; text: string }> = {
+  camisetas:  { bg: 'bg-pink',  text: 'text-white' },
+  sudaderas:  { bg: 'bg-mint',  text: 'text-dark' },
+  tazas:      { bg: 'bg-light-pink', text: 'text-dark' },
+  termos:     { bg: 'bg-dark',  text: 'text-mint' },
+  posters:    { bg: 'bg-pink',  text: 'text-white' },
+  accesorios: { bg: 'bg-mint',  text: 'text-dark' },
 };
 
-const btn = btnColors[product.category] ?? { bg: '#f72585', color: '#fff' };
+const btn = btnColors[product.category] ?? { bg: 'bg-pink', text: 'text-white' };
 ---
 
-<div
-  style={`transform:${rotation}; border:1.5px solid #111; background:#fff; padding:8px; display:flex; flex-direction:column; transition:transform 0.2s;`}
-  class="hover:scale-[1.02]"
->
+<div class="border-2 border-dark bg-white p-4 md:p-5 flex flex-col transition-transform duration-200 hover:scale-[1.03] shadow-hard rounded-xl">
   <!-- Image area -->
-  <a href={`/producto/${product.slug}`} style="display:block; text-decoration:none;">
-    <div class="img-placeholder" style="width:100%; aspect-ratio:3/4; margin-bottom:8px; position:relative; overflow:hidden;">
-      <span style="font-size:32px;">{categoryEmoji[product.category] ?? '📦'}</span>
+  <a href={`/producto/${product.slug}`} class="block no-underline">
+    <div class="img-placeholder w-full aspect-[3/4] mb-4 relative overflow-hidden rounded-lg bg-bg">
+      <span class="text-5xl md:text-6xl">{categoryEmoji[product.category] ?? '📦'}</span>
       {product.isNew && (
-        <span style="position:absolute; top:6px; right:6px; background:#4cc9a0; color:#111; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111; transform:rotate(1.5deg);">
+        <span class="absolute top-3 right-3 bg-mint text-dark font-hand text-base px-3 py-1 border-2 border-dark rotate-2 shadow-hard">
           NEW
         </span>
       )}
       {product.bestseller && !product.isNew && (
-        <span style="position:absolute; top:6px; right:6px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111; transform:rotate(1.5deg);">
+        <span class="absolute top-3 right-3 bg-pink text-white font-hand text-base px-3 py-1 border-2 border-dark rotate-2 shadow-hard">
           TOP
         </span>
       )}
       {discount && (
-        <span style="position:absolute; top:6px; left:6px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:10px; padding:2px 6px; border:1.5px solid #111;">
+        <span class="absolute top-3 left-3 bg-pink text-white font-hand text-base px-3 py-1 border-2 border-dark shadow-hard">
           -{discount}%
         </span>
       )}
     </div>
   </a>
 
-  <span style="font-family:'Caveat',cursive; font-size:10px; color:#4cc9a0; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px;">
+  <span class="font-hand text-lg text-mint uppercase tracking-widest mb-1 font-bold">
     {product.category}
   </span>
-  <a href={`/producto/${product.slug}`} style="text-decoration:none;">
-    <p style="font-family:'Caveat',cursive; font-size:13px; font-weight:700; color:#111; margin:0 0 4px; line-height:1.2;">
+  <a href={`/producto/${product.slug}`} class="no-underline">
+    <p class="font-hand text-xl md:text-2xl font-bold text-dark m-0 mb-2 leading-tight hover:text-pink transition-colors">
       {product.name}
     </p>
   </a>
-  <p style="font-family:'Caveat',cursive; font-size:12px; color:#666; margin:0 0 8px;">
+  <p class="font-hand text-xl md:text-2xl text-mid m-0 mb-4">
     {product.price.toFixed(2)}€
     {product.originalPrice && (
-      <span style="text-decoration:line-through; margin-left:4px; opacity:0.6;">{product.originalPrice.toFixed(2)}€</span>
+      <span class="line-through ml-2 opacity-60">{product.originalPrice.toFixed(2)}€</span>
     )}
   </p>
 
   <button
-    class="add-to-cart"
+    class={`add-to-cart ${btn.bg} ${btn.text} border-2 border-dark font-hand text-xl md:text-2xl py-3 px-4 cursor-pointer w-full text-center shadow-hard hover:-translate-y-1 transition-all mt-auto rounded-lg`}
     data-product-id={product.id}
     data-product-name={product.name}
     data-product-price={product.price}
-    style={`background:${btn.bg}; color:${btn.color}; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:12px; padding:5px 10px; cursor:pointer; width:100%; text-align:center;`}
   >
     🛒 añadir
   </button>

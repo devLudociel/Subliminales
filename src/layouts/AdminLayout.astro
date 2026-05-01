@@ -1,0 +1,81 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <title>{title} — Admin</title>
+  </head>
+  <body class="min-h-screen flex bg-bg">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-dark border-r-2 border-dark shrink-0 hidden md:flex flex-col sticky top-0 h-screen">
+      <div class="p-6 border-b-2 border-white/10">
+        <a href="/admin" class="font-marker text-2xl text-pink no-underline block">SUBLIMINAL</a>
+        <span class="font-hand text-lg text-white/50">panel admin</span>
+      </div>
+      <nav class="flex-1 py-6 flex flex-col gap-2 px-4">
+        <a href="/admin" class="font-hand text-xl text-white/80 hover:text-mint no-underline px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-3">
+          <span class="text-2xl">📦</span> Productos
+        </a>
+        <a href="/admin/producto-nuevo" class="font-hand text-xl text-white/80 hover:text-mint no-underline px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-3">
+          <span class="text-2xl">➕</span> Nuevo Producto
+        </a>
+        <div class="border-t border-white/10 my-4"></div>
+        <a href="/" class="font-hand text-xl text-white/50 hover:text-white no-underline px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-3">
+          <span class="text-2xl">🏠</span> Ver Tienda
+        </a>
+        <a href="/tienda" class="font-hand text-xl text-white/50 hover:text-white no-underline px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center gap-3">
+          <span class="text-2xl">🛍️</span> Ver Catálogo
+        </a>
+      </nav>
+      <div class="p-4 border-t border-white/10">
+        <button id="admin-logout" class="w-full font-hand text-xl text-pink/80 hover:text-pink py-2 cursor-pointer bg-transparent border-none text-left px-4 transition-colors">
+          cerrar sesión
+        </button>
+      </div>
+    </aside>
+
+    <!-- Mobile header -->
+    <div class="md:hidden fixed top-0 left-0 right-0 z-50 bg-dark border-b-2 border-white/10 px-4 py-3 flex items-center justify-between">
+      <a href="/admin" class="font-marker text-xl text-pink no-underline">ADMIN</a>
+      <div class="flex gap-4">
+        <a href="/admin/producto-nuevo" class="font-hand text-lg text-mint no-underline">+ Nuevo</a>
+        <a href="/" class="font-hand text-lg text-white/60 no-underline">Tienda</a>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <main class="flex-1 md:p-8 lg:p-12 pt-16 md:pt-8">
+      <slot />
+    </main>
+
+    <script>
+      import { onAuthStateChanged, signOut } from 'firebase/auth';
+      import { auth, ADMIN_EMAIL } from '../lib/firebase/client';
+
+      // Auth guard - redirect if not admin
+      onAuthStateChanged(auth, (user) => {
+        if (!user || user.email !== ADMIN_EMAIL) {
+          window.location.href = '/login';
+        }
+      });
+
+      document.getElementById('admin-logout')?.addEventListener('click', async () => {
+        await signOut(auth);
+        window.location.href = '/';
+      });
+    </script>
+  </body>
+</html>

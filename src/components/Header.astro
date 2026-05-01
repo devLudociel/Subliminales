@@ -2,42 +2,49 @@
 import CartIcon from './CartIcon';
 ---
 
-<header class="sticky top-0 z-50">
+<header class="sticky top-0 z-50 flex flex-col">
   <!-- Level 1: pink bar -->
-  <div style="background:#f72585; border-bottom:2px solid #111; padding:9px 20px; display:flex; justify-content:space-between; align-items:center;">
+  <div class="bg-pink border-b-2 border-dark px-4 py-3 md:py-4 flex justify-between items-center">
 
     <!-- Logo -->
-    <a href="/" style="font-family:'Permanent Marker',cursive; font-size:18px; color:#fff; text-decoration:none; flex-shrink:0;">
+    <a href="/" class="font-marker text-2xl md:text-4xl text-white no-underline shrink-0 tracking-wide hover:scale-105 transition-transform">
       SUBLIMINAL.ES
     </a>
 
     <!-- Nav (desktop) -->
-    <nav class="hidden md:flex" style="gap:20px; align-items:center;">
-      <a href="/tienda?cat=camisetas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">camisetas</a>
-      <span style="color:rgba(255,255,255,0.4);">·</span>
-      <a href="/tienda?cat=sudaderas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">sudaderas</a>
-      <span style="color:rgba(255,255,255,0.4);">·</span>
-      <a href="/tienda?cat=tazas" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">tazas</a>
-      <span style="color:rgba(255,255,255,0.4);">·</span>
-      <a href="/colecciones" style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); text-decoration:none;">colecciones</a>
+    <nav class="hidden md:flex gap-6 lg:gap-8 items-center">
+      <a href="/tienda?cat=camisetas" class="font-hand text-2xl lg:text-3xl text-white/90 hover:text-white no-underline transition-colors">camisetas</a>
+      <span class="text-white/40">·</span>
+      <a href="/tienda?cat=sudaderas" class="font-hand text-2xl lg:text-3xl text-white/90 hover:text-white no-underline transition-colors">sudaderas</a>
+      <span class="text-white/40">·</span>
+      <a href="/tienda?cat=tazas" class="font-hand text-2xl lg:text-3xl text-white/90 hover:text-white no-underline transition-colors">tazas</a>
+      <span class="text-white/40">·</span>
+      <a href="/colecciones" class="font-hand text-2xl lg:text-3xl text-white/90 hover:text-white no-underline transition-colors">colecciones</a>
     </nav>
 
     <!-- Actions -->
-    <div style="display:flex; align-items:center; gap:12px;">
-      <span style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.88); cursor:pointer;">buscar</span>
+    <div class="flex items-center gap-4 md:gap-6">
+      <span class="font-hand text-2xl text-white/90 cursor-pointer hover:text-white transition-colors hidden sm:block">buscar</span>
+      
+      <!-- User / Login -->
+      <a href="/login" class="text-white hover:text-mint transition-colors hover:scale-110" aria-label="Mi cuenta" title="Mi cuenta">
+        <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+        </svg>
+      </a>
+
       <CartIcon client:load />
 
       <!-- Mobile hamburger -->
       <button
         id="mobile-menu-btn"
-        class="md:hidden"
-        style="background:none; border:none; color:#fff; cursor:pointer; padding:4px;"
+        class="md:hidden bg-transparent border-none text-white cursor-pointer p-1 hover:scale-110 transition-transform"
         aria-label="Menú"
       >
-        <svg id="menu-icon" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg id="menu-icon" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
         </svg>
-        <svg id="close-icon" class="hidden" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <svg id="close-icon" class="hidden" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
@@ -45,19 +52,26 @@ import CartIcon from './CartIcon';
   </div>
 
   <!-- Level 2: mint ticker -->
-  <div style="background:#4cc9a0; border-bottom:1.5px solid #111; padding:5px 0; overflow:hidden;">
-    <div class="ticker-track">
-      <span style="font-family:'Caveat',cursive; font-size:12px; color:#111; letter-spacing:0.5px; padding:0 20px;">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
-      <span style="font-family:'Caveat',cursive; font-size:12px; color:#111; letter-spacing:0.5px; padding:0 20px;">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
+  <div class="bg-mint border-b-[1.5px] border-dark py-2 overflow-hidden">
+    <div class="ticker-track flex whitespace-nowrap">
+      <span class="font-hand text-lg md:text-xl text-dark tracking-wide px-4 font-semibold">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
+      <span class="font-hand text-lg md:text-xl text-dark tracking-wide px-4 font-semibold">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
+      <span class="font-hand text-lg md:text-xl text-dark tracking-wide px-4 font-semibold">ENVÍOS A TODA ESPAÑA · NUEVOS DROPS CADA MES · ROPA CON CHISTE DESDE 2025 · DEVOLUCIÓN GRATIS 30 DÍAS · </span>
     </div>
   </div>
 
   <!-- Mobile menu -->
-  <div id="mobile-menu" class="hidden md:hidden" style="background:#f72585; border-bottom:2px solid #111; padding:12px 20px; display:flex; flex-direction:column; gap:8px;">
-    <a href="/tienda?cat=camisetas" style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">camisetas</a>
-    <a href="/tienda?cat=sudaderas" style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">sudaderas</a>
-    <a href="/tienda?cat=tazas"     style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.2);">tazas</a>
-    <a href="/colecciones"          style="font-family:'Caveat',cursive; font-size:16px; color:rgba(255,255,255,0.9); text-decoration:none; padding:4px 0;">colecciones</a>
+  <div id="mobile-menu" class="hidden md:hidden bg-pink border-b-2 border-dark px-6 py-6 flex flex-col gap-4 shadow-xl">
+    <a href="/tienda?cat=camisetas" class="font-hand text-3xl text-white/95 no-underline py-3 border-b border-white/20">camisetas</a>
+    <a href="/tienda?cat=sudaderas" class="font-hand text-3xl text-white/95 no-underline py-3 border-b border-white/20">sudaderas</a>
+    <a href="/tienda?cat=tazas"     class="font-hand text-3xl text-white/95 no-underline py-3 border-b border-white/20">tazas</a>
+    <a href="/colecciones"          class="font-hand text-3xl text-white/95 no-underline py-3 border-b border-white/20">colecciones</a>
+    <a href="/login"                class="font-marker text-2xl text-mint no-underline py-3 mt-2 flex items-center gap-3">
+      <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+      </svg>
+      mi cuenta
+    </a>
   </div>
 </header>
 

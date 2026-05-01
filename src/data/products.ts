@@ -1,3 +1,12 @@
+export interface ProductVariant {
+  id: string;        // e.g. "S-Negro"
+  size?: string;
+  color?: string;
+  stock: number;
+  sku?: string;
+  priceOverride?: number; // if different from base price
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -11,10 +20,12 @@ export interface Product {
   tags: string[];
   sizes?: string[];
   colors?: string[];
+  variants?: ProductVariant[];  // real stock per size×color combo
+  images?: string[];            // gallery (first = main)
   featured: boolean;
   bestseller: boolean;
   isNew?: boolean;
-  image: string;
+  image: string;                // kept for backwards compat (= images[0])
 }
 
 export const categories = [
@@ -34,6 +45,7 @@ export const collections = [
   { id: 'dual-meaning', name: 'Dual Meaning',  desc: 'Dos lecturas. Un solo diseño.' },
 ];
 
+// ── MOCK/FALLBACK DATA ──
 export const products: Product[] = [
   {
     id: '1',
@@ -170,47 +182,68 @@ export const products: Product[] = [
   },
 ];
 
-export async function getProductsFromFirebase(): Promise<Product[]> {
+// ── FIRESTORE LOADER ──
+// Tries Firestore first, falls back to mock data
+
+let _cachedProducts: Product[] | null = null;
+let _cacheTime = 0;
+const CACHE_TTL = 30_000; // 30 seconds cache
+
+export async function getAllProducts(): Promise<Product[]> {
+  // Simple in-memory cache to avoid hammering Firestore
+  if (_cachedProducts && Date.now() - _cacheTime < CACHE_TTL) {
+    return _cachedProducts;
+  }
+
   try {
     const { db } = await import('../lib/firebase/client');
-    const { collection, getDocs } = await import('firebase/firestore');
-    
-    // Si tenemos base de datos, extraemos la colección 'products'
-    const querySnapshot = await getDocs(collection(db, "products"));
-    const fbProducts: Product[] = [];
-    querySnapshot.forEach((doc) => {
-      fbProducts.push({ id: doc.id, ...doc.data() } as Product);
-    });
+    const { collection, getDocs, query, orderBy } = await import('firebase/firestore');
 
-    if(fbProducts.length > 0) return fbProducts;
-    return products; // Fallback a mock data si está vacía
+    const q = query(collection(db, 'products'), orderBy('name'));
+    const snapshot = await getDocs(q);
+    const fbProducts: Product[] = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Product));
+
+    if (fbProducts.length > 0) {
+      _cachedProducts = fbProducts;
+      _cacheTime = Date.now();
+      return fbProducts;
+    }
   } catch (error) {
-    console.error("Error cargando productos, volcando a mock data.", error);
-    return products;
+    console.warn('Firestore not available, using mock data:', error);
   }
+
+  return products; // Fallback
 }
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find(p => p.slug === slug);
+// ── HELPER FUNCTIONS (now async, reading from Firestore) ──
+
+export async function getProductBySlug(slug: string): Promise<Product | undefined> {
+  const all = await getAllProducts();
+  return all.find(p => p.slug === slug);
 }
 
-export function getProductsByCategory(category: string): Product[] {
-  if (category === 'all') return products;
-  return products.filter(p => p.category === category);
+export async function getProductsByCategory(category: string): Promise<Product[]> {
+  const all = await getAllProducts();
+  if (category === 'all') return all;
+  return all.filter(p => p.category === category);
 }
 
-export function getProductsByCollection(collection: string): Product[] {
-  return products.filter(p => p.collection === collection);
+export async function getProductsByCollection(collectionId: string): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter(p => p.collection === collectionId);
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter(p => p.featured);
+export async function getFeaturedProducts(): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter(p => p.featured);
 }
 
-export function getBestsellers(): Product[] {
-  return products.filter(p => p.bestseller);
+export async function getBestsellers(): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter(p => p.bestseller);
 }
 
-export function getNewProducts(): Product[] {
-  return products.filter(p => p.isNew);
+export async function getNewProducts(): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter(p => p.isNew);
 }

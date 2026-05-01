@@ -3,115 +3,90 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="Cómo Funcionan los Subliminales"
-  description="Descubre la ciencia detrás de los audios subliminales y cómo pueden transformar tu vida."
+  title="Cómo Funciona — subliminal.es"
+  description="Descubre cómo creamos ropa con doble sentido y humor."
 >
   <!-- Hero -->
-  <section class="bg-hero-gradient border-b border-dark-border py-16">
+  <section class="bg-pink border-b-2 border-dark py-16 md:py-24">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <span class="badge-primary mb-6 inline-block">La Ciencia</span>
-      <h1 class="font-display font-black text-5xl text-white mb-6">
-        ¿Cómo funcionan<br/>los subliminales?
+      <span class="bg-white border-2 border-dark text-dark font-hand text-xl px-4 py-1 inline-block mb-6 shadow-hard rotate-2">La Ciencia</span>
+      <h1 class="font-marker text-5xl md:text-7xl text-white mb-6 leading-none">
+        ¿Cómo funciona<br/>esto?
       </h1>
-      <p class="text-gray-400 text-xl leading-relaxed">
-        Descubre el fascinante mundo de la reprogramación subconsciente y cómo nuestros
-        audios pueden transformar tu vida desde adentro hacia afuera.
+      <p class="font-hand text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto">
+        No somos una marca normal. Hacemos ropa que la gente tiene que mirar dos veces para entender el chiste.
       </p>
     </div>
   </section>
 
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-20">
     <!-- What are subliminales -->
     <section>
-      <h2 class="font-display font-bold text-3xl text-white mb-6">¿Qué son los subliminales?</h2>
-      <div class="card p-8">
-        <p class="text-gray-300 text-lg leading-relaxed mb-4">
-          Los mensajes subliminales son afirmaciones positivas que se presentan por debajo
-          del umbral consciente de percepción. Esto significa que tu mente consciente no
-          los "escucha" directamente, pero tu mente subconsciente los absorbe y procesa.
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-8">¿Qué es esto de la ropa con chiste?</h2>
+      <div class="bg-white border-2 border-dark shadow-hard p-8 md:p-10 rounded-xl">
+        <p class="font-hand text-2xl text-mid leading-relaxed mb-6">
+          Los mensajes "subliminales" son esos detalles que pasan desapercibidos a primera vista. Tu cerebro los procesa, pero tardas un par de segundos en pillar la gracia.
         </p>
-        <p class="text-gray-400 leading-relaxed">
-          En nuestros audios, combinamos afirmaciones positivas cuidadosamente formuladas
-          con frecuencias binaurales y música de alta vibración para crear un poderoso
-          programa de reprogramación mental.
+        <p class="font-hand text-2xl text-mid leading-relaxed m-0">
+          En nuestras prendas, combinamos diseños aparentemente inocentes o elegantes con textos y gráficos que ocultan un doble sentido, una ironía o simplemente algo absurdo.
         </p>
       </div>
     </section>
 
     <!-- Steps -->
     <section>
-      <h2 class="font-display font-bold text-3xl text-white mb-8">El proceso de transformación</h2>
-      <div class="space-y-6">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10">El proceso creativo</h2>
+      <div class="space-y-8">
         {[
           {
             num: '01',
-            title: 'Relajación Alpha',
-            desc: 'La música de fondo lleva tu cerebro a un estado Alpha (8-12 Hz), el estado ideal para la receptividad y el aprendizaje. En este estado, tu mente consciente se relaja y el subconsciente se vuelve más accesible.',
-            icon: '🧘',
+            title: 'La Idea Absurda',
+            desc: 'Alguien del equipo dice una tontería durante un café. Si nos reímos durante más de 10 segundos, se convierte en un posible diseño.',
+            icon: '☕',
           },
           {
             num: '02',
-            title: 'Penetración Subliminal',
-            desc: 'Las afirmaciones positivas, mezcladas a un nivel de volumen cuidadosamente calibrado, pasan "por debajo" de la percepción consciente pero son captadas por el subconsciente. Este proceso es similar a cómo aprendemos hábitos.',
-            icon: '📡',
+            title: 'El Camuflaje',
+            desc: 'Diseñamos el chiste para que parezca el logo de una universidad de élite, una marca de lujo o un mensaje inspiracional genérico.',
+            icon: '🥸',
           },
           {
             num: '03',
-            title: 'Reescritura de Creencias',
-            desc: 'Con escucha repetida (recomendamos 21-30 días), las nuevas afirmaciones comienzan a reemplazar las creencias limitantes antiguas. Tu cerebro literalmente forma nuevas conexiones neuronales (neuroplasticidad).',
-            icon: '🔄',
+            title: 'Fabricación',
+            desc: 'Imprimimos en prendas de alta calidad. El chiste puede ser malo, pero la camiseta no. Algodón orgánico, suave y duradero.',
+            icon: '👕',
           },
           {
             num: '04',
-            title: 'Cambio Conductual',
-            desc: 'Una vez que las nuevas creencias están instaladas en el subconsciente, naturalmente comienzas a actuar de manera diferente, atraes nuevas oportunidades y manifiestas los cambios que deseas.',
-            icon: '✨',
+            title: 'La Doble Mirada',
+            desc: 'Te pones la camiseta. Sales a la calle. Alguien te mira. Sigue caminando. Se para. Se gira. Se ríe. Objetivo conseguido.',
+            icon: '👀',
           },
-        ].map(step => (
-          <div class="flex gap-6 card p-6">
+        ].map((step, i) => (
+          <div class={`flex flex-col md:flex-row gap-6 md:gap-8 bg-mint-light border-2 border-dark p-6 md:p-8 shadow-hard rounded-xl transform ${i % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-all`}>
             <div class="shrink-0">
-              <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary-500/30 to-accent/30 flex items-center justify-center text-2xl">
+              <div class="w-16 h-16 rounded-xl bg-white border-2 border-dark flex items-center justify-center text-4xl shadow-hard">
                 {step.icon}
               </div>
             </div>
             <div>
-              <div class="flex items-center gap-3 mb-2">
-                <span class="font-display font-bold text-primary-400 text-sm">{step.num}</span>
-                <h3 class="font-display font-bold text-xl text-white">{step.title}</h3>
+              <div class="flex items-center gap-4 mb-3">
+                <span class="font-marker text-3xl text-pink">{step.num}</span>
+                <h3 class="font-marker text-3xl md:text-4xl text-dark">{step.title}</h3>
               </div>
-              <p class="text-gray-400 leading-relaxed">{step.desc}</p>
+              <p class="font-hand text-2xl text-mid leading-relaxed m-0">{step.desc}</p>
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
-
-    <!-- Tips -->
-    <section>
-      <h2 class="font-display font-bold text-3xl text-white mb-6">Consejos para mejores resultados</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {[
-          { icon: '🌅', tip: 'Escucha por las mañanas al despertar o por la noche antes de dormir' },
-          { icon: '🎧', tip: 'Usa auriculares para una mejor absorción de las frecuencias binaurales' },
-          { icon: '📅', tip: 'Sé consistente: escucha durante al menos 21 días seguidos' },
-          { icon: '🙏', tip: 'Mantén una mente abierta y receptiva; confía en el proceso' },
-          { icon: '💧', tip: 'Bebe agua antes y después de escuchar para potenciar los efectos' },
-          { icon: '📝', tip: 'Lleva un diario de tus cambios y transformaciones' },
-        ].map(item => (
-          <div class="flex items-start gap-3 p-4 rounded-xl bg-dark-card border border-dark-border">
-            <span class="text-2xl shrink-0">{item.icon}</span>
-            <p class="text-gray-300 text-sm">{item.tip}</p>
           </div>
         ))}
       </div>
     </section>
 
     <!-- CTA -->
-    <section class="text-center card p-10">
-      <h2 class="font-display font-bold text-3xl text-white mb-4">¿Listo para comenzar?</h2>
-      <p class="text-gray-400 mb-8">Explora nuestra colección y encuentra el programa perfecto para ti.</p>
-      <a href="/tienda" class="btn-primary text-lg px-8 py-4">
-        Ver todos los programas
+    <section class="text-center bg-dark border-2 border-dark p-12 md:p-16 shadow-hard rounded-xl transform -rotate-1">
+      <h2 class="font-marker text-5xl text-mint mb-6">¿Listo para ponértelo?</h2>
+      <p class="font-hand text-3xl text-white/80 mb-10">Explora la tienda y encuentra el diseño que va contigo.</p>
+      <a href="/tienda" class="btn-primary text-2xl px-10 py-5 shadow-hard hover:-translate-y-1 transition-all rounded-lg inline-block bg-pink text-white border-white">
+        Ver tienda
       </a>
     </section>
   </div>

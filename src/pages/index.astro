@@ -3,155 +3,163 @@ import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
 import { getFeaturedProducts } from '../data/products';
 
-const featured = getFeaturedProducts().slice(0, 4);
+const featured = (await getFeaturedProducts()).slice(0, 4);
 
-const rotations = ['rotate(-1.5deg)', 'rotate(1deg)', 'rotate(-0.5deg)', 'rotate(1.5deg)'];
+const rotations = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2'];
 ---
 
 <Layout title="No todo lo que ves es lo que parece">
 
   <!-- ── HERO ── -->
-  <section style="background:#fde8f0; border-bottom:2px solid #111; padding:20px 20px 0; overflow:hidden; position:relative;">
+  <section class="bg-light-pink border-b-2 border-dark relative overflow-hidden">
     <!-- Decorative circle -->
-    <div style="position:absolute; top:-60px; right:-60px; width:220px; height:220px; border-radius:50%; background:rgba(76,201,160,0.18); filter:blur(40px); pointer-events:none;"></div>
+    <div class="absolute -top-16 -right-16 w-64 h-64 md:w-96 md:h-96 rounded-full bg-mint/20 blur-[60px] pointer-events-none"></div>
+    <div class="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-pink/10 blur-[60px] pointer-events-none"></div>
 
-    <div style="display:flex; flex-direction:row; gap:16px; align-items:flex-end; max-width:720px; margin:0 auto;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 flex flex-col md:flex-row gap-12 items-center relative z-10">
+      
       <!-- Left content -->
-      <div style="flex:1; padding-bottom:20px;">
-        <span class="tag tag-mint" style="transform:rotate(-1deg); display:inline-block; margin-bottom:14px; font-size:12px;">
+      <div class="flex-1 text-center md:text-left">
+        <span class="tag tag-mint -rotate-2 mb-6 text-sm shadow-hard">
           nueva colección 🌿
         </span>
-        <h1 style="font-family:'Permanent Marker',cursive; font-size:clamp(32px,7vw,52px); line-height:1; color:#111; margin:0 0 10px;">
+        <h1 class="font-marker text-5xl md:text-6xl lg:text-8xl leading-[1.1] text-dark mb-4 mt-4">
           ROPA / CON
-          <span style="color:#f72585;"> (CHISTE)</span>
+          <span class="text-pink block md:inline"> (CHISTE)</span>
         </h1>
-        <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; margin:0 0 18px; line-height:1.4;">
+        <p class="font-hand text-xl md:text-2xl text-mid mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
           (y también sin chiste, pero eso es mentira)
         </p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <a href="/tienda" class="btn-dark">Ver tienda →</a>
-          <a href="/sobre-nosotros" class="btn-outline">¿qué es esto?</a>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+          <a href="/tienda" class="btn-dark text-lg px-8 py-3 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">Ver tienda →</a>
+          <a href="/sobre-nosotros" class="btn-outline text-lg px-8 py-3 bg-white shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">¿qué es esto?</a>
         </div>
       </div>
 
       <!-- Right: product images placeholder -->
-      <div style="display:flex; gap:8px; align-items:flex-end; flex-shrink:0;">
-        <div class="img-placeholder" style="width:120px; height:150px; transform:rotate(-2deg); flex-shrink:0;">
-          <span style="font-size:40px;">👕</span>
+      <div class="hidden md:flex gap-6 items-center justify-center flex-1 relative">
+        <div class="img-placeholder w-48 h-64 -rotate-6 shadow-hard bg-white z-10 hover:rotate-0 transition-transform duration-300 rounded-xl">
+          <span class="text-7xl">👕</span>
         </div>
-        <div class="img-placeholder" style="width:90px; height:110px; transform:rotate(3deg); flex-shrink:0;">
-          <span style="font-size:32px;">☕</span>
+        <div class="img-placeholder w-40 h-56 rotate-6 shadow-hard bg-white mt-16 hover:rotate-0 transition-transform duration-300 rounded-xl">
+          <span class="text-6xl">☕</span>
         </div>
       </div>
     </div>
 
     <!-- Badge absolute -->
-    <div style="position:absolute; bottom:16px; left:20px;">
-      <span class="tag tag-pink" style="transform:rotate(-1.5deg); font-size:12px; font-weight:700; box-shadow:2px 2px 0 #111;">
+    <div class="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 z-20 hidden md:block">
+      <span class="tag tag-pink -rotate-2 text-sm font-bold shadow-hard">
         ¡NUEVO DROP! 🔥
       </span>
     </div>
   </section>
 
   <!-- ── CATEGORÍAS ── -->
-  <section style="background:#fff; border-bottom:2px solid #111; padding:16px 20px;">
-    <p style="font-family:'Caveat',cursive; font-size:15px; font-weight:700; color:#111; margin:0 0 10px;">
-      explorar por tipo
-    </p>
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <a href="/tienda?cat=camisetas" class="tag tag-pink" style="transform:rotate(-1deg); text-decoration:none;">👕 camisetas</a>
-      <a href="/tienda?cat=sudaderas" class="tag tag-mint" style="transform:rotate(0.5deg); text-decoration:none;">🧥 sudaderas</a>
-      <a href="/tienda?cat=tazas"     class="tag tag-light" style="transform:rotate(-0.5deg); text-decoration:none;">☕ tazas</a>
-      <a href="/tienda?cat=termos"    class="tag tag-mint" style="transform:rotate(1deg); text-decoration:none;">🧃 termos</a>
-      <a href="/tienda"               class="tag tag-dark"  style="transform:rotate(-1deg); text-decoration:none;">📦 todo</a>
+  <section class="bg-white border-b-2 border-dark">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <p class="font-hand text-2xl font-bold text-dark mb-6 text-center md:text-left">
+        explorar por tipo:
+      </p>
+      <div class="flex gap-4 md:gap-6 flex-wrap items-center justify-center md:justify-start">
+        <a href="/tienda?cat=camisetas" class="tag tag-pink -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">👕 camisetas</a>
+        <a href="/tienda?cat=sudaderas" class="tag tag-mint rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">🧥 sudaderas</a>
+        <a href="/tienda?cat=tazas"     class="tag tag-light -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard bg-light-pink border-dark px-6 py-2">☕ tazas</a>
+        <a href="/tienda?cat=termos"    class="tag tag-mint rotate-2 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">🧃 termos</a>
+        <a href="/tienda"               class="tag tag-dark -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">📦 todo</a>
+      </div>
     </div>
   </section>
 
   <!-- ── PRODUCTOS DESTACADOS ── -->
-  <section style="padding:20px;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0;">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <div class="flex justify-between items-end mb-8 md:mb-12">
+      <h2 class="font-marker text-4xl md:text-6xl text-dark m-0">
         lo más deseado
       </h2>
-      <a href="/tienda" style="font-family:'Caveat',cursive; font-size:13px; color:#666; text-decoration:none;">ver todo →</a>
+      <a href="/tienda" class="font-hand text-2xl md:text-3xl text-mid hover:text-dark no-underline transition-colors">ver todo →</a>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
       {featured.map((product, i) => (
-        <ProductCard product={product} rotation={rotations[i % rotations.length]} />
+        <div class={`transform ${rotations[i % rotations.length]} hover:z-10 hover:rotate-0 transition-transform duration-300`}>
+           <ProductCard product={product} rotation="rotate-0" />
+        </div>
       ))}
     </div>
   </section>
 
   <!-- ── CONCEPTO ── -->
-  <section style="background:#e0f7f0; border-top:2px solid #111; border-bottom:2px solid #111; padding:20px;">
-    <div style="display:flex; gap:16px; align-items:flex-start; max-width:680px; margin:0 auto;">
-      <div class="img-placeholder" style="width:110px; height:110px; flex-shrink:0; transform:rotate(-2deg);">
-        <span style="font-size:36px;">🤣</span>
-      </div>
-      <div>
-        <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0 0 8px; line-height:1.2;">
-          ropa con personalidad propia
-        </h2>
-        <p style="font-family:'Caveat',cursive; font-size:14px; color:#666; margin:0 0 12px; line-height:1.5;">
-          Diseños de humor y doble sentido. No es moda seria — es un proyecto personal
-          con mensajes que revelan algo diferente cuando los miras dos veces.
-        </p>
-        <a href="/sobre-nosotros" class="btn-primary" style="font-size:13px; padding:6px 14px;">
-          saber más →
-        </a>
+  <section class="bg-mint-light border-y-2 border-dark">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
+        <div class="img-placeholder w-40 h-40 md:w-56 md:h-56 shrink-0 -rotate-3 shadow-hard bg-white rounded-2xl">
+          <span class="text-7xl md:text-9xl">🤣</span>
+        </div>
+        <div class="text-center md:text-left">
+          <h2 class="font-marker text-5xl md:text-6xl text-dark mb-6 leading-tight">
+            ropa con personalidad propia
+          </h2>
+          <p class="font-hand text-2xl md:text-3xl text-mid mb-8 leading-relaxed max-w-2xl mx-auto md:mx-0">
+            Diseños de humor y doble sentido. No es moda seria — es un proyecto personal
+            con mensajes que revelan algo diferente cuando los miras dos veces.
+          </p>
+          <a href="/sobre-nosotros" class="btn-primary text-xl px-10 py-4 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all inline-block">
+            saber más →
+          </a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ── COLECCIONES ── -->
-  <section style="padding:20px;">
-    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0;">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+    <div class="flex justify-between items-end mb-8 md:mb-12">
+      <h2 class="font-marker text-4xl md:text-6xl text-dark m-0">
         colecciones
       </h2>
-      <a href="/colecciones" style="font-family:'Caveat',cursive; font-size:13px; color:#666; text-decoration:none;">ver todas →</a>
+      <a href="/colecciones" class="font-hand text-2xl md:text-3xl text-mid hover:text-dark no-underline transition-colors">ver todas →</a>
     </div>
 
-    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px;">
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
       {[
-        { name: 'PATOCHAR',     bg: '#f72585', color: '#fff',  rotate: 'rotate(-1.5deg)', desc: 'cuando el clima es un chiste' },
-        { name: 'HIDDEN TRUTH', bg: '#111',    color: '#fff',  rotate: 'rotate(1deg)',    desc: 'la verdad siempre estuvo ahí' },
-        { name: 'WAKE UP',      bg: '#4cc9a0', color: '#111',  rotate: 'rotate(-0.5deg)', desc: 'abre los ojos. en serio.' },
+        { name: 'PATOCHAR',     bg: 'bg-pink', color: 'text-white',  rotate: '-rotate-2', desc: 'cuando el clima es un chiste', border: 'border-white/30' },
+        { name: 'HIDDEN TRUTH', bg: 'bg-dark', color: 'text-white',  rotate: 'rotate-1',  desc: 'la verdad siempre estuvo ahí', border: 'border-white/30' },
+        { name: 'WAKE UP',      bg: 'bg-mint', color: 'text-dark',   rotate: '-rotate-1', desc: 'abre los ojos. en serio.', border: 'border-dark/20' },
       ].map(col => (
         <a
           href="/colecciones"
-          style={`background:${col.bg}; color:${col.color}; border:1.5px solid #111; padding:14px 12px; text-decoration:none; display:flex; flex-direction:column; transform:${col.rotate}; transition:transform 0.2s;`}
-          class="hover:scale-[1.02]"
+          class={`${col.bg} ${col.color} border-2 border-dark p-6 md:p-8 no-underline flex flex-col transform ${col.rotate} shadow-hard hover:scale-105 hover:rotate-0 hover:shadow-hard-lg transition-all duration-300 rounded-xl`}
         >
-          <div class="img-placeholder" style={`width:100%; height:65px; background:rgba(255,255,255,0.12); border-color:${col.color === '#fff' ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'}; margin-bottom:10px;`}>
-          </div>
-          <p style="font-family:'Permanent Marker',cursive; font-size:14px; margin:0 0 4px;">{col.name}</p>
-          <p style={`font-family:'Caveat',cursive; font-size:11px; margin:0 0 8px; opacity:0.8;`}>{col.desc}</p>
-          <span style="font-family:'Caveat',cursive; font-size:11px; opacity:0.7;">ver colección →</span>
+          <div class={`img-placeholder w-full h-40 md:h-48 bg-white/10 border-2 ${col.border} mb-6 rounded-lg`}></div>
+          <p class="font-marker text-4xl mb-2">{col.name}</p>
+          <p class="font-hand text-2xl mb-8 opacity-90">{col.desc}</p>
+          <span class="font-hand text-xl opacity-75 mt-auto">ver colección →</span>
         </a>
       ))}
     </div>
   </section>
 
   <!-- ── NEWSLETTER ── -->
-  <section style="background:#f72585; border-top:2px solid #111; padding:20px;">
-    <h2 style="font-family:'Permanent Marker',cursive; font-size:18px; color:#fff; margin:0 0 6px;">
-      ¿te cuento los chistes nuevos?
-    </h2>
-    <p style="font-family:'Caveat',cursive; font-size:14px; color:rgba(255,255,255,0.85); margin:0 0 14px;">
-      Suscríbete y recibe los drops antes que nadie.
-    </p>
-    <form style="display:flex; gap:8px; max-width:380px; flex-wrap:wrap;" onsubmit="return false;">
-      <input
-        type="email"
-        placeholder="tu@email.com"
-        style="flex:1; min-width:180px; padding:8px 12px; font-family:'Caveat',cursive; font-size:14px; border:1.5px solid #111; background:#fff; color:#111; outline:none;"
-      />
-      <button type="submit" class="btn-dark" style="padding:8px 16px; font-size:14px; white-space:nowrap;">
-        suscribirse
-      </button>
-    </form>
+  <section class="bg-pink border-t-2 border-dark">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+      <h2 class="font-marker text-4xl md:text-6xl text-white mb-6">
+        ¿te cuento los chistes nuevos?
+      </h2>
+      <p class="font-hand text-2xl text-white/90 mb-10">
+        Suscríbete y recibe los drops antes que nadie.
+      </p>
+      <form class="flex flex-col sm:flex-row gap-4 justify-center items-center" onsubmit="return false;">
+        <input
+          type="email"
+          placeholder="tu@email.com"
+          class="w-full sm:w-auto flex-1 max-w-md px-6 py-4 font-hand text-xl border-2 border-dark bg-white text-dark outline-none shadow-hard focus:shadow-hard-lg transition-shadow rounded-none"
+        />
+        <button type="submit" class="btn-dark text-xl px-8 py-4 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all whitespace-nowrap w-full sm:w-auto">
+          suscribirse
+        </button>
+      </form>
+    </div>
   </section>
 
 </Layout>

@@ -1,0 +1,15 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ProductForm from '../../components/admin/ProductForm';
+---
+
+<AdminLayout title="Nuevo Producto">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <a href="/admin" class="font-hand text-xl text-mid hover:text-dark no-underline transition-colors">← Volver a productos</a>
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none mt-4">Nuevo Producto</h1>
+      <p class="font-hand text-2xl text-mid">Rellena los datos y publica tu nuevo diseño.</p>
+    </div>
+    <ProductForm client:load />
+  </div>
+</AdminLayout>

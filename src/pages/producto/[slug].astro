@@ -27,7 +27,7 @@ const categoryEmoji: Record<string, string> = {
   termos: '🧃', posters: '🖼️', accesorios: '🎁',
 };
 
-const relRotations = ['rotate(-1.5deg)', 'rotate(1deg)', 'rotate(-0.5deg)'];
+const relRotations = ['-rotate-2', 'rotate-1', '-rotate-1'];
 
 const colorMap: Record<string, string> = {
   'Negro': '#111', 'Blanco': '#fff', 'Gris oscuro': '#444',
@@ -37,79 +37,81 @@ const colorMap: Record<string, string> = {
 <Layout title={product.name} description={product.description}>
 
   <!-- Breadcrumb -->
-  <nav style="background:#fff; border-bottom:1px solid #eee; padding:8px 20px;">
-    <span style="font-family:'Caveat',cursive; font-size:12px; color:#666;">
-      <a href="/" style="color:#666; text-decoration:none;">inicio</a>
-      {' → '}
-      <a href="/tienda" style="color:#666; text-decoration:none;">tienda</a>
-      {' → '}
-      <a href={`/tienda?cat=${product.category}`} style="color:#666; text-decoration:none;">{product.category}</a>
-      {' → '}
-      <span style="color:#111;">{product.name}</span>
-    </span>
+  <nav class="bg-white border-b-2 border-dark">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <span class="font-hand text-xl text-mid">
+        <a href="/" class="text-mid no-underline hover:text-dark transition-colors">inicio</a>
+        {' → '}
+        <a href="/tienda" class="text-mid no-underline hover:text-dark transition-colors">tienda</a>
+        {' → '}
+        <a href={`/tienda?cat=${product.category}`} class="text-mid no-underline hover:text-dark transition-colors">{product.category}</a>
+        {' → '}
+        <span class="text-dark font-bold">{product.name}</span>
+      </span>
+    </div>
   </nav>
 
   <!-- Main product section -->
-  <div style="padding:20px; max-width:900px; margin:0 auto;">
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="product-grid">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
 
       <!-- Gallery left -->
       <div>
         <!-- Main image -->
-        <div class="img-placeholder" style="width:100%; aspect-ratio:4/5; transform:rotate(-1deg); border:2px solid #111; margin-bottom:10px; position:relative;">
-          <span style="font-size:60px;">{categoryEmoji[product.category] ?? '📦'}</span>
+        <div class="img-placeholder w-full aspect-[4/5] -rotate-1 border-2 border-dark mb-6 relative overflow-hidden shadow-hard rounded-xl bg-white">
+          <span class="text-8xl md:text-9xl">{categoryEmoji[product.category] ?? '📦'}</span>
           {product.isNew && (
-            <span style="position:absolute; top:10px; right:10px; background:#4cc9a0; color:#111; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111; transform:rotate(1.5deg);">
+            <span class="absolute top-4 right-4 bg-mint text-dark font-hand text-lg px-4 py-1 border-2 border-dark rotate-2 shadow-hard">
               NEW
             </span>
           )}
           {product.bestseller && !product.isNew && (
-            <span style="position:absolute; top:10px; right:10px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111; transform:rotate(1.5deg);">
+            <span class="absolute top-4 right-4 bg-pink text-white font-hand text-lg px-4 py-1 border-2 border-dark rotate-2 shadow-hard">
               TOP
             </span>
           )}
           {discount && (
-            <span style="position:absolute; top:10px; left:10px; background:#f72585; color:#fff; font-family:'Caveat',cursive; font-size:12px; padding:3px 8px; border:1.5px solid #111;">
+            <span class="absolute top-4 left-4 bg-pink text-white font-hand text-lg px-4 py-1 border-2 border-dark shadow-hard">
               -{discount}%
             </span>
           )}
         </div>
         <!-- Thumbnails -->
-        <div style="display:flex; gap:8px;">
+        <div class="flex gap-4">
           {[1,2,3].map(i => (
-            <div class="img-placeholder" style="width:60px; height:60px; cursor:pointer; border:1.5px solid #111;">
-              <span style="font-size:18px;">{categoryEmoji[product.category] ?? '📦'}</span>
+            <div class="img-placeholder w-20 h-20 md:w-24 md:h-24 cursor-pointer border-2 border-dark shadow-hard hover:-translate-y-1 transition-transform rounded-lg bg-white">
+              <span class="text-3xl md:text-4xl">{categoryEmoji[product.category] ?? '📦'}</span>
             </div>
           ))}
         </div>
       </div>
 
       <!-- Info right -->
-      <div style="display:flex; flex-direction:column; gap:12px;">
+      <div class="flex flex-col gap-6 md:gap-8">
         <!-- Collection tag -->
         {product.collection && (
-          <span class="tag tag-mint" style="transform:rotate(-1deg); align-self:flex-start; font-size:11px;">
+          <span class="tag tag-mint -rotate-1 self-start text-lg shadow-hard px-4 py-1">
             {product.collection.replace('-', ' ')}
           </span>
         )}
 
         <!-- Name -->
-        <h1 style="font-family:'Permanent Marker',cursive; font-size:clamp(22px,5vw,32px); color:#111; margin:0; line-height:1.1;">
+        <h1 class="font-marker text-4xl md:text-5xl lg:text-6xl text-dark m-0 leading-none">
           {product.name}
         </h1>
 
         <!-- Short desc -->
-        <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; margin:0; line-height:1.5;">
+        <p class="font-hand text-2xl md:text-3xl text-mid m-0 leading-relaxed">
           {product.description}
         </p>
 
         <!-- Price -->
-        <div style="display:flex; align-items:baseline; gap:8px;">
-          <span style="font-family:'Caveat',cursive; font-size:22px; font-weight:700; color:#111;">
+        <div class="flex items-baseline gap-4">
+          <span class="font-marker text-4xl md:text-5xl text-dark">
             {product.price.toFixed(2)}€
           </span>
           {product.originalPrice && (
-            <span style="font-family:'Caveat',cursive; font-size:14px; color:#999; text-decoration:line-through;">
+            <span class="font-hand text-2xl text-mid line-through opacity-70">
               {product.originalPrice.toFixed(2)}€
             </span>
           )}
@@ -118,13 +120,13 @@ const colorMap: Record<string, string> = {
         <!-- Size selector -->
         {product.sizes && (
           <div>
-            <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0 0 6px;">talla:</p>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;" id="size-selector">
+            <p class="font-hand text-2xl text-dark mb-4 font-bold">talla:</p>
+            <div class="flex gap-3 flex-wrap" id="size-selector">
               {product.sizes.map((size, idx) => (
                 <button
-                  class="size-btn"
+                  class="size-btn font-hand text-xl md:text-2xl px-6 py-3 border-2 border-dark cursor-pointer transition-all hover:scale-105 shadow-hard rounded-lg"
                   data-size={size}
-                  style={`font-family:'Caveat',cursive; font-size:13px; padding:4px 10px; border:1.5px solid #111; cursor:pointer; ${idx === 0 ? 'background:#f72585; color:#fff;' : 'background:#fff; color:#111;'}`}
+                  style={idx === 0 ? 'background:#f72585; color:#fff;' : 'background:#fff; color:#111;'}
                 >
                   {size}
                 </button>
@@ -136,11 +138,12 @@ const colorMap: Record<string, string> = {
         <!-- Color selector -->
         {product.colors && (
           <div>
-            <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0 0 6px;">color:</p>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <p class="font-hand text-2xl text-dark mb-4 font-bold">color:</p>
+            <div class="flex gap-4 flex-wrap">
               {product.colors.map((color) => (
                 <div
-                  style={`width:22px; height:22px; border-radius:50%; background:${colorMap[color] ?? '#ccc'}; border:2px solid #111; cursor:pointer;`}
+                  class="w-10 h-10 md:w-12 md:h-12 rounded-full border-[3px] border-dark cursor-pointer hover:scale-110 transition-transform shadow-hard"
+                  style={`background:${colorMap[color] ?? '#ccc'};`}
                   title={color}
                 ></div>
               ))}
@@ -149,26 +152,26 @@ const colorMap: Record<string, string> = {
         )}
 
         <!-- Add to cart buttons -->
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+        <div class="flex flex-col gap-4 mt-4">
           <button
             id="add-to-cart-btn"
             data-product-id={product.id}
             data-product-name={product.name}
             data-product-price={product.price}
-            style="background:#f72585; color:#fff; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:16px; padding:10px 20px; cursor:pointer; width:100%; text-align:center;"
+            class="bg-pink text-white border-2 border-dark font-hand text-2xl md:text-3xl py-4 md:py-5 cursor-pointer w-full text-center shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all rounded-lg"
           >
             añadir al carrito 🛒
           </button>
           <a
             href="/carrito"
-            style="background:#111; color:#4cc9a0; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:15px; padding:9px 20px; cursor:pointer; width:100%; text-align:center; text-decoration:none; display:block;"
+            class="bg-dark text-mint border-2 border-dark font-hand text-2xl md:text-3xl py-4 md:py-5 cursor-pointer w-full text-center no-underline block shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all rounded-lg"
           >
             comprar ahora →
           </a>
         </div>
 
         <!-- Guarantees -->
-        <p style="font-family:'Caveat',cursive; font-size:12px; color:#666; margin:0;">
+        <p class="font-hand text-xl text-mid m-0">
           ✓ envío gratis +50€ · ✓ devolución 30 días
         </p>
       </div>
@@ -176,47 +179,43 @@ const colorMap: Record<string, string> = {
   </div>
 
   <!-- Description / el chiste -->
-  <section style="background:#fff; border-top:2px solid #111; border-bottom:2px solid #111; padding:20px; max-width:900px; margin:0 auto;">
-    <h2 style="font-family:'Permanent Marker',cursive; font-size:18px; color:#111; margin:0 0 10px;">
-      el chiste
-    </h2>
-    <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0 0 14px;">
-      {product.longDescription}
-    </p>
-    <!-- Feature tags -->
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">100% algodón</span>
-      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">fabricado en España</span>
-      <span class="tag" style="background:#e0f7f0; color:#111; font-size:12px;">lavable a 30°</span>
-      {product.tags.slice(0, 2).map(t => (
-        <span class="tag" style="background:#fde8f0; color:#111; font-size:12px;">{t}</span>
-      ))}
+  <section class="bg-white border-y-2 border-dark">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-8">
+        el chiste
+      </h2>
+      <p class="font-hand text-2xl md:text-3xl text-mid leading-relaxed mb-10">
+        {product.longDescription}
+      </p>
+      <!-- Feature tags -->
+      <div class="flex gap-4 flex-wrap">
+        <span class="tag bg-mint-light text-dark border-2 border-dark text-lg md:text-xl px-5 py-2 shadow-hard">100% algodón</span>
+        <span class="tag bg-mint-light text-dark border-2 border-dark text-lg md:text-xl px-5 py-2 shadow-hard">fabricado en España</span>
+        <span class="tag bg-mint-light text-dark border-2 border-dark text-lg md:text-xl px-5 py-2 shadow-hard">lavable a 30°</span>
+        {product.tags.slice(0, 2).map(t => (
+          <span class="tag bg-light-pink text-dark border-2 border-dark text-lg md:text-xl px-5 py-2 shadow-hard">{t}</span>
+        ))}
+      </div>
     </div>
   </section>
 
   <!-- Related products -->
   {related.length > 0 && (
-    <section style="padding:20px; max-width:900px; margin:0 auto;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:18px; color:#111; margin:0 0 14px;">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10">
         también te puede gustar
       </h2>
-      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:12px;">
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
         {related.map((p, i) => (
-          <ProductCard product={p} rotation={relRotations[i % relRotations.length]} />
+          <div class={`transform ${relRotations[i % relRotations.length]} hover:z-10 hover:rotate-0 transition-transform duration-300`}>
+            <ProductCard product={p} rotation="rotate-0" />
+          </div>
         ))}
       </div>
     </section>
   )}
 
 </Layout>
-
-<style>
-  @media (max-width: 600px) {
-    .product-grid {
-      grid-template-columns: 1fr !important;
-    }
-  }
-</style>
 
 <script>
   import { addToCart } from '../../store/cart';

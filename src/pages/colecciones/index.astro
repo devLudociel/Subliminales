@@ -7,32 +7,36 @@ const colecciones = [
     id: 'patochar',
     name: 'PATOCHAR',
     desc: 'Cuando el clima es un chiste (y no solo el tiempo). Diseños que mezclan lo cotidiano con el absurdo.',
-    color: '#f72585',
-    textColor: '#fff',
+    bg: 'bg-pink',
+    color: 'text-white',
+    border: 'border-white',
     items: products.filter(p => p.collection === 'mind-control' || p.collection === 'hidden-truth').slice(0, 4),
   },
   {
     id: 'hidden-truth',
     name: 'HIDDEN TRUTH',
     desc: 'La verdad siempre estuvo ahí. Mira otra vez.',
-    color: '#111',
-    textColor: '#fff',
+    bg: 'bg-dark',
+    color: 'text-white',
+    border: 'border-white',
     items: products.filter(p => p.collection === 'hidden-truth').slice(0, 4),
   },
   {
     id: 'wake-up',
     name: 'WAKE UP',
     desc: 'Abre los ojos. En serio.',
-    color: '#4cc9a0',
-    textColor: '#111',
+    bg: 'bg-mint',
+    color: 'text-dark',
+    border: 'border-dark',
     items: products.filter(p => p.collection === 'wake-up').slice(0, 4),
   },
   {
     id: 'dual-meaning',
     name: 'DUAL MEANING',
     desc: 'Dos lecturas, un solo diseño. Lo que ves no es lo único que hay.',
-    color: '#fde8f0',
-    textColor: '#111',
+    bg: 'bg-light-pink',
+    color: 'text-dark',
+    border: 'border-dark',
     items: products.filter(p => p.collection === 'dual-meaning').slice(0, 4),
   },
 ];
@@ -43,60 +47,62 @@ const categoryEmoji: Record<string, string> = {
 };
 ---
 
-<Layout title="colecciones — subliminal.es">
+<Layout title="colecciones — subliminal.es" description="Explora nuestras colecciones temáticas de ropa con chiste.">
 
   <!-- Header -->
-  <section style="background:#f72585; border-bottom:2px solid #111; padding:20px;">
-    <h1 style="font-family:'Permanent Marker',cursive; font-size:32px; color:#fff; margin:0 0 6px;">
-      colecciones
-    </h1>
-    <p style="font-family:'Caveat',cursive; font-size:15px; color:rgba(255,255,255,0.85); margin:0;">
-      cada colección es un universo con su propio chiste
-    </p>
+  <section class="bg-pink border-b-2 border-dark py-16 md:py-24">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="font-marker text-5xl md:text-7xl text-white mb-6 leading-none">
+        colecciones
+      </h1>
+      <p class="font-hand text-2xl md:text-3xl text-white/90 m-0 max-w-2xl mx-auto">
+        cada colección es un universo con su propio chiste. elige tu veneno.
+      </p>
+    </div>
   </section>
 
   <!-- Collections list -->
-  <div style="padding:20px; display:flex; flex-direction:column; gap:16px; max-width:860px; margin:0 auto;">
-    {colecciones.map(col => (
-      <div style="display:flex; border:1.5px solid #111; overflow:hidden; background:#fff;">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-12">
+    {colecciones.map((col, i) => (
+      <div class={`flex flex-col sm:flex-row border-2 border-dark overflow-hidden bg-white shadow-hard transform ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} hover:rotate-0 transition-transform rounded-xl`}>
 
         <!-- Left zone: color band with rotated name -->
-        <div style={`background:${col.color}; color:${col.textColor}; width:70px; min-width:70px; display:flex; align-items:center; justify-content:center; flex-shrink:0;`}>
-          <span style={`font-family:'Permanent Marker',cursive; font-size:12px; writing-mode:vertical-rl; transform:rotate(180deg); letter-spacing:2px;`}>
+        <div class={`${col.bg} ${col.color} w-full sm:w-24 sm:min-w-[96px] py-4 sm:py-0 flex items-center justify-center shrink-0 border-b-2 sm:border-b-0 sm:border-r-2 border-dark`}>
+          <span class="font-marker text-3xl sm:text-4xl sm:[writing-mode:vertical-rl] sm:rotate-180 tracking-widest text-center">
             {col.name}
           </span>
         </div>
 
         <!-- Right zone -->
-        <div style="flex:1; padding:14px; border-left:2px solid #111;">
-          <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0 0 6px;">
+        <div class="flex-1 p-6 md:p-10">
+          <h2 class="font-marker text-3xl md:text-4xl text-dark mb-4">
             {col.name}
           </h2>
-          <p style="font-family:'Caveat',cursive; font-size:14px; color:#666; line-height:1.4; margin:0 0 12px;">
+          <p class="font-hand text-xl md:text-2xl text-mid leading-relaxed mb-8 max-w-xl">
             {col.desc}
           </p>
 
           <!-- Mini product grid -->
-          <div style="display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+          <div class="flex gap-4 mb-8 flex-wrap">
             {col.items.length > 0 ? col.items.slice(0, 3).map(p => (
-              <a href={`/producto/${p.slug}`} style="text-decoration:none;">
-                <div class="img-placeholder" style="width:65px; height:65px; border:1.5px solid #111; flex-shrink:0;">
-                  <span style="font-size:22px;">{categoryEmoji[p.category] ?? '📦'}</span>
+              <a href={`/producto/${p.slug}`} class="no-underline hover:-translate-y-1 transition-transform">
+                <div class="img-placeholder w-20 h-24 md:w-24 md:h-32 border-2 border-dark bg-bg flex items-center justify-center shadow-hard rounded-lg">
+                  <span class="text-4xl md:text-5xl">{categoryEmoji[p.category] ?? '📦'}</span>
                 </div>
               </a>
             )) : (
-              <span style="font-family:'Caveat',cursive; font-size:13px; color:#999;">próximamente...</span>
+              <span class="font-hand text-2xl text-mid opacity-75">próximamente...</span>
             )}
             {col.items.length > 3 && (
-              <div style="width:65px; height:65px; border:1.5px solid #111; background:#fde8f0; display:flex; align-items:center; justify-content:center; font-family:'Caveat',cursive; font-size:12px; color:#666; flex-shrink:0;">
-                +{col.items.length - 3} más
+              <div class="w-20 h-24 md:w-24 md:h-32 border-2 border-dark bg-mint-light flex items-center justify-center font-hand text-2xl md:text-3xl text-dark shrink-0 shadow-hard rounded-lg">
+                +{col.items.length - 3}
               </div>
             )}
           </div>
 
           <a
             href={`/tienda`}
-            style={`background:${col.color}; color:${col.textColor}; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:13px; padding:5px 14px; text-decoration:none; display:inline-block;`}
+            class={`${col.bg} ${col.color} border-2 border-dark font-hand text-2xl px-8 py-3 no-underline inline-block shadow-hard hover:-translate-y-1 transition-transform rounded-lg`}
           >
             ver colección →
           </a>

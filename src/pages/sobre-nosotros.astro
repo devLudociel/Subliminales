@@ -5,13 +5,13 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="sobre nosotros — subliminal.es">
 
   <!-- Hero dark -->
-  <section style="background:#111; padding:28px 20px; position:relative; overflow:hidden;">
-    <div style="position:absolute; top:-40px; right:-40px; width:180px; height:180px; border-radius:50%; background:rgba(247,37,133,0.15); filter:blur(40px); pointer-events:none;"></div>
-    <div style="max-width:680px; margin:0 auto; position:relative;">
-      <h1 style="font-family:'Permanent Marker',cursive; font-size:clamp(28px,6vw,42px); color:#fff; margin:0 0 12px; line-height:1.1;">
-        somos / <span style="color:#f72585;">subliminal</span>
+  <section class="bg-dark relative overflow-hidden">
+    <div class="absolute -top-16 -right-16 w-64 h-64 md:w-96 md:h-96 rounded-full bg-pink/20 blur-[60px] pointer-events-none"></div>
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10 text-center md:text-left">
+      <h1 class="font-marker text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-none">
+        somos / <span class="text-pink block md:inline">subliminal</span>
       </h1>
-      <p style="font-family:'Caveat',cursive; font-size:15px; color:rgba(255,255,255,0.7); margin:0; max-width:320px; line-height:1.5;">
+      <p class="font-hand text-2xl md:text-3xl text-white/80 m-0 max-w-2xl leading-relaxed mx-auto md:mx-0">
         Un proyecto personal de ropa con humor, doble sentido y poca pretensión.
         Empezó como un chiste. Sigue siendo un chiste. Pero de los buenos.
       </p>
@@ -19,20 +19,20 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Cómo empezó -->
-  <section style="background:#fff; border-bottom:2px solid #111; padding:24px 20px;">
-    <div style="max-width:680px; margin:0 auto;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:22px; color:#111; margin:0 0 16px;">
+  <section class="bg-white border-b-2 border-dark">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10 text-center md:text-left">
         cómo empezó todo
       </h2>
-      <div style="display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap;">
-        <div class="img-placeholder" style="width:130px; height:150px; flex-shrink:0; transform:rotate(-2deg);">
-          <span style="font-size:48px;">🤔</span>
+      <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center md:items-start">
+        <div class="img-placeholder w-32 h-40 md:w-48 md:h-56 shrink-0 -rotate-3 shadow-hard bg-white rounded-xl">
+          <span class="text-6xl md:text-8xl">🤔</span>
         </div>
-        <div style="flex:1; min-width:200px;">
-          <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0 0 10px;">
+        <div class="flex-1 text-center md:text-left">
+          <p class="font-hand text-2xl md:text-3xl text-mid leading-relaxed mb-6">
             Todo empezó con una camiseta que nadie entendía a primera vista. Esa sensación de que alguien te mira dos veces y luego se ríe solo — eso es lo que intentamos crear.
           </p>
-          <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; line-height:1.6; margin:0;">
+          <p class="font-hand text-2xl md:text-3xl text-mid leading-relaxed m-0">
             Somos un proyecto pequeño, sin pretensiones de gran marca. Solo diseños con chiste y ropa de calidad.
           </p>
         </div>
@@ -41,23 +41,23 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Cómo trabajamos -->
-  <section style="background:#e0f7f0; border-bottom:2px solid #111; padding:24px 20px;">
-    <div style="max-width:680px; margin:0 auto;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:22px; color:#111; margin:0 0 16px;">
+  <section class="bg-mint-light border-b-2 border-dark">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-12 text-center">
         cómo trabajamos
       </h2>
-      <div style="display:flex; flex-direction:column; gap:8px;">
+      <div class="flex flex-col gap-6 md:gap-8">
         {[
           { icon: '🎨', title: 'diseñamos nosotros', desc: 'Cada diseño sale de cero, sin plantillas. Si el chiste no nos hace gracia, no sale.' },
           { icon: '🏭', title: 'fabricación local',  desc: 'Producimos en pequeñas tiradas para no generar sobrestock. Calidad sobre cantidad.' },
           { icon: '😂', title: 'humor obligatorio',  desc: 'Si no tiene doble sentido o no provoca una segunda mirada, no lo publicamos.' },
           { icon: '♻️', title: 'sin sobreproducción', desc: 'Drops limitados. Cuando se acaba, se acaba. Sin reposiciones infinitas.' },
-        ].map(item => (
-          <div style="display:flex; gap:12px; align-items:flex-start; padding:10px 12px; background:#fff; border:1.5px solid #111;">
-            <span style="font-size:22px; flex-shrink:0;">{item.icon}</span>
+        ].map((item, i) => (
+          <div class={`flex flex-col md:flex-row gap-6 md:gap-8 items-start p-6 md:p-8 bg-white border-2 border-dark shadow-hard transform ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} hover:rotate-0 hover:scale-105 transition-all duration-300 rounded-xl`}>
+            <span class="text-5xl md:text-6xl shrink-0">{item.icon}</span>
             <div>
-              <p style="font-family:'Caveat',cursive; font-size:15px; font-weight:700; color:#111; margin:0 0 2px;">{item.title}</p>
-              <p style="font-family:'Caveat',cursive; font-size:13px; color:#666; margin:0; line-height:1.4;">{item.desc}</p>
+              <p class="font-hand text-3xl font-bold text-dark mb-3">{item.title}</p>
+              <p class="font-hand text-xl md:text-2xl text-mid m-0 leading-relaxed">{item.desc}</p>
             </div>
           </div>
         ))}
@@ -66,21 +66,19 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- ¿Hablamos? -->
-  <section style="background:#fde8f0; border-bottom:2px solid #111; padding:24px 20px;">
-    <div style="max-width:680px; margin:0 auto;">
-      <h2 style="font-family:'Permanent Marker',cursive; font-size:20px; color:#111; margin:0 0 8px;">
+  <section class="bg-light-pink border-b-2 border-dark">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-6">
         ¿hablamos?
       </h2>
-      <p style="font-family:'Caveat',cursive; font-size:15px; color:#666; margin:0 0 14px; line-height:1.5;">
+      <p class="font-hand text-2xl md:text-3xl text-mid mb-10 leading-relaxed">
         Colaboraciones, ideas raras, quejas, chistes malos. Todo bienvenido.
       </p>
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a href="/contacto"
-           style="background:#f72585; color:#fff; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:14px; padding:8px 18px; text-decoration:none; display:inline-block;">
+      <div class="flex flex-col sm:flex-row gap-6 justify-center">
+        <a href="/contacto" class="bg-pink text-white border-2 border-dark font-hand text-2xl px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
           email →
         </a>
-        <a href="#"
-           style="background:#111; color:#4cc9a0; border:1.5px solid #111; font-family:'Caveat',cursive; font-size:14px; padding:8px 18px; text-decoration:none; display:inline-block;">
+        <a href="#" class="bg-dark text-mint border-2 border-dark font-hand text-2xl px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
           instagram →
         </a>
       </div>

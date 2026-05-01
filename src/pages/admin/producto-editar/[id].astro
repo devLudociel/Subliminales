@@ -1,0 +1,17 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import ProductForm from '../../../components/admin/ProductForm';
+
+const { id } = Astro.params;
+---
+
+<AdminLayout title="Editar Producto">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <a href="/admin" class="font-hand text-xl text-mid hover:text-dark no-underline transition-colors">← Volver a productos</a>
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none mt-4">Editar Producto</h1>
+      <p class="font-hand text-2xl text-mid">Modifica los datos y guarda los cambios.</p>
+    </div>
+    <ProductForm client:load productId={id} />
+  </div>
+</AdminLayout>

@@ -3,66 +3,56 @@ import Layout from '../layouts/Layout.astro';
 
 const faqs = [
   {
-    q: '¿Cuánto tiempo tarda en hacer efecto?',
-    a: 'Los resultados varían según la persona, pero la mayoría empieza a notar cambios entre 2-4 semanas de escucha consistente. Para resultados profundos, recomendamos 90 días.',
+    q: '¿Cómo son las tallas?',
+    a: 'Nuestras camisetas y sudaderas tienen un corte unisex ligeramente oversize. Si prefieres un ajuste más ceñido, te recomendamos pedir una talla menos de la que usas habitualmente.',
   },
   {
-    q: '¿Puedo escuchar mientras duermo?',
-    a: 'Sí. De hecho, escuchar mientras duermes es una de las formas más efectivas, ya que la mente consciente está inactiva y el subconsciente es más receptivo.',
+    q: '¿Cuánto tiempo tarda el envío?',
+    a: 'Los envíos a la Península tardan entre 24 y 48 horas laborables una vez que el pedido ha sido procesado. La producción bajo demanda puede sumar de 1 a 3 días extra.',
   },
   {
-    q: '¿Son seguros los audios subliminales?',
-    a: 'Completamente seguros. Solo contienen afirmaciones positivas. No hay hipnosis, tonos dañinos ni mensajes negativos. Son adecuados para toda la familia.',
+    q: '¿Los chistes son originales?',
+    a: 'Completamente. Cada diseño sale de nuestra cabeza. Si alguna vez ves una copia por ahí, diles que el original es nuestro y mándanos un MD para quejarnos juntos.',
   },
   {
-    q: '¿En qué formato recibiré los archivos?',
-    a: 'Recibirás los archivos en MP3 320kbps y FLAC (sin pérdida de calidad) mediante un enlace de descarga enviado a tu email inmediatamente tras la compra.',
+    q: '¿Cómo debo lavar las prendas?',
+    a: 'Lava siempre del revés con agua fría (máx 30º). No uses secadora ni planches directamente sobre el diseño. Trata la prenda como si fuera tu chiste favorito, con cariño.',
   },
   {
-    q: '¿Qué pasa si no veo resultados?',
-    a: 'Ofrecemos garantía de devolución de 30 días sin preguntas. Si no estás satisfecho por cualquier motivo, te devolvemos el dinero completamente.',
+    q: '¿Aceptan devoluciones?',
+    a: 'Sí, tienes 30 días para devolver la prenda si no te convence, siempre y cuando no la hayas usado ni lavado (póntela para probar, pero no te vayas de fiesta con ella).',
   },
   {
-    q: '¿Necesito creer en los subliminales para que funcionen?',
-    a: 'No necesariamente. Los subliminales trabajan a nivel subconsciente, por lo que no es imprescindible creer conscientemente en ellos. Sin embargo, una mente abierta potencia los resultados.',
-  },
-  {
-    q: '¿Puedo escuchar varios programas a la vez?',
-    a: 'Sí, aunque recomendamos no más de 2-3 programas simultáneamente para no saturar el subconsciente. Prioriza los más importantes para ti.',
-  },
-  {
-    q: '¿Cuántas veces al día debo escuchar?',
-    a: 'Recomendamos al menos una sesión diaria de 30-60 minutos. Puedes escuchar varias veces al día para potenciar los resultados.',
+    q: '¿Hacen envíos internacionales?',
+    a: 'De momento solo enviamos a toda España, pero estamos trabajando para llevar nuestros chistes a más países pronto.',
   },
 ];
 ---
 
-<Layout title="Preguntas Frecuentes" description="Respuestas a las preguntas más comunes sobre nuestros audios subliminales.">
-  <section class="bg-hero-gradient border-b border-dark-border py-16">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
-      <h1 class="font-display font-black text-5xl text-white mb-4">Preguntas Frecuentes</h1>
-      <p class="text-gray-400 text-xl">Todo lo que necesitas saber antes de empezar.</p>
+<Layout title="Preguntas Frecuentes — subliminal.es" description="Respuestas a las preguntas más comunes sobre nuestra tienda y productos.">
+  <section class="bg-mint border-b-2 border-dark py-16 md:py-24">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="font-marker text-5xl md:text-7xl text-dark mb-6 leading-none">Preguntas Frecuentes</h1>
+      <p class="font-hand text-2xl md:text-3xl text-dark/80 max-w-2xl mx-auto">Lo que todo el mundo nos pregunta antes de comprar. Léelo antes de mandarnos un email, porfa.</p>
     </div>
   </section>
 
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-4">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-6">
     {faqs.map((faq, i) => (
-      <details class="card group">
-        <summary class="flex items-center justify-between p-6 cursor-pointer list-none">
-          <h3 class="font-semibold text-white group-open:text-primary-300 transition-colors pr-4">{faq.q}</h3>
-          <svg class="w-5 h-5 text-gray-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
+      <details class="bg-white border-2 border-dark shadow-hard group rounded-xl overflow-hidden cursor-pointer open:bg-light-pink transition-colors">
+        <summary class="flex items-center justify-between p-6 md:p-8 list-none outline-none">
+          <h3 class="font-marker text-2xl md:text-3xl text-dark pr-6">{faq.q}</h3>
+          <span class="text-4xl text-pink shrink-0 group-open:rotate-45 transition-transform duration-300">+</span>
         </summary>
-        <div class="px-6 pb-6">
-          <p class="text-gray-400 leading-relaxed">{faq.a}</p>
+        <div class="px-6 md:px-8 pb-6 md:pb-8 border-t-2 border-dark/10 pt-4 md:pt-6">
+          <p class="font-hand text-xl md:text-2xl text-mid leading-relaxed">{faq.a}</p>
         </div>
       </details>
     ))}
 
-    <div class="text-center pt-8">
-      <p class="text-gray-500 mb-4">¿Tienes otra pregunta?</p>
-      <a href="/contacto" class="btn-secondary">Contáctanos</a>
+    <div class="text-center pt-12 md:pt-16">
+      <p class="font-hand text-3xl text-dark mb-8">¿Tienes una pregunta más rara?</p>
+      <a href="/contacto" class="btn-dark text-2xl px-10 py-4 shadow-hard hover:-translate-y-1 transition-all inline-block rounded-lg">Escríbenos</a>
     </div>
   </div>
 </Layout>
