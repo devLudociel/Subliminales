@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import OrdersManager from '../../components/admin/OrdersManager';
+---
+
+<AdminLayout title="Pedidos">
+  <div class="px-4 md:px-0">
+    <div class="mb-8">
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-2 leading-none">Pedidos</h1>
+      <p class="font-hand text-2xl text-mid">Gestiona estados, tracking y detalles de cada pedido.</p>
+    </div>
+    <OrdersManager client:load />
+  </div>
+</AdminLayout>

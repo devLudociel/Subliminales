@@ -103,11 +103,29 @@ export const POST: APIRoute = async ({ request }) => {
           );
 
         if (variant) {
+          // Stock check
+          if (variant.stock < item.quantity) {
+            const available = variant.stock;
+            const varLabel = [item.size, item.color].filter(Boolean).join(' / ');
+            if (available <= 0) {
+              return json({ error: `"${product.name}${varLabel ? ' — ' + varLabel : ''}" está agotado.` }, 400);
+            }
+            return json({ error: `Solo quedan ${available} unidades de "${product.name}${varLabel ? ' — ' + varLabel : ''}".` }, 400);
+          }
           if (variant.priceOverride && variant.priceOverride > 0) {
             const grossOverride = variant.priceOverride;
             finalPrice = isCanarias ? grossOverride / IVA_DIVISOR : grossOverride;
           }
           resolvedVariantId = variant.id;
+        } else if (product.variants?.length) {
+          // Variant expected but not found
+          return json({ error: `Variante no encontrada para: ${product.name}` }, 400);
+        } else if (typeof product.stock === 'number' && product.stock < item.quantity) {
+          // Product without variants — check base stock
+          if (product.stock <= 0) {
+            return json({ error: `"${product.name}" está agotado.` }, 400);
+          }
+          return json({ error: `Solo quedan ${product.stock} unidades de "${product.name}".` }, 400);
         }
       }
 

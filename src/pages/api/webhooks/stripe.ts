@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 import Stripe from 'stripe';
 import { db } from '../../../lib/firebase/client';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, doc, runTransaction } from 'firebase/firestore';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string);
 
@@ -67,6 +67,43 @@ export const POST: APIRoute = async ({ request }) => {
       });
 
       console.log('Order saved:', session.id);
+
+      // Decrement stock for each item using transactions
+      for (const item of items) {
+        if (!item.productId) continue;
+        try {
+          const productRef = doc(db, 'products', item.productId);
+          await runTransaction(db, async (tx) => {
+            const snap = await tx.get(productRef);
+            if (!snap.exists()) return;
+            const data = snap.data();
+
+            if (data.variants?.length) {
+              // Find matching variant and decrement its stock
+              const variants = [...data.variants];
+              const idx = variants.findIndex((v: any) =>
+                item.variantId
+                  ? v.id === item.variantId
+                  : (item.size  ? v.size  === item.size  : true) &&
+                    (item.color ? v.color === item.color : true)
+              );
+              if (idx !== -1) {
+                variants[idx] = {
+                  ...variants[idx],
+                  stock: Math.max(0, (variants[idx].stock ?? 0) - item.quantity),
+                };
+                tx.update(productRef, { variants });
+              }
+            } else if (typeof data.stock === 'number') {
+              // Product without variants
+              tx.update(productRef, { stock: Math.max(0, data.stock - item.quantity) });
+            }
+          });
+        } catch (stockErr) {
+          console.error(`Error decrementing stock for ${item.productId}:`, stockErr);
+          // Non-fatal — order is saved, log for manual review
+        }
+      }
     } catch (err) {
       console.error('Error saving order to Firestore:', err);
       // Still return 200 so Stripe doesn't retry — log and investigate manually

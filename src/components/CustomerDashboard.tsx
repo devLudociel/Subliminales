@@ -12,6 +12,8 @@ import { auth, db } from '../lib/firebase/client';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
+type OrderStatus = 'nuevo' | 'preparando' | 'enviado' | 'entregado' | 'cancelado';
+
 interface Order {
   id: string;
   stripeSessionId: string;
@@ -21,6 +23,9 @@ interface Order {
   createdAt: any;
   shippingMethod: string;
   taxNote: string;
+  status?: OrderStatus;
+  trackingNumber?: string;
+  carrier?: string;
   customer: {
     name: string;
     email: string;
@@ -38,6 +43,23 @@ interface Order {
     name?: string;
   }>;
 }
+
+const ORDER_STATUS_INFO: Record<OrderStatus, { label: string; color: string; bg: string; icon: string }> = {
+  nuevo:      { label: 'Recibido',    icon: '🆕', color: 'text-blue-700',   bg: 'bg-blue-50 border-blue-200'    },
+  preparando: { label: 'Preparando',  icon: '🔧', color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
+  enviado:    { label: 'En camino',   icon: '🚚', color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200' },
+  entregado:  { label: 'Entregado',   icon: '✅', color: 'text-green-700',  bg: 'bg-green-50 border-green-200'   },
+  cancelado:  { label: 'Cancelado',   icon: '❌', color: 'text-red-700',    bg: 'bg-red-50 border-red-200'       },
+};
+
+const CARRIER_TRACKING: Record<string, string> = {
+  'Correos': 'https://www.correos.es/es/es/herramientas/localizador/envios/detalle?tracking=',
+  'SEUR':    'https://www.seur.com/livetracking/?segOnlineIdentificador=',
+  'MRW':     'https://www.mrw.es/seguimiento_envios/buscador_dhl.asp?Num_Alb=',
+  'GLS':     'https://gls-group.com/track/',
+  'DHL':     'https://www.dhl.com/es-es/home/tracking/tracking-express.html?submit=1&tracking-id=',
+  'UPS':     'https://www.ups.com/track?tracknum=',
+};
 
 interface UserProfile {
   displayName: string;
@@ -91,6 +113,15 @@ function StatusBadge({ status }: { status: string }) {
 function OrderCard({ order, onExpand, expanded }: {
   order: Order; onExpand: () => void; expanded: boolean;
 }) {
+  const st = ORDER_STATUS_INFO[order.status ?? 'nuevo'];
+  const trackingUrl = order.carrier && order.trackingNumber
+    ? (CARRIER_TRACKING[order.carrier] ?? '') + order.trackingNumber
+    : null;
+
+  // Progress steps
+  const steps: OrderStatus[] = ['nuevo', 'preparando', 'enviado', 'entregado'];
+  const currentStep = steps.indexOf(order.status ?? 'nuevo');
+
   return (
     <div className="border-2 border-dark bg-white rounded-xl shadow-hard overflow-hidden">
       {/* Header */}
@@ -99,9 +130,11 @@ function OrderCard({ order, onExpand, expanded }: {
         onClick={onExpand}
         className="w-full flex items-center justify-between p-5 hover:bg-bg transition-colors text-left"
       >
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           <span className="font-marker text-xl text-dark">#{shortId(order.stripeSessionId)}</span>
-          <StatusBadge status={order.paymentStatus} />
+          <span className={`px-2 py-0.5 border rounded-full font-hand text-base ${st.bg} ${st.color}`}>
+            {st.icon} {st.label}
+          </span>
           <span className="font-hand text-lg text-mid">{formatDate(order.createdAt)}</span>
         </div>
         <div className="flex items-center gap-4 shrink-0">
@@ -110,33 +143,81 @@ function OrderCard({ order, onExpand, expanded }: {
         </div>
       </button>
 
+      {/* Progress bar — only for non-cancelled */}
+      {order.status !== 'cancelado' && (
+        <div className="px-5 pb-4 flex items-center gap-0">
+          {steps.map((step, i) => {
+            const stepInfo = ORDER_STATUS_INFO[step];
+            const done   = i <= currentStep;
+            const active = i === currentStep;
+            return (
+              <div key={step} className="flex items-center flex-1 last:flex-none">
+                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold transition-all ${
+                  done ? 'bg-mint border-dark text-dark' : 'bg-white border-dark/20 text-mid'
+                } ${active ? 'scale-110 shadow-hard' : ''}`}>
+                  {done ? stepInfo.icon : '○'}
+                </div>
+                <p className={`hidden sm:block ml-1 font-hand text-sm ${done ? 'text-dark font-bold' : 'text-mid'}`}>
+                  {stepInfo.label}
+                </p>
+                {i < steps.length - 1 && (
+                  <div className={`flex-1 h-0.5 mx-2 ${i < currentStep ? 'bg-mint' : 'bg-dark/10'}`} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Detail */}
       {expanded && (
         <div className="border-t-2 border-dark/10 p-5 space-y-5 bg-bg">
+
+          {/* Tracking callout */}
+          {order.trackingNumber && (
+            <div className={`border-2 rounded-xl p-4 ${st.bg}`}>
+              <p className={`font-hand text-lg font-bold mb-1 ${st.color}`}>🚚 Seguimiento del envío</p>
+              <p className="font-hand text-xl text-dark">
+                {order.carrier && <span className="font-bold">{order.carrier} · </span>}
+                <span className="font-mono">{order.trackingNumber}</span>
+              </p>
+              {trackingUrl && (
+                <a
+                  href={trackingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-block mt-2 font-hand text-lg font-bold no-underline hover:opacity-80 transition-opacity ${st.color}`}
+                >
+                  Ver en tiempo real →
+                </a>
+              )}
+            </div>
+          )}
+
           {/* Items */}
           <div>
             <p className="font-hand text-lg text-mid font-bold mb-2 uppercase tracking-wide">Artículos</p>
             <div className="space-y-2">
               {order.items.map((item, i) => {
                 const variantParts = [item.size, item.color].filter(Boolean);
-                const displayName = item.name || item.productId;
+                const displayName  = item.name || item.productId;
                 return (
-                  <div key={i} className="flex items-center gap-3">
+                  <div key={i} className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-dark/10">
                     <span className="text-xl">👕</span>
-                    <span className="font-hand text-xl text-dark">
+                    <span className="font-hand text-xl text-dark flex-1">
                       {displayName}
                       {variantParts.length > 0 && (
                         <span className="text-mid"> — {variantParts.join(' / ')}</span>
                       )}
                     </span>
-                    <span className="font-hand text-lg text-mid ml-auto">×{item.quantity}</span>
+                    <span className="font-hand text-lg text-mid">×{item.quantity}</span>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Shipping */}
+          {/* Shipping + address */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="font-hand text-lg text-mid font-bold mb-1 uppercase tracking-wide">Envío</p>
