@@ -52,7 +52,7 @@ export const POST: APIRoute = async ({ request }) => {
         currency: session.currency,
         customer: {
           name: meta.customer_name ?? '',
-          email: meta.customer_email ?? session.customer_email ?? '',
+          email: (meta.customer_email ?? session.customer_email ?? '').toLowerCase(),
           address: meta.shipping_address ?? '',
           city: meta.shipping_city ?? '',
           province: meta.shipping_province ?? '',
@@ -60,6 +60,8 @@ export const POST: APIRoute = async ({ request }) => {
         },
         shippingMethod: meta.shipping_method ?? 'standard',
         taxNote: meta.tax_note ?? '',
+        userUid: meta.user_uid || null,
+        customerEmail: (meta.customer_email ?? session.customer_email ?? '').toLowerCase(),
         items,
         createdAt: serverTimestamp(),
       });

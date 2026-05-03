@@ -44,7 +44,8 @@ export const POST: APIRoute = async ({ request }) => {
       customer,
       shippingMethod,
       isCanarias,
-    }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean } = body;
+      userUid,
+    }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean; userUid?: string } = body;
 
     // ── Validate input ──────────────────────────────────────────
     if (!items?.length) {
@@ -221,6 +222,7 @@ export const POST: APIRoute = async ({ request }) => {
         shipping_zip:      customer.zip,
         shipping_method:   shippingMethod,
         tax_note:          taxNote,
+        user_uid:          userUid ?? '',
         // format: "productId:variantId:size:color:qty" comma-separated
         item_ids:          itemMeta.join(','),
       },

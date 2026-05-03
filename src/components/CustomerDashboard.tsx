@@ -177,12 +177,14 @@ export default function CustomerDashboard() {
   // ── Auth listener ──────────────────────────────────────────────────────────
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
+      // ALWAYS set authLoading=false first — prevents redirect during session restore
+      setAuthLoading(false);
+
       if (!u) {
         window.location.href = '/login';
         return;
       }
       setUser(u);
-      setAuthLoading(false);
 
       // Load profile from Firestore
       try {
@@ -191,7 +193,6 @@ export default function CustomerDashboard() {
           const data = snap.data() as Partial<UserProfile>;
           setProfile(prev => ({ ...prev, ...data }));
         } else {
-          // Pre-fill displayName from Firebase Auth
           setProfile(prev => ({ ...prev, displayName: u.displayName ?? '' }));
         }
       } catch {}
@@ -206,37 +207,42 @@ export default function CustomerDashboard() {
   }, [tab, user]);
 
   async function loadOrders() {
-    if (!user?.email) return;
+    if (!user) return;
     setOrdersLoading(true);
-    try {
-      const q = query(
-        collection(db, 'orders'),
-        where('customer.email', '==', user.email),
-        orderBy('createdAt', 'desc')
-      );
-      const snap = await getDocs(q);
-      const result: Order[] = snap.docs.map(d => ({ id: d.id, ...d.data() } as Order));
-      setOrders(result);
-    } catch (err: any) {
-      // Fallback: query without orderBy (avoids missing index error)
+
+    const sortDesc = (a: Order, b: Order) => {
+      const ta = a.createdAt?.toDate?.() ?? new Date(0);
+      const tb = b.createdAt?.toDate?.() ?? new Date(0);
+      return tb.getTime() - ta.getTime();
+    };
+
+    // Merge results from both queries, dedupe by id
+    const seen = new Set<string>();
+    let allOrders: Order[] = [];
+
+    const runQuery = async (field: string, value: string) => {
       try {
-        const q2 = query(
-          collection(db, 'orders'),
-          where('customer.email', '==', user.email)
+        const snap = await getDocs(
+          query(collection(db, 'orders'), where(field, '==', value))
         );
-        const snap2 = await getDocs(q2);
-        const result2: Order[] = snap2.docs
-          .map(d => ({ id: d.id, ...d.data() } as Order))
-          .sort((a, b) => {
-            const ta = a.createdAt?.toDate?.() ?? new Date(0);
-            const tb = b.createdAt?.toDate?.() ?? new Date(0);
-            return tb.getTime() - ta.getTime();
-          });
-        setOrders(result2);
-      } catch {}
-    } finally {
-      setOrdersLoading(false);
-    }
+        snap.docs.forEach(d => {
+          if (!seen.has(d.id)) {
+            seen.add(d.id);
+            allOrders.push({ id: d.id, ...d.data() } as Order);
+          }
+        });
+      } catch (err) {
+        console.warn(`[Orders] query ${field} failed:`, err);
+      }
+    };
+
+    // Query by UID (most reliable — linked at checkout)
+    await runQuery('userUid', user.uid);
+    // Query by email as fallback (catches guest checkouts with same email)
+    if (user.email) await runQuery('customer.email', user.email.toLowerCase());
+
+    setOrders(allOrders.sort(sortDesc));
+    setOrdersLoading(false);
   }
 
   // ── Save profile ───────────────────────────────────────────────────────────

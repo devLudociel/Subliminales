@@ -48,11 +48,13 @@ export default function CheckoutForm() {
   const [shipping, setShipping] = useState<ShippingMethod>('standard');
   const [loading, setLoading]   = useState(false);
   const [apiError, setApiError] = useState('');
+  const [userUid, setUserUid]   = useState<string | undefined>();
 
-  // Pre-fill from saved profile
+  // Pre-fill from saved profile + capture UID
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
       if (!user) return;
+      setUserUid(user.uid);
       try {
         const snap = await getDoc(doc(db, 'users', user.uid));
         if (!snap.exists()) return;
@@ -146,6 +148,7 @@ export default function CheckoutForm() {
           })),
           shippingMethod: finalShipping,
           isCanarias:     canarias,
+          userUid,
           customer: {
             email:     form.email.trim(),
             firstName: form.firstName.trim(),
