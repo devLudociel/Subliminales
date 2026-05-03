@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { cartItems, cartTotal, cartCount } from '../store/cart';
+import { cartItems, cartTotal, cartCount, removeFromCart, updateQuantity } from '../store/cart';
 
 interface FormData {
   firstName: string;
@@ -86,7 +86,13 @@ export default function CheckoutForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: items.map(i => ({ id: i.id, quantity: i.quantity })),
+          items: items.map(i => ({
+              id:        i.id,
+              quantity:  i.quantity,
+              variantId: i.variantId,
+              size:      i.size,
+              color:     i.color,
+            })),
           shippingMethod: finalShipping,
           customer: {
             email:     form.email.trim(),
@@ -313,7 +319,7 @@ export default function CheckoutForm() {
 
               <div className="space-y-4 mb-6 max-h-72 overflow-y-auto pr-1">
                 {items.map(item => (
-                  <div key={item.id} className="flex items-center gap-4 p-3 bg-bg rounded-lg border border-dark/10">
+                  <div key={item.cartKey} className="flex items-center gap-4 p-3 bg-bg rounded-lg border border-dark/10">
                     <div className="w-12 h-12 rounded-lg border border-dark overflow-hidden shrink-0 bg-mint-light flex items-center justify-center">
                       {item.image
                         ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
@@ -322,6 +328,11 @@ export default function CheckoutForm() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-hand text-xl text-dark font-bold truncate">{item.name}</p>
+                      {(item.size || item.color) && (
+                        <p className="font-hand text-base text-mid">
+                          {[item.size, item.color].filter(Boolean).join(' · ')}
+                        </p>
+                      )}
                       <p className="font-hand text-lg text-mid">×{item.quantity}</p>
                     </div>
                     <span className="font-hand text-xl font-bold text-dark shrink-0">

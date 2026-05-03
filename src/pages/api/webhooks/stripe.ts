@@ -27,10 +27,22 @@ export const POST: APIRoute = async ({ request }) => {
 
     try {
       const meta = session.metadata ?? {};
+      // format: "productId:variantId:size:color:qty"
       const itemPairs = (meta.item_ids ?? '').split(',').filter(Boolean);
       const items = itemPairs.map(pair => {
-        const [id, qty] = pair.split(':');
-        return { productId: id, quantity: Number(qty) };
+        const parts = pair.split(':');
+        // support old format "productId:qty" and new "productId:variantId:size:color:qty"
+        if (parts.length <= 2) {
+          return { productId: parts[0], quantity: Number(parts[1] ?? 1) };
+        }
+        const [productId, variantId, size, color, qty] = parts;
+        return {
+          productId,
+          variantId: variantId || undefined,
+          size: size || undefined,
+          color: color || undefined,
+          quantity: Number(qty),
+        };
       });
 
       await addDoc(collection(db, 'orders'), {

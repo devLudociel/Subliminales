@@ -1,6 +1,8 @@
 import { useStore } from '@nanostores/react';
 import { cartItems, cartTotal, cartCount, updateQuantity, removeFromCart } from '../store/cart';
 
+const FREE_THRESHOLD = 60;
+
 export default function CartPage() {
   const items = useStore(cartItems);
   const total = useStore(cartTotal);
@@ -26,21 +28,24 @@ export default function CartPage() {
     );
   }
 
-  const freeShipping = total >= 50;
+  const freeShipping = total >= FREE_THRESHOLD;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 flex flex-col gap-8">
 
       {/* Items */}
       <div className="flex flex-col gap-6">
-        {items.map((item, i) => (
+        {items.map((item) => (
           <div
-            key={item.id}
+            key={item.cartKey}
             className="border-2 border-dark bg-white p-5 md:p-6 flex flex-col sm:flex-row gap-5 items-center shadow-hard rounded-xl"
           >
             {/* Thumbnail */}
-            <div className="w-20 h-20 md:w-24 md:h-24 border-2 border-dark bg-bg flex items-center justify-center shrink-0 text-4xl md:text-5xl rounded-lg">
-              📦
+            <div className="w-20 h-20 md:w-24 md:h-24 border-2 border-dark bg-bg flex items-center justify-center shrink-0 rounded-lg overflow-hidden">
+              {item.image
+                ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                : <span className="text-4xl md:text-5xl">📦</span>
+              }
             </div>
 
             {/* Info */}
@@ -48,6 +53,21 @@ export default function CartPage() {
               <p className="font-hand text-2xl md:text-3xl font-bold text-dark mb-1 leading-tight">
                 {item.name}
               </p>
+              {/* Variant badges */}
+              {(item.size || item.color) && (
+                <div className="flex gap-2 flex-wrap justify-center sm:justify-start mb-1">
+                  {item.size && (
+                    <span className="font-hand text-lg px-3 py-0.5 border-2 border-dark bg-bg rounded-full text-dark font-bold">
+                      {item.size}
+                    </span>
+                  )}
+                  {item.color && (
+                    <span className="font-hand text-lg px-3 py-0.5 border-2 border-dark bg-bg rounded-full text-dark">
+                      {item.color}
+                    </span>
+                  )}
+                </div>
+              )}
               <p className="font-hand text-xl md:text-2xl text-mid">
                 {item.price.toFixed(2)}€ c/u
               </p>
@@ -56,14 +76,14 @@ export default function CartPage() {
             {/* Quantity controls */}
             <div className="flex items-center gap-3 shrink-0">
               <button
-                onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                onClick={() => updateQuantity(item.cartKey, item.quantity - 1)}
                 className="w-10 h-10 md:w-12 md:h-12 border-2 border-dark bg-white font-hand text-2xl cursor-pointer flex items-center justify-center p-0 shadow-hard hover:bg-bg transition-colors rounded-lg"
               >−</button>
               <span className="font-hand text-2xl md:text-3xl text-dark min-w-[30px] text-center font-bold">
                 {item.quantity}
               </span>
               <button
-                onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
                 className="w-10 h-10 md:w-12 md:h-12 border-2 border-dark bg-white font-hand text-2xl cursor-pointer flex items-center justify-center p-0 shadow-hard hover:bg-bg transition-colors rounded-lg"
               >+</button>
             </div>
@@ -75,7 +95,7 @@ export default function CartPage() {
 
             {/* Remove */}
             <button
-              onClick={() => removeFromCart(item.id)}
+              onClick={() => removeFromCart(item.cartKey)}
               className="bg-none border-2 border-dark/20 font-hand text-2xl text-mid cursor-pointer shrink-0 hover:text-pink hover:border-pink transition-colors w-10 h-10 rounded-full flex items-center justify-center"
               aria-label="Eliminar"
             >×</button>
@@ -92,33 +112,22 @@ export default function CartPage() {
         <div className="flex justify-between mb-4">
           <span className="font-hand text-2xl text-mid">envío</span>
           <span className={`font-hand text-2xl ${freeShipping ? 'text-mint font-bold' : 'text-dark'}`}>
-            {freeShipping ? 'gratis 🎉' : '4.95€'}
+            {freeShipping ? 'gratis 🎉' : 'desde 6.99€'}
           </span>
         </div>
         {!freeShipping && (
           <p className="font-hand text-xl text-mid mb-4">
-            añade {(50 - total).toFixed(2)}€ más para envío gratis
+            añade {(FREE_THRESHOLD - total).toFixed(2)}€ más para envío gratis
           </p>
         )}
 
         <div className="border-t-2 border-dashed border-dark pt-5 mt-2 flex justify-between items-baseline">
           <span className="font-marker text-3xl text-dark">total</span>
           <span className="font-marker text-4xl text-pink">
-            {(total + (freeShipping ? 0 : 4.95)).toFixed(2)}€
+            {total.toFixed(2)}€
           </span>
         </div>
-      </div>
-
-      {/* Discount code */}
-      <div className="flex gap-4">
-        <input
-          type="text"
-          placeholder="código descuento"
-          className="flex-1 px-6 py-4 font-hand text-xl border-2 border-dark bg-white text-dark outline-none focus:shadow-hard transition-all rounded-none"
-        />
-        <button className="bg-dark text-mint border-2 border-dark font-hand text-xl px-8 py-4 cursor-pointer whitespace-nowrap shadow-hard hover:-translate-y-1 transition-all rounded-lg">
-          aplicar
-        </button>
+        <p className="font-hand text-lg text-mid mt-1 text-right">+ envío (se calcula al pagar)</p>
       </div>
 
       {/* CTA */}
