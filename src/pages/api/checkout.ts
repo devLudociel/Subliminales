@@ -6,7 +6,8 @@ import type { ProductVariant } from '../../data/products';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string);
 
-const FREE_THRESHOLD_CENTS = 6000; // 60€
+const FREE_THRESHOLD_CENTS = 6000; // 60€ gross
+const IVA_DIVISOR          = 1.21;  // prices stored with IVA 21% included
 
 const SHIPPING_RATES = {
   standard: { display_name: 'Envío estándar 📦', amount: 699 },
@@ -42,7 +43,8 @@ export const POST: APIRoute = async ({ request }) => {
       items,
       customer,
       shippingMethod,
-    }: { items: OrderItem[]; customer: Customer; shippingMethod: string } = body;
+      isCanarias,
+    }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean } = body;
 
     // ── Validate input ──────────────────────────────────────────
     if (!items?.length) {
@@ -85,7 +87,7 @@ export const POST: APIRoute = async ({ request }) => {
       }
 
       // Resolve variant price override
-      let finalPrice = basePrice;
+      let finalPrice = isCanarias ? basePrice / IVA_DIVISOR : basePrice;
       let resolvedVariantId = item.variantId ?? '';
 
       if (product.variants?.length) {
@@ -101,7 +103,8 @@ export const POST: APIRoute = async ({ request }) => {
 
         if (variant) {
           if (variant.priceOverride && variant.priceOverride > 0) {
-            finalPrice = variant.priceOverride;
+            const grossOverride = variant.priceOverride;
+            finalPrice = isCanarias ? grossOverride / IVA_DIVISOR : grossOverride;
           }
           resolvedVariantId = variant.id;
         }
@@ -149,11 +152,19 @@ export const POST: APIRoute = async ({ request }) => {
 
     let shippingOption: Stripe.Checkout.SessionCreateParams.ShippingOption;
 
+    // Adjust shipping cost for Canarias (remove IVA)
+    const stdCents = isCanarias
+      ? Math.round(SHIPPING_RATES.standard.amount / IVA_DIVISOR)
+      : SHIPPING_RATES.standard.amount;
+    const expCents = isCanarias
+      ? Math.round(SHIPPING_RATES.express.amount / IVA_DIVISOR)
+      : SHIPPING_RATES.express.amount;
+
     if (shippingMethod === 'express') {
       shippingOption = {
         shipping_rate_data: {
           type: 'fixed_amount',
-          fixed_amount: { amount: SHIPPING_RATES.express.amount, currency: 'eur' },
+          fixed_amount: { amount: expCents, currency: 'eur' },
           display_name: SHIPPING_RATES.express.display_name,
           delivery_estimate: {
             minimum: { unit: 'business_day', value: 1 },
@@ -179,7 +190,7 @@ export const POST: APIRoute = async ({ request }) => {
         shipping_rate_data: {
           type: 'fixed_amount',
           fixed_amount: {
-            amount: freeEligible ? 0 : SHIPPING_RATES.standard.amount,
+            amount: freeEligible ? 0 : stdCents,
             currency: 'eur',
           },
           display_name: freeEligible ? 'Envío gratis 🎉' : SHIPPING_RATES.standard.display_name,
@@ -192,7 +203,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const origin = request.headers.get('origin') || 'https://subliminal.es';
-    const taxNote = isCanarias(customer.zip) ? 'Exento IGIC (Canarias)' : 'IVA 21% incluido';
+    const taxNote = isCanarias ? 'Exento IVA (Canarias)' : 'IVA 21% incluido';
 
     // ── Create Stripe Checkout Session ─────────────────────────
     const session = await stripe.checkout.sessions.create({
