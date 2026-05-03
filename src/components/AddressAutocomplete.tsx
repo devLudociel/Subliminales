@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 
 interface AddressSuggestion {
-  label: string;       // display string for the dropdown
-  street: string;      // street + number
+  label: string;
+  street: string;
   city: string;
   province: string;
   zip: string;
@@ -20,13 +20,17 @@ const API_KEY = import.meta.env.PUBLIC_GEOAPIFY_KEY as string | undefined;
 
 function parseFeature(feature: any): AddressSuggestion {
   const p = feature.properties ?? {};
+  // Build street: "Calle Mayantigo 4"
   const street = [p.street, p.housenumber].filter(Boolean).join(' ');
-  // In Spain: county = provincia, city = municipality
+  // Spain: county = provincia (Santa Cruz de Tenerife), city = municipio
   const province = p.county ?? p.state ?? '';
+  const city     = p.city ?? p.town ?? p.village ?? p.municipality ?? p.county ?? '';
+  const label    = p.formatted ?? p.address_line1 ?? street;
+
   return {
-    label:    feature.properties.formatted ?? street,
-    street:   street || p.address_line1 || '',
-    city:     p.city ?? p.town ?? p.village ?? p.municipality ?? '',
+    label,
+    street:   street || p.address_line1 || label,
+    city,
     province,
     zip:      p.postcode ?? '',
   };
@@ -35,14 +39,13 @@ function parseFeature(feature: any): AddressSuggestion {
 export default function AddressAutocomplete({
   value, onChange, onSelect, hasError, placeholder = 'Calle Ejemplo 123',
 }: Props) {
-  const [suggestions, setSuggestions]   = useState<AddressSuggestion[]>([]);
-  const [open, setOpen]                 = useState(false);
-  const [loading, setLoading]           = useState(false);
-  const [activeIdx, setActiveIdx]       = useState(-1);
+  const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([]);
+  const [open, setOpen]               = useState(false);
+  const [loading, setLoading]         = useState(false);
+  const [activeIdx, setActiveIdx]     = useState(-1);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wrapRef  = useRef<HTMLDivElement>(null);
 
-  // Close on outside click
   useEffect(() => {
     function handler(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -54,32 +57,43 @@ export default function AddressAutocomplete({
   }, []);
 
   async function fetchSuggestions(text: string) {
-    if (!API_KEY || text.length < 3) {
+    if (!API_KEY) {
+      console.warn('[Autocomplete] PUBLIC_GEOAPIFY_KEY no configurada');
+      return;
+    }
+    if (text.length < 3) {
       setSuggestions([]);
       setOpen(false);
       return;
     }
+
     setLoading(true);
     try {
+      // No "type" filter — returns streets, cities, amenities, all useful
       const url = new URL('https://api.geoapify.com/v1/geocode/autocomplete');
       url.searchParams.set('text', text);
       url.searchParams.set('filter', 'countrycode:es');
       url.searchParams.set('limit', '6');
       url.searchParams.set('lang', 'es');
-      url.searchParams.set('type', 'street,amenity');
       url.searchParams.set('apiKey', API_KEY);
 
       const res  = await fetch(url.toString());
       const data = await res.json();
 
-      const results: AddressSuggestion[] = (data.features ?? [])
-        .map(parseFeature)
-        .filter((s: AddressSuggestion) => s.street);
+      if (!res.ok) {
+        console.error('[Autocomplete] Geoapify error:', data);
+        setSuggestions([]);
+        setOpen(false);
+        return;
+      }
+
+      const results: AddressSuggestion[] = (data.features ?? []).map(parseFeature);
 
       setSuggestions(results);
       setOpen(results.length > 0);
       setActiveIdx(-1);
-    } catch {
+    } catch (err) {
+      console.error('[Autocomplete] fetch error:', err);
       setSuggestions([]);
     } finally {
       setLoading(false);
@@ -131,29 +145,21 @@ export default function AddressAutocomplete({
         placeholder={placeholder}
         className={inputCls}
         autoComplete="off"
-        aria-autocomplete="list"
-        aria-expanded={open}
+        spellCheck={false}
       />
 
-      {/* Loading indicator */}
       {loading && (
-        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mid font-hand text-lg animate-pulse">
+        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-mid font-hand text-lg animate-pulse pointer-events-none">
           buscando…
         </span>
       )}
 
-      {/* Dropdown */}
       {open && suggestions.length > 0 && (
-        <ul
-          className="absolute z-50 w-full mt-1 bg-white border-2 border-dark shadow-hard rounded-xl overflow-hidden max-h-72 overflow-y-auto"
-          role="listbox"
-        >
+        <ul className="absolute z-50 w-full mt-1 bg-white border-2 border-dark shadow-hard rounded-xl overflow-hidden max-h-72 overflow-y-auto">
           {suggestions.map((s, i) => (
             <li
               key={i}
-              role="option"
-              aria-selected={i === activeIdx}
-              onMouseDown={() => handleSelect(s)}
+              onMouseDown={e => { e.preventDefault(); handleSelect(s); }}
               onMouseEnter={() => setActiveIdx(i)}
               className={`px-5 py-3 cursor-pointer border-b border-dark/10 last:border-0 transition-colors ${
                 i === activeIdx ? 'bg-pink/10' : 'hover:bg-bg'
@@ -167,11 +173,6 @@ export default function AddressAutocomplete({
               </p>
             </li>
           ))}
-          {!API_KEY && (
-            <li className="px-5 py-3 font-hand text-lg text-mid">
-              Configura PUBLIC_GEOAPIFY_KEY para activar sugerencias
-            </li>
-          )}
         </ul>
       )}
     </div>
