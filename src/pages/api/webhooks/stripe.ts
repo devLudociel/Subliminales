@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import Stripe from 'stripe';
 import { db } from '../../../lib/firebase/client';
 import { collection, addDoc, serverTimestamp, doc, runTransaction } from 'firebase/firestore';
+import { sendOrderConfirmation, sendAdminNewOrder } from '../../../lib/emails';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string);
 
@@ -67,6 +68,27 @@ export const POST: APIRoute = async ({ request }) => {
       });
 
       console.log('Order saved:', session.id);
+
+      // Send transactional emails (non-fatal if they fail)
+      const emailOrder = {
+        stripeSessionId: session.id,
+        amountTotal: (session.amount_total ?? 0) / 100,
+        shippingMethod: meta.shipping_method ?? 'standard',
+        taxNote: meta.tax_note ?? '',
+        customer: {
+          name:     meta.customer_name ?? '',
+          email:    (meta.customer_email ?? session.customer_email ?? '').toLowerCase(),
+          address:  meta.shipping_address ?? '',
+          city:     meta.shipping_city ?? '',
+          province: meta.shipping_province ?? '',
+          zip:      meta.shipping_zip ?? '',
+        },
+        items,
+      };
+      await Promise.allSettled([
+        sendOrderConfirmation(emailOrder),
+        sendAdminNewOrder(emailOrder),
+      ]);
 
       // Decrement stock for each item using transactions
       for (const item of items) {

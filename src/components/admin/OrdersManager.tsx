@@ -94,9 +94,10 @@ export default function OrdersManager() {
   const [saving, setSaving]         = useState<string | null>(null);
 
   // Editing state per order
-  const [editStatus, setEditStatus]   = useState<Record<string, OrderStatus>>({});
+  const [editStatus, setEditStatus]     = useState<Record<string, OrderStatus>>({});
   const [editTracking, setEditTracking] = useState<Record<string, string>>({});
   const [editCarrier, setEditCarrier]   = useState<Record<string, string>>({});
+  const [emailSent, setEmailSent]       = useState<Record<string, boolean>>({});
 
   useEffect(() => { loadOrders(); }, []);
 
@@ -369,14 +370,48 @@ export default function OrdersManager() {
                         </a>
                       )}
 
-                      <button
-                        type="button"
-                        onClick={() => saveOrder(order.id)}
-                        disabled={isSaving}
-                        className="bg-dark text-mint border-2 border-dark font-hand text-xl px-6 py-2.5 rounded-lg cursor-pointer shadow-hard hover:-translate-y-0.5 transition-all disabled:opacity-60"
-                      >
-                        {isSaving ? 'Guardando...' : '💾 Guardar cambios'}
-                      </button>
+                                      <div className="flex flex-wrap gap-3">
+                        <button
+                          type="button"
+                          onClick={() => saveOrder(order.id)}
+                          disabled={isSaving}
+                          className="bg-dark text-mint border-2 border-dark font-hand text-xl px-6 py-2.5 rounded-lg cursor-pointer shadow-hard hover:-translate-y-0.5 transition-all disabled:opacity-60"
+                        >
+                          {isSaving ? 'Guardando...' : '💾 Guardar cambios'}
+                        </button>
+
+                        {/* Send shipping email — only when status=enviado and tracking filled */}
+                        {editStatus[order.id] === 'enviado' && editTracking[order.id] && editCarrier[order.id] && (
+                          <button
+                            type="button"
+                            disabled={emailSent[order.id]}
+                            onClick={async () => {
+                              const secret = import.meta.env.PUBLIC_RESEND_GUARD ?? '';
+                              try {
+                                const res = await fetch('/api/admin/send-shipping-email', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    stripeSessionId: order.stripeSessionId,
+                                    trackingNumber:  editTracking[order.id],
+                                    carrier:         editCarrier[order.id],
+                                    customerName:    order.customer.name,
+                                    customerEmail:   order.customer.email,
+                                    adminSecret:     secret,
+                                  }),
+                                });
+                                if (res.ok) setEmailSent(p => ({ ...p, [order.id]: true }));
+                                else alert('Error al enviar email. Revisa los logs.');
+                              } catch {
+                                alert('Error al enviar email.');
+                              }
+                            }}
+                            className="bg-purple-600 text-white border-2 border-dark font-hand text-xl px-6 py-2.5 rounded-lg cursor-pointer shadow-hard hover:-translate-y-0.5 transition-all disabled:opacity-60"
+                          >
+                            {emailSent[order.id] ? '✅ Email enviado' : '📧 Avisar al cliente'}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     {/* Status history */}
