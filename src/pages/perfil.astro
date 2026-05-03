@@ -1,57 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import CustomerDashboard from '../components/CustomerDashboard';
 ---
 
-<Layout title="Mi Perfil">
-  <div class="max-w-4xl mx-auto py-16 md:py-24 px-4 sm:px-6 lg:px-8 min-h-[70vh]">
-    <div class="flex flex-col md:flex-row items-center gap-6 md:gap-8 mb-12 border-b-2 border-dark pb-10">
-      <div class="w-20 h-20 md:w-24 md:h-24 bg-mint border-2 border-dark rounded-full flex items-center justify-center font-marker text-4xl md:text-5xl text-dark shadow-hard" id="avatar-initial">
-        ?
-      </div>
-      <div class="text-center md:text-left">
-        <h1 class="font-marker text-4xl md:text-5xl text-dark mb-2">Mi Perfil</h1>
-        <p class="font-hand text-2xl text-mid" id="user-email">Cargando identidad...</p>
-      </div>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-      <div class="bg-white border-2 border-dark p-6 md:p-10 shadow-hard rounded-xl transform -rotate-1">
-        <h2 class="font-marker text-3xl text-pink mb-6">Historial de pedidos</h2>
-        <p class="font-hand text-xl md:text-2xl text-mid mb-6 leading-relaxed">Aún no hay pedidos en tu historial. ¡Explora la tienda y encuentra tu chiste!</p>
-        <a href="/tienda" class="btn-dark text-xl px-8 py-3 shadow-hard hover:-translate-y-1 transition-all inline-block rounded-lg no-underline">IR A LA TIENDA →</a>
-      </div>
-
-      <div class="bg-white border-2 border-dark p-6 md:p-10 shadow-hard rounded-xl transform rotate-1 h-fit">
-        <h2 class="font-marker text-3xl text-dark mb-6">Preferencias</h2>
-        <button id="logout-btn" class="w-full bg-pink text-white border-2 border-dark font-hand text-2xl py-4 px-6 cursor-pointer shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all rounded-lg flex justify-between items-center">
-          <span>Cerrar Sesión</span>
-          <span class="text-3xl">×</span>
-        </button>
-      </div>
-    </div>
-  </div>
+<Layout title="Mi Cuenta — Subliminales">
+  <CustomerDashboard client:load />
 </Layout>
-
-<script>
-  import { onAuthStateChanged, signOut } from 'firebase/auth';
-  import { auth } from '../lib/firebase/client';
-
-  const userEmail = document.getElementById('user-email');
-  const avatar = document.getElementById('avatar-initial');
-  const logoutBtn = document.getElementById('logout-btn');
-
-  // Verify auth directly to protect page
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      if(userEmail) userEmail.textContent = user.email || 'Identidad oculta';
-      if(avatar && user.email) avatar.textContent = user.email.charAt(0).toUpperCase();
-    } else {
-      window.location.href = '/login'; // Redirect if not logged in
-    }
-  });
-
-  logoutBtn?.addEventListener('click', async () => {
-    await signOut(auth);
-    window.location.href = '/';
-  });
-</script>

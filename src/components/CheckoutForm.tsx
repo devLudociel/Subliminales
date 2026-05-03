@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { cartItems, cartTotal, cartCount, removeFromCart, updateQuantity } from '../store/cart';
 import AddressAutocomplete from './AddressAutocomplete';
+import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth, db } from '../lib/firebase/client';
 
 interface FormData {
   firstName: string;
@@ -45,6 +48,28 @@ export default function CheckoutForm() {
   const [shipping, setShipping] = useState<ShippingMethod>('standard');
   const [loading, setLoading]   = useState(false);
   const [apiError, setApiError] = useState('');
+
+  // Pre-fill from saved profile
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+      try {
+        const snap = await getDoc(doc(db, 'users', user.uid));
+        if (!snap.exists()) return;
+        const p = snap.data();
+        setForm(prev => ({
+          ...prev,
+          firstName: prev.firstName || (p.displayName ?? '').split(' ')[0] || '',
+          lastName:  prev.lastName  || (p.displayName ?? '').split(' ').slice(1).join(' ') || '',
+          address:   prev.address   || p.address  || '',
+          city:      prev.city      || p.city     || '',
+          province:  prev.province  || p.province || '',
+          zip:       prev.zip       || p.zip      || '',
+        }));
+      } catch {}
+    });
+    return unsub;
+  }, []);
 
   const canarias = isCanarias(form.zip);
 
