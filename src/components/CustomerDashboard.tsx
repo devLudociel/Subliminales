@@ -5,7 +5,7 @@ import {
   type User,
 } from 'firebase/auth';
 import {
-  collection, query, where, orderBy, getDocs,
+  collection, query, where, getDocs,
   doc, getDoc, setDoc, serverTimestamp,
 } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase/client';
@@ -35,6 +35,7 @@ interface Order {
     size?: string;
     color?: string;
     quantity: number;
+    name?: string;
   }>;
 }
 
@@ -48,6 +49,13 @@ interface UserProfile {
 }
 
 type Tab = 'pedidos' | 'cuenta' | 'seguridad';
+
+function getInitialTab(): Tab {
+  if (typeof window === 'undefined') return 'pedidos';
+  const p = new URLSearchParams(window.location.search).get('tab');
+  if (p === 'cuenta' || p === 'seguridad') return p;
+  return 'pedidos';
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -111,11 +119,12 @@ function OrderCard({ order, onExpand, expanded }: {
             <div className="space-y-2">
               {order.items.map((item, i) => {
                 const variantParts = [item.size, item.color].filter(Boolean);
+                const displayName = item.name || item.productId;
                 return (
                   <div key={i} className="flex items-center gap-3">
-                    <span className="text-xl">📦</span>
+                    <span className="text-xl">👕</span>
                     <span className="font-hand text-xl text-dark">
-                      {item.productId}
+                      {displayName}
                       {variantParts.length > 0 && (
                         <span className="text-mid"> — {variantParts.join(' / ')}</span>
                       )}
@@ -154,7 +163,7 @@ function OrderCard({ order, onExpand, expanded }: {
 export default function CustomerDashboard() {
   const [user, setUser]           = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-  const [tab, setTab]             = useState<Tab>('pedidos');
+  const [tab, setTab]             = useState<Tab>(getInitialTab);
 
   // Orders state
   const [orders, setOrders]       = useState<Order[]>([]);
@@ -176,28 +185,43 @@ export default function CustomerDashboard() {
 
   // ── Auth listener ──────────────────────────────────────────────────────────
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (u) => {
-      // ALWAYS set authLoading=false first — prevents redirect during session restore
-      setAuthLoading(false);
+    let active = true;
 
+    // authStateReady waits until Firebase has restored session from IndexedDB
+    // before we decide to redirect — prevents false logout on page load
+    auth.authStateReady().then(async () => {
+      if (!active) return;
+      const u = auth.currentUser;
       if (!u) {
         window.location.href = '/login';
         return;
       }
       setUser(u);
-
-      // Load profile from Firestore
+      setAuthLoading(false);
+      // Load profile
       try {
         const snap = await getDoc(doc(db, 'users', u.uid));
+        if (!active) return;
         if (snap.exists()) {
-          const data = snap.data() as Partial<UserProfile>;
-          setProfile(prev => ({ ...prev, ...data }));
+          setProfile(prev => ({ ...prev, ...(snap.data() as Partial<UserProfile>) }));
         } else {
           setProfile(prev => ({ ...prev, displayName: u.displayName ?? '' }));
         }
       } catch {}
     });
-    return unsub;
+
+    // Subscribe for subsequent sign-out (e.g. another tab)
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (!u && !authLoading) {
+        window.location.href = '/login';
+      }
+    });
+
+    return () => {
+      active = false;
+      unsub();
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Load orders when tab changes ───────────────────────────────────────────
@@ -240,6 +264,27 @@ export default function CustomerDashboard() {
     await runQuery('userUid', user.uid);
     // Query by email as fallback (catches guest checkouts with same email)
     if (user.email) await runQuery('customer.email', user.email.toLowerCase());
+
+    // Fetch product names for all unique productIds
+    const productIds = [...new Set(allOrders.flatMap(o => o.items.map(i => i.productId)))];
+    const productNames: Record<string, string> = {};
+    await Promise.all(
+      productIds.map(async pid => {
+        try {
+          const snap = await getDoc(doc(db, 'products', pid));
+          if (snap.exists()) productNames[pid] = snap.data().name ?? pid;
+        } catch {}
+      })
+    );
+
+    // Inject names into items
+    allOrders = allOrders.map(order => ({
+      ...order,
+      items: order.items.map(item => ({
+        ...item,
+        name: item.name || productNames[item.productId] || item.productId,
+      })),
+    }));
 
     setOrders(allOrders.sort(sortDesc));
     setOrdersLoading(false);
