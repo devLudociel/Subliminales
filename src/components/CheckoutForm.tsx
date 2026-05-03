@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '@nanostores/react';
 import { cartItems, cartTotal, cartCount, removeFromCart, updateQuantity } from '../store/cart';
+import AddressAutocomplete from './AddressAutocomplete';
 
 interface FormData {
   firstName: string;
@@ -205,9 +206,26 @@ export default function CheckoutForm() {
               <div className="space-y-5">
                 <div>
                   <label className="block font-hand text-xl text-dark mb-2 font-bold">Dirección *</label>
-                  <input type="text" value={form.address} onChange={e => set('address', e.target.value)}
-                    placeholder="Calle Ejemplo 123, Piso 2" className={inputCls('address')} autoComplete="street-address" />
+                  <AddressAutocomplete
+                    value={form.address}
+                    onChange={v => set('address', v)}
+                    onSelect={s => {
+                      setForm(prev => ({
+                        ...prev,
+                        address:  s.street  || prev.address,
+                        city:     s.city    || prev.city,
+                        province: s.province || prev.province,
+                        zip:      s.zip     || prev.zip,
+                      }));
+                      setErrors({});
+                    }}
+                    hasError={!!errors.address}
+                    placeholder="Calle Mayantigo 4"
+                  />
                   <ErrorMsg field="address" />
+                  <p className="font-hand text-lg text-mid mt-1">
+                    Escribe la calle y selecciona de las sugerencias
+                  </p>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div>
