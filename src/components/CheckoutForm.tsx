@@ -46,19 +46,22 @@ export default function CheckoutForm() {
   const [loading, setLoading]   = useState(false);
   const [apiError, setApiError] = useState('');
 
-  const canarias     = isCanarias(form.zip);
-  const freeEligible = total >= FREE_THRESHOLD;
+  const canarias = isCanarias(form.zip);
+
+  // Adjusted prices (net for Canarias, gross for Peninsula)
+  const adjTotal       = netPrice(total, canarias);
+  const adjShippingStd = netPrice(SHIPPING_STD, canarias);
+  const adjShippingExp = netPrice(SHIPPING_EXP, canarias);
+
+  // Free shipping threshold applies to what the customer actually pays
+  const effectiveTotal = canarias ? adjTotal : total;
+  const freeEligible   = effectiveTotal >= FREE_THRESHOLD;
 
   // Auto-switch to free when eligible, back to standard when not
   useEffect(() => {
     if (freeEligible && shipping === 'standard') setShipping('free');
     if (!freeEligible && shipping === 'free')    setShipping('standard');
   }, [freeEligible]);
-
-  // Adjusted prices (net for Canarias, gross for Peninsula)
-  const adjTotal       = netPrice(total, canarias);
-  const adjShippingStd = netPrice(SHIPPING_STD, canarias);
-  const adjShippingExp = netPrice(SHIPPING_EXP, canarias);
 
   const adjShippingCost =
     shipping === 'free'     ? 0 :
@@ -70,8 +73,8 @@ export default function CheckoutForm() {
   // IVA removed amount (only relevant for Canarias display)
   const ivaRemoved = total - adjTotal;
 
-  // Progress toward free shipping (always calculated on gross)
-  const toFree = Math.max(0, FREE_THRESHOLD - total);
+  // Progress toward free shipping — use what customer pays
+  const toFree = Math.max(0, FREE_THRESHOLD - effectiveTotal);
 
   function set(field: keyof FormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -279,13 +282,13 @@ export default function CheckoutForm() {
                     <p className="font-hand text-lg text-mid">
                       🎁 Te faltan <span className="text-dark font-bold">{toFree.toFixed(2)}€</span> para envío gratis
                     </p>
-                    <p className="font-hand text-lg text-mid">{total.toFixed(2)}€ / {FREE_THRESHOLD}€</p>
+                    <p className="font-hand text-lg text-mid">{effectiveTotal.toFixed(2)}€ / {FREE_THRESHOLD}€</p>
                   </div>
                   {/* Progress bar */}
                   <div className="w-full h-2.5 bg-dark/10 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-pink rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(100, (total / FREE_THRESHOLD) * 100).toFixed(1)}%` }}
+                      style={{ width: `${Math.min(100, (effectiveTotal / FREE_THRESHOLD) * 100).toFixed(1)}%` }}
                     />
                   </div>
                 </div>
