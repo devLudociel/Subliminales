@@ -1,20 +1,16 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import { products, getProductBySlug, getProductsByCategory } from '../../data/products';
-
-export async function getStaticPaths() {
-  return products.map(p => ({ params: { slug: p.slug } }));
-}
+import { getProductBySlug, getProductsByCategory } from '../../data/products';
 
 const { slug } = Astro.params;
-const product = getProductBySlug(slug);
+const product = await getProductBySlug(slug as string);
 
 if (!product) {
   return Astro.redirect('/tienda');
 }
 
-const related = getProductsByCategory(product.category)
+const related = (await getProductsByCategory(product.category))
   .filter(p => p.id !== product.id)
   .slice(0, 3);
 
@@ -30,7 +26,17 @@ const categoryEmoji: Record<string, string> = {
 const relRotations = ['-rotate-2', 'rotate-1', '-rotate-1'];
 
 const colorMap: Record<string, string> = {
-  'Negro': '#111', 'Blanco': '#fff', 'Gris oscuro': '#444',
+  'Negro':      '#111111',
+  'Blanco':     '#ffffff',
+  'Gris oscuro':'#444444',
+  'Rojo':       '#e63946',
+  'Azul':       '#1d6fa4',
+  'Verde':      '#2d6a4f',
+  'Beige':      '#d4b896',
+  'Rosa':       '#f72585',
+  'Naranja':    '#ff9f1c',
+  'Amarillo':   '#ffd60a',
+  'Morado':     '#7209b7',
 };
 ---
 
@@ -58,8 +64,13 @@ const colorMap: Record<string, string> = {
       <!-- Gallery left -->
       <div>
         <!-- Main image -->
-        <div class="img-placeholder w-full aspect-[4/5] -rotate-1 border-2 border-dark mb-6 relative overflow-hidden shadow-hard rounded-xl bg-white">
-          <span class="text-8xl md:text-9xl">{categoryEmoji[product.category] ?? '📦'}</span>
+        <div class="w-full aspect-[4/5] -rotate-1 border-2 border-dark mb-6 relative overflow-hidden shadow-hard rounded-xl bg-white flex items-center justify-center" id="main-img-wrap">
+          {product.image ? (
+            <img src={product.image} alt={product.name}
+              class="w-full h-full object-cover" id="main-img" />
+          ) : (
+            <span class="text-8xl md:text-9xl">{categoryEmoji[product.category] ?? '📦'}</span>
+          )}
           {product.isNew && (
             <span class="absolute top-4 right-4 bg-mint text-dark font-hand text-lg px-4 py-1 border-2 border-dark rotate-2 shadow-hard">
               NEW
@@ -77,13 +88,18 @@ const colorMap: Record<string, string> = {
           )}
         </div>
         <!-- Thumbnails -->
-        <div class="flex gap-4">
-          {[1,2,3].map(i => (
-            <div class="img-placeholder w-20 h-20 md:w-24 md:h-24 cursor-pointer border-2 border-dark shadow-hard hover:-translate-y-1 transition-transform rounded-lg bg-white">
-              <span class="text-3xl md:text-4xl">{categoryEmoji[product.category] ?? '📦'}</span>
-            </div>
-          ))}
-        </div>
+        {product.images && product.images.length > 1 && (
+          <div class="flex gap-4 overflow-x-auto pb-1">
+            {product.images.map((img, i) => (
+              <button type="button"
+                class="thumb-btn shrink-0 w-20 h-20 md:w-24 md:h-24 cursor-pointer border-2 border-dark shadow-hard hover:-translate-y-1 transition-transform rounded-lg overflow-hidden bg-white p-0"
+                data-src={img}
+                style={i === 0 ? 'border-color:#f72585;' : ''}>
+                <img src={img} alt={`${product.name} ${i+1}`} class="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       <!-- Info right -->
@@ -232,6 +248,17 @@ const colorMap: Record<string, string> = {
     const orig = btn.innerHTML;
     btn.innerHTML = '✓ añadido al carrito';
     setTimeout(() => { btn.innerHTML = orig; }, 1800);
+  });
+
+  // Thumbnail gallery
+  document.querySelectorAll('.thumb-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = (btn as HTMLButtonElement).dataset.src!;
+      const mainImg = document.getElementById('main-img') as HTMLImageElement | null;
+      if (mainImg) mainImg.src = src;
+      document.querySelectorAll('.thumb-btn').forEach(b => (b as HTMLElement).style.borderColor = '');
+      (btn as HTMLElement).style.borderColor = '#f72585';
+    });
   });
 
   // Size selector

@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { createProduct, updateProduct, getProductById, generateSlug } from '../../lib/firebase/admin-products';
+import { getAllCollections, type Collection } from '../../lib/firebase/admin-collections';
 import GalleryUploader from './GalleryUploader';
 import VariantManager from './VariantManager';
 import type { Product, ProductVariant } from '../../data/products';
 
-const ALL_SIZES       = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-const ALL_CATEGORIES  = ['camisetas', 'sudaderas', 'tazas', 'termos', 'posters', 'accesorios'];
-const ALL_COLLECTIONS = ['mind-control', 'hidden-truth', 'wake-up', 'dual-meaning'];
-const ALL_COLORS      = ['Negro', 'Blanco', 'Gris oscuro', 'Rojo', 'Azul', 'Verde', 'Beige'];
+const ALL_SIZES      = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+const ALL_CATEGORIES = ['camisetas', 'sudaderas', 'tazas', 'termos', 'posters', 'accesorios'];
+const ALL_COLORS     = ['Negro', 'Blanco', 'Gris oscuro', 'Rojo', 'Azul', 'Verde', 'Beige'];
 
 interface Props {
   productId?: string;
@@ -34,12 +34,17 @@ const emptyProduct = {
 };
 
 export default function ProductForm({ productId }: Props) {
-  const [form, setForm]           = useState(emptyProduct);
-  const [tagInput, setTagInput]   = useState('');
-  const [saving, setSaving]       = useState(false);
-  const [saved, setSaved]         = useState(false);
-  const [loading, setLoading]     = useState(!!productId);
-  const [activeTab, setActiveTab] = useState<'basic' | 'variants' | 'images' | 'status'>('basic');
+  const [form, setForm]               = useState(emptyProduct);
+  const [tagInput, setTagInput]       = useState('');
+  const [saving, setSaving]           = useState(false);
+  const [saved, setSaved]             = useState(false);
+  const [loading, setLoading]         = useState(!!productId);
+  const [activeTab, setActiveTab]     = useState<'basic' | 'variants' | 'images' | 'status'>('basic');
+  const [collections, setCollections] = useState<Collection[]>([]);
+
+  useEffect(() => {
+    getAllCollections().then(setCollections).catch(console.error);
+  }, []);
 
   useEffect(() => {
     if (productId) {
@@ -250,7 +255,9 @@ export default function ProductForm({ productId }: Props) {
                 <select value={form.collection} onChange={e => set('collection', e.target.value)}
                   className={`${inputCls} cursor-pointer`}>
                   <option value="">Sin colección</option>
-                  {ALL_COLLECTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                  {collections.map(c => (
+                    <option key={c.slug} value={c.slug}>{c.name}</option>
+                  ))}
                 </select>
               </div>
             </div>

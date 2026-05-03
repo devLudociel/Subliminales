@@ -1,0 +1,15 @@
+---
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import CollectionManager from '../../../components/admin/CollectionManager';
+---
+
+<AdminLayout title="Colecciones">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <a href="/admin" class="font-hand text-xl text-mid hover:text-dark no-underline transition-colors">← Volver al panel</a>
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none mt-4">Colecciones</h1>
+      <p class="font-hand text-2xl text-mid">Gestiona las colecciones temáticas de tu tienda.</p>
+    </div>
+    <CollectionManager client:load />
+  </div>
+</AdminLayout>

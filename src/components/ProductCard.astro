@@ -36,8 +36,11 @@ const btn = btnColors[product.category] ?? { bg: 'bg-pink', text: 'text-white' }
 <div class="border-2 border-dark bg-white p-4 md:p-5 flex flex-col transition-transform duration-200 hover:scale-[1.03] shadow-hard rounded-xl">
   <!-- Image area -->
   <a href={`/producto/${product.slug}`} class="block no-underline">
-    <div class="img-placeholder w-full aspect-[3/4] mb-4 relative overflow-hidden rounded-lg bg-bg">
-      <span class="text-5xl md:text-6xl">{categoryEmoji[product.category] ?? '📦'}</span>
+    <div class="w-full aspect-[3/4] mb-4 relative overflow-hidden rounded-lg bg-bg flex items-center justify-center border border-dark/10">
+      {product.image
+        ? <img src={product.image} alt={product.name} class="w-full h-full object-cover" loading="lazy" />
+        : <span class="text-5xl md:text-6xl">{categoryEmoji[product.category] ?? '📦'}</span>
+      }
       {product.isNew && (
         <span class="absolute top-3 right-3 bg-mint text-dark font-hand text-base px-3 py-1 border-2 border-dark rotate-2 shadow-hard">
           NEW

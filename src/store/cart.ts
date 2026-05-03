@@ -8,7 +8,29 @@ export interface CartItem {
   quantity: number;
 }
 
-export const cartItems = atom<CartItem[]>([]);
+const STORAGE_KEY = 'subliminal_cart';
+
+function loadCart(): CartItem[] {
+  if (typeof localStorage === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCart(items: CartItem[]) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  } catch {}
+}
+
+export const cartItems = atom<CartItem[]>(loadCart());
+
+// Persist every change
+cartItems.subscribe(saveCart);
 
 export const cartCount = computed(cartItems, items =>
   items.reduce((sum, item) => sum + item.quantity, 0)
