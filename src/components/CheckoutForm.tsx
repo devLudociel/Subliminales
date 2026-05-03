@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useStore } from '@nanostores/react';
-import { cartItems, cartTotal, cartCount, clearCart } from '../store/cart';
+import { cartItems, cartTotal, cartCount } from '../store/cart';
 
 interface FormData {
   firstName: string;
@@ -8,26 +8,46 @@ interface FormData {
   email: string;
   address: string;
   city: string;
+  province: string;
   zip: string;
 }
 
+type ShippingMethod = 'free' | 'standard' | 'express';
+
 const empty: FormData = {
   firstName: '', lastName: '', email: '',
-  address: '', city: '', zip: '',
+  address: '', city: '', province: '', zip: '',
 };
 
-export default function CheckoutForm() {
-  const items   = useStore(cartItems);
-  const total   = useStore(cartTotal);
-  const count   = useStore(cartCount);
-  const [form, setForm]       = useState<FormData>(empty);
-  const [errors, setErrors]   = useState<Partial<FormData>>({});
-  const [loading, setLoading] = useState(false);
-  const [apiError, setApiError] = useState('');
+const FREE_THRESHOLD = 60;
+const SHIPPING_STANDARD = 6.99;
+const SHIPPING_EXPRESS = 14.99;
 
-  const freeShipping = total >= 50;
-  const shipping     = freeShipping ? 0 : 4.95;
-  const grandTotal   = total + shipping;
+function isCanarias(zip: string) {
+  return /^(35|38)\d{3}$/.test(zip.trim());
+}
+
+export default function CheckoutForm() {
+  const items  = useStore(cartItems);
+  const total  = useStore(cartTotal);
+  const count  = useStore(cartCount);
+
+  const [form, setForm]           = useState<FormData>(empty);
+  const [errors, setErrors]       = useState<Partial<FormData>>({});
+  const [shipping, setShipping]   = useState<ShippingMethod>('standard');
+  const [loading, setLoading]     = useState(false);
+  const [apiError, setApiError]   = useState('');
+
+  const freeEligible = total >= FREE_THRESHOLD;
+  const canarias     = isCanarias(form.zip);
+
+  // shipping cost based on selected method
+  const shippingCost =
+    shipping === 'free'     ? 0 :
+    shipping === 'standard' ? SHIPPING_STANDARD :
+                              SHIPPING_EXPRESS;
+
+  const grandTotal = total + shippingCost;
 
   function set(field: keyof FormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -40,8 +60,9 @@ export default function CheckoutForm() {
     if (!form.lastName.trim())  e.lastName  = 'Obligatorio';
     if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       e.email = 'Email inválido';
-    if (!form.address.trim()) e.address = 'Obligatorio';
-    if (!form.city.trim())    e.city    = 'Obligatorio';
+    if (!form.address.trim())  e.address  = 'Obligatorio';
+    if (!form.city.trim())     e.city     = 'Obligatorio';
+    if (!form.province.trim()) e.province = 'Obligatorio';
     if (!form.zip.trim() || !/^\d{4,5}$/.test(form.zip.trim()))
       e.zip = 'CP inválido';
     setErrors(e);
@@ -53,6 +74,10 @@ export default function CheckoutForm() {
     if (items.length === 0) return;
     if (!validate()) return;
 
+    // guard: can't select free if not eligible
+    const finalShipping: ShippingMethod =
+      shipping === 'free' && !freeEligible ? 'standard' : shipping;
+
     setLoading(true);
     setApiError('');
 
@@ -62,12 +87,14 @@ export default function CheckoutForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           items: items.map(i => ({ id: i.id, quantity: i.quantity })),
+          shippingMethod: finalShipping,
           customer: {
             email:     form.email.trim(),
             firstName: form.firstName.trim(),
             lastName:  form.lastName.trim(),
             address:   form.address.trim(),
             city:      form.city.trim(),
+            province:  form.province.trim(),
             zip:       form.zip.trim(),
           },
         }),
@@ -81,7 +108,6 @@ export default function CheckoutForm() {
         return;
       }
 
-      // Redirect to Stripe Checkout
       window.location.href = data.url;
     } catch {
       setApiError('Error de conexión. Inténtalo de nuevo.');
@@ -144,7 +170,7 @@ export default function CheckoutForm() {
               </div>
             </div>
 
-            {/* Shipping */}
+            {/* Shipping address */}
             <div className="bg-white border-2 border-dark p-6 md:p-10 shadow-hard rounded-xl">
               <h2 className="font-marker text-3xl text-dark mb-6">Dirección de Envío</h2>
               <div className="space-y-5">
@@ -162,12 +188,79 @@ export default function CheckoutForm() {
                     <ErrorMsg field="city" />
                   </div>
                   <div>
+                    <label className="block font-hand text-xl text-dark mb-2 font-bold">Provincia *</label>
+                    <input type="text" value={form.province} onChange={e => set('province', e.target.value)}
+                      placeholder="Madrid" className={inputCls('province')} autoComplete="address-level1" />
+                    <ErrorMsg field="province" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div>
                     <label className="block font-hand text-xl text-dark mb-2 font-bold">Código Postal *</label>
                     <input type="text" value={form.zip} onChange={e => set('zip', e.target.value)}
                       placeholder="28001" className={inputCls('zip')} autoComplete="postal-code" maxLength={5} />
                     <ErrorMsg field="zip" />
+                    {canarias && (
+                      <p className="font-hand text-lg text-mint mt-1">🏝️ Canarias — exento de IGIC</p>
+                    )}
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-full px-5 py-4 border-2 border-dark/30 bg-bg rounded-lg">
+                      <p className="font-hand text-lg text-mid">País</p>
+                      <p className="font-hand text-xl text-dark font-bold">🇪🇸 España</p>
+                    </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Shipping method */}
+            <div className="bg-white border-2 border-dark p-6 md:p-10 shadow-hard rounded-xl">
+              <h2 className="font-marker text-3xl text-dark mb-6">Método de Envío</h2>
+              <div className="space-y-3">
+
+                {freeEligible && (
+                  <label className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${shipping === 'free' ? 'border-mint bg-mint/10' : 'border-dark/30 bg-bg hover:border-dark'}`}>
+                    <input type="radio" name="shipping" value="free"
+                      checked={shipping === 'free'} onChange={() => setShipping('free')}
+                      className="accent-pink w-5 h-5" />
+                    <div className="flex-1">
+                      <p className="font-hand text-xl text-dark font-bold">Envío estándar 📦</p>
+                      <p className="font-hand text-lg text-mid">3-5 días laborables</p>
+                    </div>
+                    <span className="font-marker text-2xl text-mint">GRATIS 🎉</span>
+                  </label>
+                )}
+
+                {!freeEligible && (
+                  <label className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${shipping === 'standard' ? 'border-pink bg-pink/5' : 'border-dark/30 bg-bg hover:border-dark'}`}>
+                    <input type="radio" name="shipping" value="standard"
+                      checked={shipping === 'standard'} onChange={() => setShipping('standard')}
+                      className="accent-pink w-5 h-5" />
+                    <div className="flex-1">
+                      <p className="font-hand text-xl text-dark font-bold">Envío estándar 📦</p>
+                      <p className="font-hand text-lg text-mid">3-5 días laborables</p>
+                      {!freeEligible && (
+                        <p className="font-hand text-lg text-mint">
+                          Añade {(FREE_THRESHOLD - total).toFixed(2)}€ más para envío gratis
+                        </p>
+                      )}
+                    </div>
+                    <span className="font-marker text-2xl text-dark">{SHIPPING_STANDARD.toFixed(2)}€</span>
+                  </label>
+                )}
+
+                <label className={`flex items-center gap-4 p-4 border-2 rounded-xl cursor-pointer transition-all ${shipping === 'express' ? 'border-pink bg-pink/5' : 'border-dark/30 bg-bg hover:border-dark'}`}>
+                  <input type="radio" name="shipping" value="express"
+                    checked={shipping === 'express'} onChange={() => setShipping('express')}
+                    className="accent-pink w-5 h-5" />
+                  <div className="flex-1">
+                    <p className="font-hand text-xl text-dark font-bold">Envío urgente ⚡</p>
+                    <p className="font-hand text-lg text-mid">24/48h laborables</p>
+                  </div>
+                  <span className="font-marker text-2xl text-dark">{SHIPPING_EXPRESS.toFixed(2)}€</span>
+                </label>
+
               </div>
             </div>
 
@@ -245,18 +338,17 @@ export default function CheckoutForm() {
                 </div>
                 <div className="flex justify-between font-hand text-xl">
                   <span className="text-mid">Envío</span>
-                  <span className={freeShipping ? 'text-mint font-bold' : 'text-dark'}>
-                    {freeShipping ? 'gratis 🎉' : '4.95€'}
+                  <span className={shippingCost === 0 ? 'text-mint font-bold' : 'text-dark'}>
+                    {shippingCost === 0 ? 'gratis 🎉' : `${shippingCost.toFixed(2)}€`}
                   </span>
                 </div>
-                {!freeShipping && (
-                  <p className="font-hand text-lg text-mid">
-                    Añade {(50 - total).toFixed(2)}€ más para envío gratis
-                  </p>
-                )}
                 <div className="flex justify-between font-hand text-lg text-mid">
-                  <span>IVA</span>
-                  <span>incluido en el precio</span>
+                  <span>Impuestos</span>
+                  <span>
+                    {canarias && form.zip
+                      ? 'Exento IGIC (Canarias)'
+                      : 'IVA incluido en precio'}
+                  </span>
                 </div>
                 <div className="border-t-2 border-dark pt-3 flex justify-between items-baseline">
                   <span className="font-marker text-3xl text-dark">Total</span>
@@ -265,7 +357,7 @@ export default function CheckoutForm() {
               </div>
 
               <div className="mt-6 pt-4 border-t-2 border-dark/20 flex flex-wrap gap-3 justify-center">
-                <span className="font-hand text-lg text-mid flex items-center gap-1">📦 24/48h</span>
+                <span className="font-hand text-lg text-mid flex items-center gap-1">📦 Envío España</span>
                 <span className="font-hand text-lg text-mid flex items-center gap-1">✅ 30 días devolución</span>
                 <span className="font-hand text-lg text-mid flex items-center gap-1">🔒 Pago seguro</span>
               </div>

@@ -43,8 +43,11 @@ export const POST: APIRoute = async ({ request }) => {
           email: meta.customer_email ?? session.customer_email ?? '',
           address: meta.shipping_address ?? '',
           city: meta.shipping_city ?? '',
+          province: meta.shipping_province ?? '',
           zip: meta.shipping_zip ?? '',
         },
+        shippingMethod: meta.shipping_method ?? 'standard',
+        taxNote: meta.tax_note ?? '',
         items,
         createdAt: serverTimestamp(),
       });
