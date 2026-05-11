@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /api/
+Disallow: /checkout/
+Disallow: /carrito
+Disallow: /perfil
+
+Sitemap: https://subliminal.es/sitemap.xml

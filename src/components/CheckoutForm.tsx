@@ -50,6 +50,12 @@ export default function CheckoutForm() {
   const [apiError, setApiError] = useState('');
   const [userUid, setUserUid]   = useState<string | undefined>();
 
+  // Coupon state
+  const [couponInput, setCouponInput]   = useState('');
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError]   = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
+
   // Pre-fill from saved profile + capture UID
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (user) => {
@@ -95,13 +101,41 @@ export default function CheckoutForm() {
     shipping === 'standard' ? adjShippingStd :
                               adjShippingExp;
 
-  const grandTotal = adjTotal + adjShippingCost;
+  const couponDiscount = appliedCoupon?.discount ?? 0;
+  const grandTotal = Math.max(0, adjTotal + adjShippingCost - couponDiscount);
 
   // IVA removed amount (only relevant for Canarias display)
   const ivaRemoved = total - adjTotal;
 
   // Progress toward free shipping — use what customer pays
   const toFree = Math.max(0, FREE_THRESHOLD - effectiveTotal);
+
+  async function applyCoupon() {
+    const code = couponInput.trim();
+    if (!code) return;
+    setCouponLoading(true);
+    setCouponError('');
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, subtotal: adjTotal }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setCouponError(data.error ?? 'Cupón inválido');
+        setAppliedCoupon(null);
+      } else {
+        const label = data.type === 'percent' ? `-${data.value}%` : `-${data.value.toFixed(2)}€`;
+        setAppliedCoupon({ code: data.code, discount: data.discount, label });
+        setCouponInput('');
+      }
+    } catch {
+      setCouponError('Error al validar cupón');
+    } finally {
+      setCouponLoading(false);
+    }
+  }
 
   function set(field: keyof FormData, value: string) {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -149,6 +183,8 @@ export default function CheckoutForm() {
           shippingMethod: finalShipping,
           isCanarias:     canarias,
           userUid,
+          couponCode: appliedCoupon?.code ?? undefined,
+          couponDiscount: appliedCoupon?.discount ?? 0,
           customer: {
             email:     form.email.trim(),
             firstName: form.firstName.trim(),
@@ -461,6 +497,36 @@ export default function CheckoutForm() {
                 })}
               </div>
 
+              {/* Coupon input */}
+              <div className="mb-4">
+                {appliedCoupon ? (
+                  <div className="flex items-center justify-between px-4 py-3 bg-mint/15 border-2 border-mint rounded-xl">
+                    <div>
+                      <p className="font-hand text-lg text-dark font-bold">🎟️ {appliedCoupon.code}</p>
+                      <p className="font-hand text-base text-mint font-bold">{appliedCoupon.label} = −{appliedCoupon.discount.toFixed(2)}€</p>
+                    </div>
+                    <button type="button" onClick={() => setAppliedCoupon(null)}
+                      className="font-hand text-lg text-mid hover:text-pink cursor-pointer border-none bg-transparent">✕</button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={e => { setCouponInput(e.target.value.toUpperCase()); setCouponError(''); }}
+                      placeholder="Código descuento"
+                      className="flex-1 px-4 py-3 font-hand text-lg border-2 border-dark/40 bg-bg text-dark outline-none focus:border-dark rounded-lg"
+                      onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), applyCoupon())}
+                    />
+                    <button type="button" onClick={applyCoupon} disabled={couponLoading || !couponInput.trim()}
+                      className="px-4 py-3 font-hand text-lg border-2 border-dark bg-white text-dark cursor-pointer hover:bg-bg transition-colors rounded-lg disabled:opacity-50">
+                      {couponLoading ? '...' : 'Aplicar'}
+                    </button>
+                  </div>
+                )}
+                {couponError && <p className="font-hand text-base text-pink mt-1">⚠️ {couponError}</p>}
+              </div>
+
               <div className="border-t-2 border-dark pt-4 space-y-3">
                 <div className="flex justify-between font-hand text-xl">
                   <span className="text-mid">Subtotal</span>
@@ -487,6 +553,13 @@ export default function CheckoutForm() {
                     {adjShippingCost === 0 ? 'gratis 🎉' : `${adjShippingCost.toFixed(2)}€`}
                   </span>
                 </div>
+
+                {appliedCoupon && (
+                  <div className="flex justify-between font-hand text-xl text-mint font-bold">
+                    <span>🎟️ Descuento ({appliedCoupon.code})</span>
+                    <span>−{appliedCoupon.discount.toFixed(2)}€</span>
+                  </div>
+                )}
 
                 <div className="border-t-2 border-dark pt-3 flex justify-between items-baseline">
                   <span className="font-marker text-3xl text-dark">Total</span>

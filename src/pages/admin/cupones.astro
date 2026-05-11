@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import CouponsManager from '../../components/admin/CouponsManager';
+---
+
+<AdminLayout title="Cupones">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none">Cupones</h1>
+      <p class="font-hand text-2xl text-mid">Crea y gestiona códigos de descuento.</p>
+    </div>
+    <CouponsManager client:load />
+  </div>
+</AdminLayout>

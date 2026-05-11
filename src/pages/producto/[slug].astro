@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import WishlistButton from '../../components/WishlistButton';
+import ProductReviews from '../../components/ProductReviews';
 import { getProductBySlug, getProductsByCategory } from '../../data/products';
 
 const { slug } = Astro.params;
@@ -192,7 +194,17 @@ const colorMap: Record<string, string> = {
           </a>
         </div>
 
-        <!-- Guarantees -->
+        <!-- Wishlist + Guarantees -->
+        <div class="flex items-center gap-4 flex-wrap">
+          <WishlistButton
+            client:load
+            productId={product.id}
+            productName={product.name}
+            productSlug={product.slug}
+            productImage={product.image}
+            productPrice={product.price}
+          />
+        </div>
         <p class="font-hand text-xl text-mid m-0">
           ✓ envío gratis +50€ · ✓ devolución 30 días
         </p>
@@ -219,6 +231,11 @@ const colorMap: Record<string, string> = {
         ))}
       </div>
     </div>
+  </section>
+
+  <!-- Reviews -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 border-t-2 border-dark/10">
+    <ProductReviews productId={product.id} client:load />
   </section>
 
   <!-- Related products -->

@@ -6,7 +6,7 @@ import {
 } from 'firebase/auth';
 import {
   collection, query, where, getDocs,
-  doc, getDoc, setDoc, serverTimestamp,
+  doc, getDoc, setDoc, addDoc, serverTimestamp, updateDoc, arrayRemove,
 } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase/client';
 
@@ -70,7 +70,16 @@ interface UserProfile {
   zip: string;
 }
 
-type Tab = 'pedidos' | 'cuenta' | 'seguridad';
+type Tab = 'pedidos' | 'cuenta' | 'seguridad' | 'favoritos' | 'devoluciones';
+
+interface WishlistItem {
+  productId: string;
+  productName: string;
+  productSlug: string;
+  productImage?: string;
+  productPrice: number;
+  addedAt: string;
+}
 
 function getInitialTab(): Tab {
   if (typeof window === 'undefined') return 'pedidos';
@@ -233,6 +242,16 @@ function OrderCard({ order, onExpand, expanded }: {
               </p>
             </div>
           </div>
+
+          {/* Actions */}
+          <div className="flex gap-3 flex-wrap">
+            <a
+              href={`/factura/${order.id}`}
+              className="font-hand text-lg border-2 border-dark px-4 py-2 no-underline hover:bg-bg transition-colors rounded-lg text-dark"
+            >
+              🧾 Ver factura
+            </a>
+          </div>
         </div>
       )}
     </div>
@@ -263,6 +282,16 @@ export default function CustomerDashboard() {
   const [pwError, setPwError]     = useState('');
   const [pwSuccess, setPwSuccess] = useState(false);
   const [pwLoading, setPwLoading] = useState(false);
+
+  // Wishlist state
+  const [wishlist, setWishlist]   = useState<WishlistItem[]>([]);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  // Returns state
+  const [returnForm, setReturnForm] = useState({ orderId: '', reason: '', details: '' });
+  const [returnSaving, setReturnSaving] = useState(false);
+  const [returnSent, setReturnSent] = useState(false);
+  const [returnError, setReturnError] = useState('');
 
   // ── Auth listener ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -310,6 +339,64 @@ export default function CustomerDashboard() {
     if (tab !== 'pedidos' || !user) return;
     loadOrders();
   }, [tab, user]);
+
+  useEffect(() => {
+    if (tab !== 'favoritos' || !user) return;
+    loadWishlist();
+  }, [tab, user]);
+
+  async function loadWishlist() {
+    if (!user) return;
+    setWishlistLoading(true);
+    try {
+      const snap = await getDoc(doc(db, 'wishlists', user.uid));
+      if (snap.exists()) setWishlist(snap.data().items ?? []);
+      else setWishlist([]);
+    } finally {
+      setWishlistLoading(false);
+    }
+  }
+
+  async function removeFromWishlist(productId: string) {
+    if (!user) return;
+    const ref = doc(db, 'wishlists', user.uid);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) return;
+    const items: WishlistItem[] = snap.data().items ?? [];
+    const filtered = items.filter(i => i.productId !== productId);
+    await updateDoc(ref, {
+      productIds: filtered.map(i => i.productId),
+      items: filtered,
+    });
+    setWishlist(filtered);
+  }
+
+  async function submitReturn(e: React.FormEvent) {
+    e.preventDefault();
+    if (!user) return;
+    setReturnSaving(true);
+    setReturnError('');
+    try {
+      const res = await fetch('/api/returns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: returnForm.orderId,
+          reason: returnForm.reason,
+          details: returnForm.details,
+          userUid: user.uid,
+          userEmail: user.email,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) setReturnError(data.error ?? 'Error al enviar solicitud');
+      else { setReturnSent(true); setReturnForm({ orderId: '', reason: '', details: '' }); }
+    } catch {
+      setReturnError('Error de conexión');
+    } finally {
+      setReturnSaving(false);
+    }
+  }
 
   async function loadOrders() {
     if (!user) return;
@@ -446,9 +533,11 @@ export default function CustomerDashboard() {
 
   // ── TABS ───────────────────────────────────────────────────────────────────
   const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: 'pedidos',   label: 'Mis Pedidos',  icon: '📦' },
-    { key: 'cuenta',    label: 'Mi Cuenta',    icon: '👤' },
-    { key: 'seguridad', label: 'Seguridad',    icon: '🔒' },
+    { key: 'pedidos',      label: 'Mis Pedidos',  icon: '📦' },
+    { key: 'favoritos',    label: 'Favoritos',    icon: '❤️' },
+    { key: 'devoluciones', label: 'Devoluciones', icon: '↩️' },
+    { key: 'cuenta',       label: 'Mi Cuenta',    icon: '👤' },
+    { key: 'seguridad',    label: 'Seguridad',    icon: '🔒' },
   ];
 
   return (
@@ -676,6 +765,131 @@ export default function CustomerDashboard() {
                   Cerrar sesión
                 </button>
               </div>
+            </div>
+          )}
+
+          {/* ════ FAVORITOS ════ */}
+          {tab === 'favoritos' && (
+            <div>
+              <h2 className="font-marker text-3xl text-dark mb-6">Mis Favoritos</h2>
+              {wishlistLoading && <p className="font-hand text-xl text-mid animate-pulse">Cargando favoritos...</p>}
+              {!wishlistLoading && wishlist.length === 0 && (
+                <div className="bg-white border-2 border-dark p-8 rounded-xl shadow-hard text-center">
+                  <p className="text-6xl mb-4">🤍</p>
+                  <p className="font-hand text-2xl text-mid mb-6">No tienes productos en favoritos aún.</p>
+                  <a href="/tienda" className="bg-pink text-white border-2 border-dark font-hand text-xl px-8 py-3 no-underline inline-block shadow-hard hover:-translate-y-1 transition-all rounded-lg">
+                    Ver tienda →
+                  </a>
+                </div>
+              )}
+              {!wishlistLoading && wishlist.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {wishlist.map(item => (
+                    <div key={item.productId} className="flex gap-4 bg-white border-2 border-dark p-4 rounded-xl shadow-hard">
+                      <a href={`/producto/${item.productSlug}`} className="shrink-0 no-underline">
+                        <div className="w-20 h-20 rounded-lg border-2 border-dark overflow-hidden bg-bg flex items-center justify-center">
+                          {item.productImage
+                            ? <img src={item.productImage} alt={item.productName} className="w-full h-full object-cover" />
+                            : <span className="text-3xl">👕</span>
+                          }
+                        </div>
+                      </a>
+                      <div className="flex-1 min-w-0">
+                        <a href={`/producto/${item.productSlug}`} className="no-underline">
+                          <p className="font-marker text-xl text-dark leading-tight hover:text-pink transition-colors">{item.productName}</p>
+                        </a>
+                        <p className="font-hand text-xl text-pink font-bold mt-1">{item.productPrice.toFixed(2)}€</p>
+                        <div className="flex gap-2 mt-3">
+                          <a href={`/producto/${item.productSlug}`}
+                            className="bg-dark text-mint border-2 border-dark font-hand text-base px-4 py-1.5 no-underline inline-block shadow-hard hover:-translate-y-0.5 transition-all rounded-lg">
+                            Ver →
+                          </a>
+                          <button type="button" onClick={() => removeFromWishlist(item.productId)}
+                            className="border-2 border-dark/30 text-mid font-hand text-base px-4 py-1.5 cursor-pointer hover:border-pink hover:text-pink transition-all rounded-lg bg-transparent">
+                            Quitar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ════ DEVOLUCIONES ════ */}
+          {tab === 'devoluciones' && (
+            <div>
+              <h2 className="font-marker text-3xl text-dark mb-6">Solicitar Devolución</h2>
+              {returnSent ? (
+                <div className="bg-white border-2 border-dark p-8 rounded-xl shadow-hard text-center">
+                  <p className="text-6xl mb-4">✅</p>
+                  <h3 className="font-marker text-2xl text-dark mb-3">Solicitud enviada</h3>
+                  <p className="font-hand text-xl text-mid mb-6">Te contactaremos en 24-48h con las instrucciones de devolución.</p>
+                  <button type="button" onClick={() => setReturnSent(false)}
+                    className="bg-dark text-mint border-2 border-dark font-hand text-xl px-8 py-3 cursor-pointer shadow-hard hover:-translate-y-1 transition-all rounded-lg">
+                    Nueva solicitud
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={submitReturn} className="space-y-6">
+                  <div className="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4">
+                    <p className="font-hand text-lg text-yellow-800">
+                      🕐 Las devoluciones se aceptan hasta 30 días después de la recepción del pedido.
+                      El producto debe estar sin usar y con etiquetas originales.
+                    </p>
+                  </div>
+                  <div className="bg-white border-2 border-dark p-6 rounded-xl shadow-hard space-y-4">
+                    <div>
+                      <label className="block font-hand text-xl text-dark font-bold mb-1">Número de pedido *</label>
+                      <select
+                        value={returnForm.orderId}
+                        onChange={e => setReturnForm(p => ({ ...p, orderId: e.target.value }))}
+                        className="w-full px-4 py-3 font-hand text-xl border-2 border-dark bg-bg text-dark outline-none focus:shadow-hard rounded-lg"
+                        required
+                      >
+                        <option value="">Selecciona un pedido...</option>
+                        {orders.map(o => (
+                          <option key={o.id} value={o.stripeSessionId}>
+                            #{o.stripeSessionId.replace('cs_', '').replace('test_', '').slice(0, 10).toUpperCase()} — {o.amountTotal.toFixed(2)}€
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-hand text-xl text-dark font-bold mb-1">Motivo *</label>
+                      <select
+                        value={returnForm.reason}
+                        onChange={e => setReturnForm(p => ({ ...p, reason: e.target.value }))}
+                        className="w-full px-4 py-3 font-hand text-xl border-2 border-dark bg-bg text-dark outline-none focus:shadow-hard rounded-lg"
+                        required
+                      >
+                        <option value="">Selecciona un motivo...</option>
+                        <option value="talla">Talla incorrecta</option>
+                        <option value="defecto">Producto defectuoso</option>
+                        <option value="no-corresponde">No corresponde a la descripción</option>
+                        <option value="cambio-opinion">Cambio de opinión</option>
+                        <option value="otro">Otro motivo</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block font-hand text-xl text-dark font-bold mb-1">Detalles adicionales</label>
+                      <textarea
+                        value={returnForm.details}
+                        onChange={e => setReturnForm(p => ({ ...p, details: e.target.value }))}
+                        placeholder="Cuéntanos más sobre el problema..."
+                        rows={4}
+                        className="w-full px-4 py-3 font-hand text-xl border-2 border-dark bg-bg text-dark outline-none focus:shadow-hard transition-all rounded-lg resize-none"
+                      />
+                    </div>
+                  </div>
+                  {returnError && <p className="font-hand text-xl text-pink">⚠️ {returnError}</p>}
+                  <button type="submit" disabled={returnSaving}
+                    className="w-full bg-dark text-mint border-2 border-dark font-hand text-2xl py-4 cursor-pointer shadow-hard hover:-translate-y-1 transition-all rounded-lg disabled:opacity-60">
+                    {returnSaving ? 'Enviando...' : 'Enviar solicitud de devolución'}
+                  </button>
+                </form>
+              )}
             </div>
           )}
 

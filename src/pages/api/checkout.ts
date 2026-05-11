@@ -45,7 +45,9 @@ export const POST: APIRoute = async ({ request }) => {
       shippingMethod,
       isCanarias,
       userUid,
-    }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean; userUid?: string } = body;
+      couponCode,
+      couponDiscount,
+    }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean; userUid?: string; couponCode?: string; couponDiscount?: number } = body;
 
     // ── Validate input ──────────────────────────────────────────
     if (!items?.length) {
@@ -162,6 +164,19 @@ export const POST: APIRoute = async ({ request }) => {
       return json({ error: 'No hay productos válidos en el carrito' }, 400);
     }
 
+    // Add coupon discount as a negative line item
+    if (couponCode && couponDiscount && couponDiscount > 0) {
+      const discountCents = Math.round(couponDiscount * 100);
+      lineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: { name: `Descuento (${couponCode})` },
+          unit_amount: -discountCents,
+        },
+        quantity: 1,
+      });
+    }
+
     // ── Shipping ────────────────────────────────────────────────
     const subtotalCents = lineItems.reduce(
       (s, li) => s + (li.price_data!.unit_amount! as number) * (li.quantity as number),
@@ -241,6 +256,8 @@ export const POST: APIRoute = async ({ request }) => {
         shipping_method:   shippingMethod,
         tax_note:          taxNote,
         user_uid:          userUid ?? '',
+        coupon_code:       couponCode ?? '',
+        coupon_discount:   couponDiscount ? String(couponDiscount) : '',
         // format: "productId:variantId:size:color:qty" comma-separated
         item_ids:          itemMeta.join(','),
       },

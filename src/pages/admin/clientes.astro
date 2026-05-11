@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import ClientsManager from '../../components/admin/ClientsManager';
+---
+
+<AdminLayout title="Clientes">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none">Clientes</h1>
+      <p class="font-hand text-2xl text-mid">Todos tus compradores y su historial.</p>
+    </div>
+    <ClientsManager client:load />
+  </div>
+</AdminLayout>

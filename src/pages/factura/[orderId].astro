@@ -1,0 +1,10 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import InvoiceView from '../../components/InvoiceView';
+
+const { orderId } = Astro.params;
+---
+
+<Layout title="Factura / Recibo" description="Resumen de tu pedido en Subliminal.es">
+  <InvoiceView orderId={orderId ?? ''} client:load />
+</Layout>

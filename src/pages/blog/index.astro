@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllBlogPosts, type BlogPost } from '../../lib/firebase/blog';
+
+let posts: BlogPost[] = [];
+try {
+  posts = await getAllBlogPosts();
+} catch {}
+
+function formatDate(ts: any): string {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  return d.toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+---
+
+<Layout
+  title="Blog"
+  description="Artículos, curiosidades y chistes de Subliminal.es sobre moda, diseño y mensajes ocultos."
+>
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+
+    <div class="mb-12">
+      <h1 class="font-marker text-5xl md:text-7xl text-dark leading-none mb-4">el blog</h1>
+      <p class="font-hand text-2xl text-mid">Artículos, curiosidades y más chistes.</p>
+    </div>
+
+    {posts.length === 0 ? (
+      <div class="text-center py-20 border-2 border-dark rounded-xl">
+        <p class="text-6xl mb-4">✍️</p>
+        <p class="font-hand text-2xl text-mid">Pronto habrá posts aquí. Prometido.</p>
+      </div>
+    ) : (
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.map((post, i) => {
+          const rotations = ['-rotate-1', 'rotate-1', '-rotate-2'];
+          return (
+            <a
+              href={`/blog/${post.slug}`}
+              class={`no-underline block border-2 border-dark bg-white shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all duration-300 rounded-xl overflow-hidden transform ${rotations[i % rotations.length]} hover:rotate-0`}
+            >
+              {post.image ? (
+                <div class="aspect-video overflow-hidden">
+                  <img src={post.image} alt={post.title} class="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div class="aspect-video bg-gradient-to-br from-pink/20 to-mint/20 flex items-center justify-center">
+                  <span class="text-6xl">✍️</span>
+                </div>
+              )}
+              <div class="p-5">
+                <div class="flex flex-wrap gap-2 mb-3">
+                  {(post.tags ?? []).slice(0, 2).map(tag => (
+                    <span class="tag tag-mint text-sm px-3 py-0.5">{tag}</span>
+                  ))}
+                </div>
+                <h2 class="font-marker text-2xl text-dark mb-2 leading-tight">{post.title}</h2>
+                <p class="font-hand text-lg text-mid mb-4 line-clamp-3">{post.excerpt}</p>
+                <p class="font-hand text-base text-mid">{formatDate(post.publishedAt)}</p>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</Layout>

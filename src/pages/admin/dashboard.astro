@@ -1,0 +1,14 @@
+---
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import AdminDashboard from '../../components/admin/AdminDashboard';
+---
+
+<AdminLayout title="Dashboard">
+  <div class="px-4 md:px-0">
+    <div class="mb-10">
+      <h1 class="font-marker text-5xl md:text-6xl text-dark mb-4 leading-none">Dashboard</h1>
+      <p class="font-hand text-2xl text-mid">Resumen de tu tienda en tiempo real.</p>
+    </div>
+    <AdminDashboard client:load />
+  </div>
+</AdminLayout>
