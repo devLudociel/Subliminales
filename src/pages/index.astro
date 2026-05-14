@@ -10,181 +10,170 @@ try {
 } catch {}
 
 const displayCollections = firestoreCollections.length > 0
-  ? firestoreCollections.slice(0, 3).map(c => ({
+  ? firestoreCollections.slice(0, 3).map((c, i) => ({
       id: c.slug,
       name: c.name.toUpperCase(),
       desc: c.desc,
-      color: c.color ?? '#f72585',
+      color: c.color ?? ['#FF008C', '#00D9FF', '#FFE600'][i % 3],
+      image: [`/brand/6.png`, `/brand/2.png`, `/brand/4.png`][i % 3],
     }))
   : [
-      { id: 'mind-control', name: 'PATOCHAR',     desc: 'cuando el clima es un chiste',     color: '#f72585' },
-      { id: 'hidden-truth', name: 'HIDDEN TRUTH',  desc: 'la verdad siempre estuvo ahí',     color: '#111111' },
-      { id: 'wake-up',      name: 'WAKE UP',       desc: 'abre los ojos. en serio.',         color: '#4cc9a0' },
+      { id: 'drunk-thoughts', name: 'DRUNK THOUGHTS', desc: 'humor visual + cerveza + graffiti', color: '#FF008C', image: '/brand/6.png' },
+      { id: 'visual-noise',   name: 'VISUAL NOISE',   desc: 'sobrecarga mental, señal perdida',  color: '#00D9FF', image: '/brand/2.png' },
+      { id: 'cmyk-disorder',  name: 'CMYK DISORDER',  desc: 'el error es diseño',                color: '#FFE600', image: '/brand/4.png' },
     ];
 
 const featured = (await getFeaturedProducts()).slice(0, 4);
 
-const rotations = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2'];
+const labStats = [
+  ['DROP', '001'],
+  ['NOISE', '99%'],
+  ['MODE', 'ON'],
+  ['SIGNAL', 'LIVE'],
+];
 ---
 
-<Layout title="No todo lo que ves es lo que parece">
+<Layout title="Visual Mind Lab" description="Streetwear visual, glitch, humor absurdo y drops que actúan en tu mente.">
 
-  <!-- ── HERO ── -->
-  <section class="bg-light-pink border-b-2 border-dark relative overflow-hidden">
-    <!-- Decorative circle -->
-    <div class="absolute -top-16 -right-16 w-64 h-64 md:w-96 md:h-96 rounded-full bg-mint/20 blur-[60px] pointer-events-none"></div>
-    <div class="absolute -bottom-20 -left-20 w-72 h-72 rounded-full bg-pink/10 blur-[60px] pointer-events-none"></div>
+  <!-- Hero -->
+  <section class="relative min-h-[78vh] border-b border-dark overflow-hidden flex items-end">
+    <img src="/brand/1.png" alt="Subliminal Signal visual system" class="absolute inset-0 w-full h-full object-cover opacity-70" />
+    <div class="absolute inset-0 bg-gradient-to-b from-black/45 via-black/65 to-bg"></div>
+    <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(245,245,245,.06)_1px,transparent_1px),linear-gradient(90deg,rgba(245,245,245,.05)_1px,transparent_1px)] bg-[size:42px_42px]"></div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 lg:py-32 flex flex-col md:flex-row gap-12 items-center relative z-10">
-      
-      <!-- Left content -->
-      <div class="flex-1 text-center md:text-left">
-        <span class="tag tag-mint -rotate-2 mb-6 text-sm shadow-hard">
-          nueva colección 🌿
-        </span>
-        <h1 class="font-marker text-5xl md:text-6xl lg:text-8xl leading-[1.1] text-dark mb-4 mt-4">
-          ROPA / CON
-          <span class="text-pink block md:inline"> (CHISTE)</span>
+    <div class="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-24 pb-10 md:pb-16">
+      <div class="max-w-5xl">
+        <div class="flex flex-wrap gap-3 mb-6">
+          <span class="tag tag-pink shadow-hard">drop 001</span>
+          <span class="tag tag-dark shadow-hard">visual mind lab</span>
+          <span class="tag tag-mint shadow-hard">signal on</span>
+        </div>
+        <h1 class="font-marker text-5xl sm:text-6xl md:text-8xl lg:text-9xl text-dark leading-[.9] m-0 glitch-text">
+          diseños que actúan en tu mente
         </h1>
-        <p class="font-hand text-xl md:text-2xl text-mid mb-8 max-w-lg mx-auto md:mx-0 leading-relaxed">
-          (y también sin chiste, pero eso es mentira)
+        <p class="font-hand text-base md:text-xl text-dark/80 mt-6 mb-8 max-w-2xl uppercase tracking-[0.08em] leading-relaxed">
+          Streetwear gráfico, humor absurdo, glitch, impresión y mensajes que se quedan pegados.
         </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-          <a href="/tienda" class="btn-dark text-lg px-8 py-3 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">Ver tienda →</a>
-          <a href="/sobre-nosotros" class="btn-outline text-lg px-8 py-3 bg-white shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">¿qué es esto?</a>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="/tienda" class="btn-primary shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">ver drop</a>
+          <a href="/colecciones" class="btn-outline bg-bg/80 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all">colecciones</a>
         </div>
       </div>
 
-      <!-- Right: product images placeholder -->
-      <div class="hidden md:flex gap-6 items-center justify-center flex-1 relative">
-        <div class="img-placeholder w-48 h-64 -rotate-6 shadow-hard bg-white z-10 hover:rotate-0 transition-transform duration-300 rounded-xl">
-          <span class="text-7xl">👕</span>
-        </div>
-        <div class="img-placeholder w-40 h-56 rotate-6 shadow-hard bg-white mt-16 hover:rotate-0 transition-transform duration-300 rounded-xl">
-          <span class="text-6xl">☕</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Badge absolute -->
-    <div class="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 z-20 hidden md:block">
-      <span class="tag tag-pink -rotate-2 text-sm font-bold shadow-hard">
-        ¡NUEVO DROP! 🔥
-      </span>
-    </div>
-  </section>
-
-  <!-- ── CATEGORÍAS ── -->
-  <section class="bg-white border-b-2 border-dark">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <p class="font-hand text-2xl font-bold text-dark mb-6 text-center md:text-left">
-        explorar por tipo:
-      </p>
-      <div class="flex gap-4 md:gap-6 flex-wrap items-center justify-center md:justify-start">
-        <a href="/tienda?cat=camisetas" class="tag tag-pink -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">👕 camisetas</a>
-        <a href="/tienda?cat=sudaderas" class="tag tag-mint rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">🧥 sudaderas</a>
-        <a href="/tienda?cat=tazas"     class="tag tag-light -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard bg-light-pink border-dark px-6 py-2">☕ tazas</a>
-        <a href="/tienda?cat=termos"    class="tag tag-mint rotate-2 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">🧃 termos</a>
-        <a href="/tienda"               class="tag tag-dark -rotate-1 hover:scale-105 transition-transform no-underline text-lg md:text-xl shadow-hard px-6 py-2">📦 todo</a>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mt-12 max-w-3xl">
+        {labStats.map(([label, value]) => (
+          <div class="border border-dark bg-bg/70 p-3">
+            <p class="font-hand text-[10px] text-mid uppercase tracking-[0.18em] mb-2">{label}</p>
+            <p class="font-marker text-2xl md:text-3xl text-mint m-0 leading-none">{value}</p>
+          </div>
+        ))}
       </div>
     </div>
   </section>
 
-  <!-- ── PRODUCTOS DESTACADOS ── -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-    <div class="flex justify-between items-end mb-8 md:mb-12">
-      <h2 class="font-marker text-4xl md:text-6xl text-dark m-0">
-        lo más deseado
-      </h2>
-      <a href="/tienda" class="font-hand text-2xl md:text-3xl text-mid hover:text-dark no-underline transition-colors">ver todo →</a>
+  <!-- Categories -->
+  <section class="border-b border-dark bg-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-6 lg:items-center lg:justify-between">
+      <p class="ui-label m-0">explorar sistema</p>
+      <div class="flex gap-3 flex-wrap">
+        <a href="/tienda?cat=camisetas" class="tag tag-pink no-underline shadow-hard">camisetas</a>
+        <a href="/tienda?cat=posters" class="tag tag-mint no-underline shadow-hard">posters</a>
+        <a href="/tienda?cat=accesorios" class="tag tag-light no-underline shadow-hard">stickers</a>
+        <a href="/tienda" class="tag tag-dark no-underline shadow-hard">todo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured products -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 md:mb-12">
+      <div>
+        <p class="ui-label mb-3">selected noise</p>
+        <h2 class="font-marker text-4xl md:text-6xl text-dark m-0 leading-none">drop destacado</h2>
+      </div>
+      <a href="/tienda" class="font-hand text-sm md:text-base text-mid hover:text-mint no-underline transition-colors uppercase tracking-[0.14em]">ver todo -></a>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-      {featured.map((product, i) => (
-        <div class={`transform ${rotations[i % rotations.length]} hover:z-10 hover:rotate-0 transition-transform duration-300`}>
-           <ProductCard product={product} rotation="rotate-0" />
-        </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+      {featured.map((product) => (
+        <ProductCard product={product} rotation="rotate-0" />
       ))}
     </div>
   </section>
 
-  <!-- ── CONCEPTO ── -->
-  <section class="bg-mint-light border-y-2 border-dark">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center">
-        <div class="img-placeholder w-40 h-40 md:w-56 md:h-56 shrink-0 -rotate-3 shadow-hard bg-white rounded-2xl">
-          <span class="text-7xl md:text-9xl">🤣</span>
-        </div>
-        <div class="text-center md:text-left">
-          <h2 class="font-marker text-5xl md:text-6xl text-dark mb-6 leading-tight">
-            ropa con personalidad propia
-          </h2>
-          <p class="font-hand text-2xl md:text-3xl text-mid mb-8 leading-relaxed max-w-2xl mx-auto md:mx-0">
-            Diseños de humor y doble sentido. No es moda seria — es un proyecto personal
-            con mensajes que revelan algo diferente cuando los miras dos veces.
-          </p>
-          <a href="/sobre-nosotros" class="btn-primary text-xl px-10 py-4 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all inline-block">
-            saber más →
-          </a>
-        </div>
+  <!-- Concept -->
+  <section class="border-y border-dark bg-bg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20 grid grid-cols-1 lg:grid-cols-[1fr_1.15fr] gap-8 lg:gap-12 items-center">
+      <div class="surface-panel p-5 md:p-6">
+        <img src="/brand/3.png" alt="Drunk Thoughts Club mockup" class="w-full aspect-[4/3] object-cover border border-dark" loading="lazy" />
+      </div>
+      <div>
+        <p class="ui-label mb-4">brand rule / 23</p>
+        <h2 class="font-marker text-4xl md:text-6xl text-dark mb-6 leading-none">
+          esto es una marca. no una simple tienda.
+        </h2>
+        <p class="font-hand text-base md:text-lg text-mid leading-relaxed uppercase tracking-[0.06em] mb-8">
+          Negro dominante, neón controlado, sticker aesthetics, micro glitch CMYK y composiciones intensas. El caos visual también puede ser identidad.
+        </p>
+        <a href="/sobre-nosotros" class="btn-dark shadow-hard hover:-translate-y-1 transition-all">leer manifesto</a>
       </div>
     </div>
   </section>
 
-  <!-- ── COLECCIONES ── -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-    <div class="flex justify-between items-end mb-8 md:mb-12">
-      <h2 class="font-marker text-4xl md:text-6xl text-dark m-0">
-        colecciones
-      </h2>
-      <a href="/colecciones" class="font-hand text-2xl md:text-3xl text-mid hover:text-dark no-underline transition-colors">ver todas →</a>
+  <!-- Collections -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-24">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8 md:mb-12">
+      <div>
+        <p class="ui-label mb-3">visual systems</p>
+        <h2 class="font-marker text-4xl md:text-6xl text-dark m-0 leading-none">colecciones</h2>
+      </div>
+      <a href="/colecciones" class="font-hand text-sm md:text-base text-mid hover:text-pink no-underline transition-colors uppercase tracking-[0.14em]">ver todas -></a>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-      {displayCollections.map((col, i) => {
-        const isLight = col.color === '#4cc9a0' || col.color.startsWith('#f') && col.color !== '#f72585';
-        const textColor = isLight ? '#111' : '#fff';
-        const rotates = ['-rotate-2', 'rotate-1', '-rotate-1'];
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {displayCollections.map((col) => {
+        const isYellow = col.color === '#FFE600';
+        const textColor = isYellow ? '#050505' : '#F5F5F5';
         return (
-          <a
-            href={`/colecciones`}
-            class={`border-2 border-dark p-6 md:p-8 no-underline flex flex-col transform ${rotates[i % rotates.length]} shadow-hard hover:scale-105 hover:rotate-0 hover:shadow-hard-lg transition-all duration-300 rounded-xl`}
-            style={`background:${col.color}; color:${textColor};`}
-          >
-            <div class="w-full h-40 md:h-48 bg-white/10 border-2 border-current/30 mb-6 rounded-lg flex items-center justify-center">
-              <span class="text-5xl opacity-40">✨</span>
+          <a href="/colecciones" class="surface-panel no-underline group hover:-translate-y-1 transition-transform shadow-hard">
+            <div class="aspect-[4/3] overflow-hidden border-b border-dark">
+              <img src={col.image} alt={col.name} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
             </div>
-            <p class="font-marker text-4xl mb-2">{col.name}</p>
-            <p class="font-hand text-2xl mb-8 opacity-90">{col.desc}</p>
-            <span class="font-hand text-xl opacity-75 mt-auto">ver colección →</span>
+            <div class="p-5 md:p-6" style={`border-top:4px solid ${col.color};`}>
+              <p class="font-hand text-xs uppercase tracking-[0.16em] mb-3" style={`color:${col.color};`}>{col.id}</p>
+              <h3 class="font-marker text-3xl md:text-4xl mb-3 leading-none" style={`color:${textColor};`}>{col.name}</h3>
+              <p class="font-hand text-sm text-mid uppercase tracking-[0.08em] leading-relaxed mb-6">{col.desc}</p>
+              <span class="font-hand text-xs text-mint uppercase tracking-[0.16em]">abrir sistema -></span>
+            </div>
           </a>
         );
       })}
     </div>
   </section>
 
-  <!-- ── NEWSLETTER ── -->
-  <section class="bg-pink border-t-2 border-dark">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-      <h2 class="font-marker text-4xl md:text-6xl text-white mb-6">
-        ¿te cuento los chistes nuevos?
-      </h2>
-      <p class="font-hand text-2xl text-white/90 mb-10">
-        Suscríbete y recibe los drops antes que nadie.
-      </p>
-      <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-        <input
-          id="newsletter-email"
-          type="email"
-          placeholder="tu@email.com"
-          required
-          class="w-full sm:w-auto flex-1 max-w-md px-6 py-4 font-hand text-xl border-2 border-dark bg-white text-dark outline-none shadow-hard focus:shadow-hard-lg transition-shadow rounded-none"
-        />
-        <button id="newsletter-btn" type="submit" class="btn-dark text-xl px-8 py-4 shadow-hard hover:-translate-y-1 hover:shadow-hard-lg transition-all whitespace-nowrap w-full sm:w-auto">
-          suscribirse
-        </button>
-      </form>
-      <p id="newsletter-msg" class="font-hand text-xl text-white mt-4 hidden"></p>
+  <!-- Newsletter -->
+  <section class="bg-pink border-t border-dark">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 md:items-end">
+        <div>
+          <p class="font-hand text-xs uppercase tracking-[0.2em] text-white/75 mb-4">drop alert</p>
+          <h2 class="font-marker text-4xl md:text-6xl text-white mb-4 leading-none">ideas que se quedan pegadas</h2>
+          <p class="font-hand text-sm md:text-base text-white/85 uppercase tracking-[0.08em] m-0">Recibe lanzamientos, prototipos y señales antes que el resto.</p>
+        </div>
+        <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3 md:min-w-[420px]">
+          <input
+            id="newsletter-email"
+            type="email"
+            placeholder="tu@email.com"
+            required
+            class="w-full px-5 py-4 font-hand text-sm border border-dark bg-bg text-dark outline-none shadow-hard focus:shadow-hard-lg transition-shadow"
+          />
+          <button id="newsletter-btn" type="submit" class="btn-dark shadow-hard hover:-translate-y-1 transition-all whitespace-nowrap">
+            entrar
+          </button>
+        </form>
+      </div>
+      <p id="newsletter-msg" class="font-hand text-sm text-white mt-4 hidden uppercase tracking-[0.08em]"></p>
     </div>
   </section>
 

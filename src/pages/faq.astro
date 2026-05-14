@@ -30,29 +30,30 @@ const faqs = [
 ---
 
 <Layout title="Preguntas Frecuentes — subliminal.es" description="Respuestas a las preguntas más comunes sobre nuestra tienda y productos.">
-  <section class="bg-mint border-b-2 border-dark py-16 md:py-24">
+  <section class="surface-panel border-x-0 border-t-0 py-16 md:py-24">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="font-marker text-5xl md:text-7xl text-dark mb-6 leading-none">Preguntas Frecuentes</h1>
-      <p class="font-hand text-2xl md:text-3xl text-dark/80 max-w-2xl mx-auto">Lo que todo el mundo nos pregunta antes de comprar. Léelo antes de mandarnos un email, porfa.</p>
+      <p class="ui-label mb-4">support database</p>
+      <h1 class="font-marker text-5xl md:text-7xl text-dark mb-6 leading-none glitch-text">Preguntas Frecuentes</h1>
+      <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed max-w-2xl mx-auto">Lo que suele preguntarse antes de entrar al drop.</p>
     </div>
   </section>
 
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-6">
     {faqs.map((faq, i) => (
-      <details class="bg-white border-2 border-dark shadow-hard group rounded-xl overflow-hidden cursor-pointer open:bg-light-pink transition-colors">
+      <details class="bg-white border border-dark shadow-hard group overflow-hidden cursor-pointer open:bg-light-pink transition-colors">
         <summary class="flex items-center justify-between p-6 md:p-8 list-none outline-none">
-          <h3 class="font-marker text-2xl md:text-3xl text-dark pr-6">{faq.q}</h3>
+          <h3 class="font-marker text-xl md:text-2xl text-dark pr-6">{String(i + 1).padStart(2, '0')} / {faq.q}</h3>
           <span class="text-4xl text-pink shrink-0 group-open:rotate-45 transition-transform duration-300">+</span>
         </summary>
-        <div class="px-6 md:px-8 pb-6 md:pb-8 border-t-2 border-dark/10 pt-4 md:pt-6">
-          <p class="font-hand text-xl md:text-2xl text-mid leading-relaxed">{faq.a}</p>
+        <div class="px-6 md:px-8 pb-6 md:pb-8 border-t border-dark/10 pt-4 md:pt-6">
+          <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed">{faq.a}</p>
         </div>
       </details>
     ))}
 
     <div class="text-center pt-12 md:pt-16">
-      <p class="font-hand text-3xl text-dark mb-8">¿Tienes una pregunta más rara?</p>
-      <a href="/contacto" class="btn-dark text-2xl px-10 py-4 shadow-hard hover:-translate-y-1 transition-all inline-block rounded-lg">Escríbenos</a>
+      <p class="font-hand text-sm md:text-base text-dark uppercase tracking-[0.12em] mb-8">¿Tienes una pregunta más rara?</p>
+      <a href="/contacto" class="btn-dark px-10 py-4 shadow-hard hover:-translate-y-1 transition-all inline-block">Escríbenos</a>
     </div>
   </div>
 </Layout>

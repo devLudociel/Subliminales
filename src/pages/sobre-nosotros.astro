@@ -5,35 +5,37 @@ import Layout from '../layouts/Layout.astro';
 <Layout title="sobre nosotros — subliminal.es">
 
   <!-- Hero dark -->
-  <section class="bg-dark relative overflow-hidden">
-    <div class="absolute -top-16 -right-16 w-64 h-64 md:w-96 md:h-96 rounded-full bg-pink/20 blur-[60px] pointer-events-none"></div>
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10 text-center md:text-left">
-      <h1 class="font-marker text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-none">
-        somos / <span class="text-pink block md:inline">subliminal</span>
+  <section class="relative overflow-hidden border-b border-dark">
+    <img src="/brand/5.png" alt="Hidden Message visual" class="absolute inset-0 w-full h-full object-cover opacity-45" />
+    <div class="absolute inset-0 bg-gradient-to-r from-bg via-bg/80 to-black/30"></div>
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative z-10 text-center md:text-left">
+      <p class="ui-label mb-5">manifesto / visual mind lab</p>
+      <h1 class="font-marker text-5xl md:text-7xl lg:text-8xl text-dark mb-6 leading-none glitch-text">
+        somos subliminal
       </h1>
-      <p class="font-hand text-2xl md:text-3xl text-white/80 m-0 max-w-2xl leading-relaxed mx-auto md:mx-0">
-        Un proyecto personal de ropa con humor, doble sentido y poca pretensión.
-        Empezó como un chiste. Sigue siendo un chiste. Pero de los buenos.
+      <p class="font-hand text-sm md:text-lg text-mid uppercase tracking-[0.08em] m-0 max-w-2xl leading-relaxed mx-auto md:mx-0">
+        Un laboratorio visual streetwear: diseño gráfico, impresión, cultura internet, glitch, humor absurdo y mensajes ocultos.
       </p>
     </div>
   </section>
 
   <!-- Cómo empezó -->
-  <section class="bg-white border-b-2 border-dark">
+  <section class="bg-bg border-b border-dark">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+      <p class="ui-label mb-4 text-center md:text-left">adn de marca</p>
       <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10 text-center md:text-left">
-        cómo empezó todo
+        no es una tienda normal
       </h2>
       <div class="flex flex-col md:flex-row gap-8 md:gap-16 items-center md:items-start">
-        <div class="img-placeholder w-32 h-40 md:w-48 md:h-56 shrink-0 -rotate-3 shadow-hard bg-white rounded-xl">
-          <span class="text-6xl md:text-8xl">🤔</span>
+        <div class="surface-panel w-32 h-40 md:w-48 md:h-56 shrink-0 shadow-hard">
+          <img src="/brand/1.png" alt="Subliminal Signal" class="w-full h-full object-cover" loading="lazy" />
         </div>
         <div class="flex-1 text-center md:text-left">
-          <p class="font-hand text-2xl md:text-3xl text-mid leading-relaxed mb-6">
-            Todo empezó con una camiseta que nadie entendía a primera vista. Esa sensación de que alguien te mira dos veces y luego se ríe solo — eso es lo que intentamos crear.
+          <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed mb-6">
+            Subliminal.es mezcla streetwear, diseño gráfico, impresión, graffiti, posters underground, stickers urbanos y estética cyberpunk.
           </p>
-          <p class="font-hand text-2xl md:text-3xl text-mid leading-relaxed m-0">
-            Somos un proyecto pequeño, sin pretensiones de gran marca. Solo diseños con chiste y ropa de calidad.
+          <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed m-0">
+            La idea es simple: crear diseños absurdamente memorables. Piezas con impacto visual real, humor inteligente y una identidad que se reconoce al instante.
           </p>
         </div>
       </div>
@@ -41,23 +43,23 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- Cómo trabajamos -->
-  <section class="bg-mint-light border-b-2 border-dark">
+  <section class="surface-panel border-x-0 border-b border-dark">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <h2 class="font-marker text-4xl md:text-5xl text-dark mb-12 text-center">
-        cómo trabajamos
+        reglas del laboratorio
       </h2>
       <div class="flex flex-col gap-6 md:gap-8">
         {[
-          { icon: '🎨', title: 'diseñamos nosotros', desc: 'Cada diseño sale de cero, sin plantillas. Si el chiste no nos hace gracia, no sale.' },
-          { icon: '🏭', title: 'fabricación local',  desc: 'Producimos en pequeñas tiradas para no generar sobrestock. Calidad sobre cantidad.' },
-          { icon: '😂', title: 'humor obligatorio',  desc: 'Si no tiene doble sentido o no provoca una segunda mirada, no lo publicamos.' },
-          { icon: '♻️', title: 'sin sobreproducción', desc: 'Drops limitados. Cuando se acaba, se acaba. Sin reposiciones infinitas.' },
+          { code: '01', title: 'negro dominante', desc: 'Base oscura, contraste fuerte y neón controlado. Nunca pastel suave.' },
+          { code: '02', title: 'caos controlado',  desc: 'Glitch, CMYK offset, warning labels, barcodes y texturas sin caer en amateur.' },
+          { code: '03', title: 'espalda gigante',  desc: 'Frente limpio. Espalda con composición visual extrema y sticker style.' },
+          { code: '04', title: 'ideas pegajosas', desc: 'Si no se recuerda, no entra al drop.' },
         ].map((item, i) => (
-          <div class={`flex flex-col md:flex-row gap-6 md:gap-8 items-start p-6 md:p-8 bg-white border-2 border-dark shadow-hard transform ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} hover:rotate-0 hover:scale-105 transition-all duration-300 rounded-xl`}>
-            <span class="text-5xl md:text-6xl shrink-0">{item.icon}</span>
+          <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start p-6 md:p-8 bg-white border border-dark shadow-hard hover:-translate-y-1 transition-all duration-300">
+            <span class="font-marker text-4xl md:text-5xl text-pink shrink-0">{item.code}</span>
             <div>
-              <p class="font-hand text-3xl font-bold text-dark mb-3">{item.title}</p>
-              <p class="font-hand text-xl md:text-2xl text-mid m-0 leading-relaxed">{item.desc}</p>
+              <p class="font-marker text-2xl md:text-3xl font-bold text-dark mb-3">{item.title}</p>
+              <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] m-0 leading-relaxed">{item.desc}</p>
             </div>
           </div>
         ))}
@@ -66,20 +68,20 @@ import Layout from '../layouts/Layout.astro';
   </section>
 
   <!-- ¿Hablamos? -->
-  <section class="bg-light-pink border-b-2 border-dark">
+  <section class="bg-pink border-b border-dark">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-6">
-        ¿hablamos?
+      <h2 class="font-marker text-4xl md:text-5xl text-white mb-6">
+        visual signal detected
       </h2>
-      <p class="font-hand text-2xl md:text-3xl text-mid mb-10 leading-relaxed">
-        Colaboraciones, ideas raras, quejas, chistes malos. Todo bienvenido.
+      <p class="font-hand text-sm md:text-base text-white/85 uppercase tracking-[0.08em] mb-10 leading-relaxed">
+        Colaboraciones, ideas raras, drops y proyectos gráficos.
       </p>
       <div class="flex flex-col sm:flex-row gap-6 justify-center">
-        <a href="/contacto" class="bg-pink text-white border-2 border-dark font-hand text-2xl px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
-          email →
+        <a href="/contacto" class="bg-dark text-mint border border-dark font-hand text-xs uppercase tracking-[0.14em] px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all">
+          contacto
         </a>
-        <a href="#" class="bg-dark text-mint border-2 border-dark font-hand text-2xl px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
-          instagram →
+        <a href="/tienda" class="bg-white text-dark border border-dark font-hand text-xs uppercase tracking-[0.14em] px-10 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all">
+          ver drop
         </a>
       </div>
     </div>

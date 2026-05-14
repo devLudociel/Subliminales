@@ -24,63 +24,64 @@ const categoryEmoji: Record<string, string> = {
 const btnColors: Record<string, { bg: string; text: string }> = {
   camisetas:  { bg: 'bg-pink',  text: 'text-white' },
   sudaderas:  { bg: 'bg-mint',  text: 'text-dark' },
-  tazas:      { bg: 'bg-light-pink', text: 'text-dark' },
+  tazas:      { bg: 'bg-violet', text: 'text-white' },
   termos:     { bg: 'bg-dark',  text: 'text-mint' },
-  posters:    { bg: 'bg-pink',  text: 'text-white' },
-  accesorios: { bg: 'bg-mint',  text: 'text-dark' },
+  posters:    { bg: 'bg-mint',  text: 'text-dark' },
+  accesorios: { bg: 'bg-yellow', text: 'text-dark' },
 };
 
 const btn = btnColors[product.category] ?? { bg: 'bg-pink', text: 'text-white' };
 ---
 
-<div class="border-2 border-dark bg-white p-4 md:p-5 flex flex-col transition-transform duration-200 hover:scale-[1.03] shadow-hard rounded-xl">
+<div class="surface-panel p-3 md:p-4 flex flex-col transition-transform duration-200 hover:-translate-y-1 shadow-hard">
   <!-- Image area -->
   <a href={`/producto/${product.slug}`} class="block no-underline">
-    <div class="w-full aspect-[3/4] mb-4 relative overflow-hidden rounded-lg bg-bg flex items-center justify-center border border-dark/10">
+    <div class="w-full aspect-[3/4] mb-4 relative overflow-hidden bg-bg flex items-center justify-center border border-dark">
       {product.image
-        ? <img src={product.image} alt={product.name} class="w-full h-full object-cover" loading="lazy" />
+        ? <img src={product.image} alt={product.name} class="w-full h-full object-cover transition-transform duration-500 hover:scale-105" loading="lazy" />
         : <span class="text-5xl md:text-6xl">{categoryEmoji[product.category] ?? '📦'}</span>
       }
       {product.isNew && (
-        <span class="absolute top-3 right-3 bg-mint text-dark font-hand text-base px-3 py-1 border-2 border-dark rotate-2 shadow-hard">
+        <span class="absolute top-3 right-3 bg-mint text-dark font-hand text-[10px] uppercase tracking-[0.16em] px-3 py-1 border border-dark shadow-hard">
           NEW
         </span>
       )}
       {product.bestseller && !product.isNew && (
-        <span class="absolute top-3 right-3 bg-pink text-white font-hand text-base px-3 py-1 border-2 border-dark rotate-2 shadow-hard">
+        <span class="absolute top-3 right-3 bg-pink text-white font-hand text-[10px] uppercase tracking-[0.16em] px-3 py-1 border border-dark shadow-hard">
           TOP
         </span>
       )}
       {discount && (
-        <span class="absolute top-3 left-3 bg-pink text-white font-hand text-base px-3 py-1 border-2 border-dark shadow-hard">
+        <span class="absolute top-3 left-3 bg-yellow text-dark font-hand text-[10px] uppercase tracking-[0.16em] px-3 py-1 border border-dark shadow-hard">
           -{discount}%
         </span>
       )}
     </div>
   </a>
 
-  <span class="font-hand text-lg text-mint uppercase tracking-widest mb-1 font-bold">
-    {product.category}
+  <span class="font-hand text-[11px] text-mint uppercase tracking-[0.18em] mb-2 font-bold">
+    {product.collection ?? product.category}
   </span>
   <a href={`/producto/${product.slug}`} class="no-underline">
-    <p class="font-hand text-xl md:text-2xl font-bold text-dark m-0 mb-2 leading-tight hover:text-pink transition-colors">
+    <p class="font-marker text-lg md:text-xl font-bold text-dark m-0 mb-2 leading-tight hover:text-pink transition-colors">
       {product.name}
     </p>
   </a>
-  <p class="font-hand text-xl md:text-2xl text-mid m-0 mb-4">
+  <p class="font-hand text-sm md:text-base text-mid m-0 mb-3">
     {product.price.toFixed(2)}€
     {product.originalPrice && (
       <span class="line-through ml-2 opacity-60">{product.originalPrice.toFixed(2)}€</span>
     )}
   </p>
+  <div class="barcode mb-3 h-4"></div>
 
   <button
-    class={`add-to-cart ${btn.bg} ${btn.text} border-2 border-dark font-hand text-xl md:text-2xl py-3 px-4 cursor-pointer w-full text-center shadow-hard hover:-translate-y-1 transition-all mt-auto rounded-lg`}
+    class={`add-to-cart ${btn.bg} ${btn.text} border border-dark font-hand text-xs uppercase tracking-[0.14em] py-3 px-4 cursor-pointer w-full text-center shadow-hard hover:-translate-y-1 transition-all mt-auto`}
     data-product-id={product.id}
     data-product-name={product.name}
     data-product-price={product.price}
   >
-    🛒 añadir
+    añadir / cart
   </button>
 </div>
 
@@ -97,7 +98,7 @@ const btn = btnColors[product.category] ?? { bg: 'bg-pink', text: 'text-white' }
         image: '',
       });
       const orig = el.innerHTML;
-      el.innerHTML = '✓ añadido';
+      el.innerHTML = 'signal added';
       setTimeout(() => { el.innerHTML = orig; }, 1500);
     });
   });

@@ -23,7 +23,7 @@ export default function AuthButtons() {
   return (
     <a 
       href={user ? "/perfil" : "/login"} 
-      className="p-2 text-ink-muted hover:text-neon transition-colors" 
+      className="p-2 text-mid hover:text-mint transition-colors" 
       aria-label="Cuenta"
     >
       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">

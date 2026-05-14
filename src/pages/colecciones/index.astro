@@ -12,10 +12,11 @@ const allProducts = await getAllProducts();
 
 // Fallback static config if Firestore empty
 const STATIC = [
-  { slug: 'mind-control',  name: 'MIND CONTROL', desc: 'Quién controla lo que piensas. Diseños que te hacen pensar dos veces.', bg: '#f72585', light: false },
-  { slug: 'hidden-truth',  name: 'HIDDEN TRUTH',  desc: 'La verdad siempre estuvo ahí. Mira otra vez.',                        bg: '#111111', light: false },
-  { slug: 'wake-up',       name: 'WAKE UP',       desc: 'Abre los ojos. En serio.',                                            bg: '#4cc9a0', light: true  },
-  { slug: 'dual-meaning',  name: 'DUAL MEANING',  desc: 'Dos lecturas, un solo diseño. Lo que ves no es lo único que hay.',   bg: '#fef0f4', light: true  },
+  { slug: 'drunk-thoughts',    name: 'DRUNK THOUGHTS',    desc: 'Humor visual, cerveza, graffiti y stickers neón.',        bg: '#FF008C', light: false, image: '/brand/6.png' },
+  { slug: 'visual-noise',      name: 'VISUAL NOISE',      desc: 'Sobrecarga visual, interferencia y señal perdida.',        bg: '#00D9FF', light: true,  image: '/brand/2.png' },
+  { slug: 'cmyk-disorder',     name: 'CMYK DISORDER',     desc: 'El error de impresión convertido en identidad.',           bg: '#FFE600', light: true,  image: '/brand/4.png' },
+  { slug: 'hidden-message',    name: 'HIDDEN MESSAGE',    desc: 'Estatuas, ojos, hipnosis y mensajes ocultos.',             bg: '#7A2FFF', light: false, image: '/brand/5.png' },
+  { slug: 'subliminal-signal', name: 'SUBLIMINAL SIGNAL', desc: 'La S hipnótica y el sistema principal de la marca.',       bg: '#F5F5F5', light: true,  image: '/brand/1.png' },
 ];
 
 const colecciones = firestoreCollections.length > 0
@@ -23,8 +24,9 @@ const colecciones = firestoreCollections.length > 0
       slug: c.slug,
       name: c.name,
       desc: c.desc,
-      bg: c.color ?? '#f72585',
+      bg: c.color ?? '#FF008C',
       light: false,
+      image: '/brand/1.png',
     }))
   : STATIC;
 
@@ -37,47 +39,45 @@ const categoryEmoji: Record<string, string> = {
 <Layout title="Colecciones" description="Explora nuestras colecciones temáticas de ropa con chiste.">
 
   <!-- Header -->
-  <section class="bg-pink border-b-2 border-dark py-16 md:py-24">
+  <section class="surface-panel border-x-0 border-t-0 py-16 md:py-24">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="font-marker text-5xl md:text-7xl text-white mb-6 leading-none">colecciones</h1>
-      <p class="font-hand text-2xl md:text-3xl text-white/90 m-0 max-w-2xl mx-auto">
-        cada colección es un universo con su propio chiste. elige tu veneno.
+      <p class="ui-label mb-4">visual systems</p>
+      <h1 class="font-marker text-5xl md:text-7xl text-dark mb-6 leading-none glitch-text">colecciones</h1>
+      <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.09em] leading-relaxed m-0 max-w-2xl mx-auto">
+        Cada drop funciona como un sistema: color, ruido, iconografía, mensaje y prenda.
       </p>
     </div>
   </section>
 
   <!-- Collections list -->
-  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-12">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-8">
     {colecciones.map((col, i) => {
       const colProducts = allProducts
         .filter(p => p.collection === col.slug)
         .slice(0, 4);
-      const textColor = col.light ? '#111' : '#fff';
-      const borderColor = col.light ? '#111' : 'rgba(255,255,255,0.5)';
+      const textColor = col.light ? '#050505' : '#fff';
       return (
         <div
-          class={`flex flex-col sm:flex-row border-2 border-dark overflow-hidden bg-white shadow-hard transform ${i % 2 === 0 ? '-rotate-1' : 'rotate-1'} hover:rotate-0 transition-transform rounded-xl`}
+          class="surface-panel grid grid-cols-1 md:grid-cols-[280px_1fr] overflow-hidden shadow-hard"
         >
-          <!-- Color band -->
-          <div
-            class="w-full sm:w-24 sm:min-w-[96px] py-4 sm:py-0 flex items-center justify-center shrink-0 border-b-2 sm:border-b-0 sm:border-r-2 border-dark"
-            style={`background:${col.bg}; color:${textColor};`}
-          >
-            <span class="font-marker text-3xl sm:text-4xl sm:[writing-mode:vertical-rl] sm:rotate-180 tracking-widest text-center">
-              {col.name}
-            </span>
+          <div class="relative min-h-[240px] border-b md:border-b-0 md:border-r border-dark overflow-hidden">
+            <img src={col.image} alt={col.name} class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+            <div class="absolute inset-x-0 bottom-0 p-4" style={`background:${col.bg}; color:${textColor};`}>
+              <p class="font-hand text-[10px] uppercase tracking-[0.18em] mb-1">system / {String(i + 1).padStart(2, '0')}</p>
+              <p class="font-marker text-3xl leading-none">{col.name}</p>
+            </div>
           </div>
 
           <!-- Content -->
           <div class="flex-1 p-6 md:p-10">
-            <h2 class="font-marker text-3xl md:text-4xl text-dark mb-4">{col.name}</h2>
-            <p class="font-hand text-xl md:text-2xl text-mid leading-relaxed mb-8 max-w-xl">{col.desc}</p>
+            <h2 class="font-marker text-3xl md:text-5xl text-dark mb-4 leading-none">{col.name}</h2>
+            <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed mb-8 max-w-xl">{col.desc}</p>
 
             <!-- Mini product grid -->
             <div class="flex gap-4 mb-8 flex-wrap">
               {colProducts.length > 0 ? colProducts.slice(0, 3).map(p => (
                 <a href={`/producto/${p.slug}`} class="no-underline hover:-translate-y-1 transition-transform">
-                  <div class="w-20 h-24 md:w-24 md:h-32 border-2 border-dark bg-bg flex items-center justify-center shadow-hard rounded-lg overflow-hidden">
+                  <div class="w-20 h-24 md:w-24 md:h-32 border border-dark bg-bg flex items-center justify-center shadow-hard overflow-hidden">
                     {p.image
                       ? <img src={p.image} alt={p.name} class="w-full h-full object-cover" />
                       : <span class="text-4xl md:text-5xl">{categoryEmoji[p.category] ?? '📦'}</span>
@@ -85,10 +85,10 @@ const categoryEmoji: Record<string, string> = {
                   </div>
                 </a>
               )) : (
-                <span class="font-hand text-2xl text-mid opacity-75">próximamente...</span>
+                <span class="font-hand text-sm text-mid opacity-75 uppercase tracking-[0.12em]">proximamente...</span>
               )}
               {colProducts.length > 3 && (
-                <div class="w-20 h-24 md:w-24 md:h-32 border-2 border-dark bg-mint-light flex items-center justify-center font-hand text-2xl md:text-3xl text-dark shrink-0 shadow-hard rounded-lg">
+                <div class="w-20 h-24 md:w-24 md:h-32 border border-dark bg-mint-light flex items-center justify-center font-hand text-xl text-dark shrink-0 shadow-hard">
                   +{colProducts.length - 3}
                 </div>
               )}
@@ -96,10 +96,10 @@ const categoryEmoji: Record<string, string> = {
 
             <a
               href={`/tienda?col=${col.slug}`}
-              class="border-2 border-dark font-hand text-2xl px-8 py-3 no-underline inline-block shadow-hard hover:-translate-y-1 transition-transform rounded-lg"
+              class="border border-dark font-hand text-xs uppercase tracking-[0.14em] px-8 py-3 no-underline inline-block shadow-hard hover:-translate-y-1 transition-transform"
               style={`background:${col.bg}; color:${textColor};`}
             >
-              ver colección →
+              ver colección
             </a>
           </div>
         </div>

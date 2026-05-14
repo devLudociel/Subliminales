@@ -11,17 +11,21 @@ export default function CartIcon() {
         display: 'inline-flex',
         alignItems: 'center',
         gap: '4px',
-        background: '#111111',
-        color: '#4cc9a0',
-        padding: '4px 10px',
-        fontFamily: 'Caveat, cursive',
-        fontSize: '14px',
+        background: '#050505',
+        color: '#00D9FF',
+        padding: '7px 11px',
+        fontFamily: 'IBM Plex Mono, monospace',
+        fontSize: '12px',
+        fontWeight: 700,
+        letterSpacing: '.08em',
+        textTransform: 'uppercase',
         textDecoration: 'none',
-        border: '1.5px solid #111111',
+        border: '1.5px solid rgba(245,245,245,.72)',
         lineHeight: 1.3,
+        boxShadow: '2px 2px 0 #FF008C',
       }}
     >
-      🛒 {count}
+      cart/{count}
     </a>
   );
 }

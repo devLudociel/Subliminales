@@ -1,55 +1,57 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
-import { products, categories, getProductsByCategory } from '../data/products';
+import { getProductsByCategory, getProductsByCollection } from '../data/products';
 
 const selectedCat = Astro.url.searchParams.get('cat') || 'all';
-const filteredProducts = await getProductsByCategory(selectedCat);
-
-const rotations = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2', '-rotate-1', 'rotate-1'];
+const selectedCol = Astro.url.searchParams.get('col');
+const filteredProducts = selectedCol
+  ? await getProductsByCollection(selectedCol)
+  : await getProductsByCategory(selectedCat);
 
 const catLabels: Record<string, string> = {
-  all:        '📦 todo',
-  camisetas:  '👕 camisetas',
-  sudaderas:  '🧥 sudaderas',
-  tazas:      '☕ tazas',
-  termos:     '🧃 termos',
-  posters:    '🖼️ posters',
-  accesorios: '🎁 accesorios',
+  all:        'todo',
+  camisetas:  'camisetas',
+  sudaderas:  'sudaderas',
+  tazas:      'tazas',
+  termos:     'termos',
+  posters:    'posters',
+  accesorios: 'stickers',
 };
 ---
 
-<Layout title="la tienda — subliminal.es" description="Todos los productos con mensajes de humor y doble sentido.">
+<Layout title="Tienda — subliminal.es" description="Drops de streetwear visual, posters, camisetas y piezas del Visual Mind Lab.">
 
   <!-- Header -->
-  <section class="bg-mint border-b-2 border-dark">
+  <section class="surface-panel border-x-0 border-t-0">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
       <div class="flex flex-col md:flex-row justify-between md:items-end gap-6">
         <div>
-          <h1 class="font-marker text-5xl md:text-7xl text-dark mb-4 leading-none">
-            la tienda
+          <p class="ui-label mb-4">catalog / visual signal</p>
+          <h1 class="font-marker text-5xl md:text-7xl text-dark mb-4 leading-none glitch-text">
+            tienda
           </h1>
-          <p class="font-hand text-2xl md:text-3xl text-dark/80 m-0">
-            {filteredProducts.length} productos{selectedCat !== 'all' ? ` en ${catLabels[selectedCat] ?? selectedCat}` : ''}
+          <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.1em] m-0">
+            {filteredProducts.length} productos{selectedCol ? ` en ${selectedCol}` : selectedCat !== 'all' ? ` en ${catLabels[selectedCat] ?? selectedCat}` : ''}
           </p>
         </div>
         <div class="flex gap-4">
-          <button class="font-hand text-xl px-6 py-2 border-2 border-dark bg-white text-dark hover:bg-dark hover:text-mint transition-colors shadow-hard">filtrar ↓</button>
-          <button class="font-hand text-xl px-6 py-2 border-2 border-dark bg-white text-dark hover:bg-dark hover:text-mint transition-colors shadow-hard">ordenar ↓</button>
+          <button class="font-hand text-xs uppercase tracking-[0.14em] px-5 py-3 border border-dark bg-white text-dark hover:bg-pink transition-colors shadow-hard">filtrar</button>
+          <button class="font-hand text-xs uppercase tracking-[0.14em] px-5 py-3 border border-dark bg-white text-dark hover:bg-mint hover:text-black transition-colors shadow-hard">ordenar</button>
         </div>
       </div>
     </div>
   </section>
 
   <!-- Category filters -->
-  <div class="bg-white border-b-2 border-dark sticky top-[72px] md:top-[88px] z-40">
+  <div class="bg-bg border-b border-dark sticky top-[96px] md:top-[126px] z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-6 flex gap-3 md:gap-4 flex-wrap overflow-x-auto no-scrollbar">
       {Object.entries(catLabels).map(([id, label]) => {
-        const active = selectedCat === id;
+        const active = !selectedCol && selectedCat === id;
         return (
           <a
             href={id === 'all' ? '/tienda' : `/tienda?cat=${id}`}
-            class={`font-hand text-xl md:text-2xl px-6 py-2 border-2 border-dark no-underline whitespace-nowrap transition-all ${active ? 'bg-pink text-white shadow-hard scale-105' : 'bg-white text-dark hover:bg-light-pink'}`}
+            class={`font-hand text-xs md:text-sm uppercase tracking-[0.14em] px-5 py-2.5 border border-dark no-underline whitespace-nowrap transition-all ${active ? 'bg-pink text-white shadow-hard' : 'bg-white text-dark hover:bg-light-pink'}`}
           >
             {label}
           </a>
@@ -61,19 +63,17 @@ const catLabels: Record<string, string> = {
   <!-- Product grid -->
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-24">
     {filteredProducts.length > 0 ? (
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-10">
-        {filteredProducts.map((product, i) => (
-          <div class={`transform ${rotations[i % rotations.length]} hover:z-10 hover:rotate-0 transition-transform duration-300`}>
-            <ProductCard product={product} rotation="rotate-0" />
-          </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-8">
+        {filteredProducts.map((product) => (
+          <ProductCard product={product} rotation="rotate-0" />
         ))}
       </div>
     ) : (
       <div class="text-center py-24 md:py-32">
-        <p class="text-7xl mb-6">🔍</p>
+        <p class="ui-label mb-4">error_404</p>
         <h3 class="font-marker text-4xl text-dark mb-4">sin resultados</h3>
-        <p class="font-hand text-2xl text-mid mb-8 max-w-md mx-auto">No hay productos en esta categoría todavía, o alguien se llevó el chiste.</p>
-        <a href="/tienda" class="btn-primary text-xl px-10 py-4 shadow-hard hover:-translate-y-1 transition-all">ver todo</a>
+        <p class="font-hand text-sm md:text-base text-mid mb-8 max-w-md mx-auto uppercase tracking-[0.08em]">No hay señal en esta categoría todavía.</p>
+        <a href="/tienda" class="btn-primary shadow-hard hover:-translate-y-1 transition-all">ver todo</a>
       </div>
     )}
   </div>

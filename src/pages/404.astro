@@ -3,23 +3,24 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Página no encontrada" description="Esta página no existe o fue movida.">
-  <div class="min-h-[70vh] flex items-center justify-center px-4">
-    <div class="text-center max-w-lg">
-      <div class="font-marker text-[10rem] leading-none text-pink mb-0 select-none -rotate-3 inline-block">
+  <div class="min-h-[70vh] flex items-center justify-center px-4 relative overflow-hidden">
+    <img src="/brand/7.png" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20" />
+    <div class="text-center max-w-lg relative z-10 surface-panel p-8 md:p-10 shadow-hard">
+      <div class="font-marker text-[7rem] md:text-[10rem] leading-none text-pink mb-0 select-none glitch-text inline-block">
         404
       </div>
       <h1 class="font-marker text-4xl md:text-5xl text-dark mt-4 mb-4">
-        esto no existe
+        motivación no encontrada
       </h1>
-      <p class="font-hand text-2xl text-mid mb-10 leading-relaxed">
-        O la movimos, o nunca existió, o quizás solo estamos probando que sepas leer el error.
+      <p class="font-hand text-sm md:text-base text-mid mb-10 uppercase tracking-[0.08em] leading-relaxed">
+        El recurso solicitado ya no está disponible. Reintentando señal visual.
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="/" class="bg-pink text-white border-2 border-dark font-hand text-xl px-8 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
-          volver al inicio →
+        <a href="/" class="bg-pink text-white border border-dark font-hand text-xs uppercase tracking-[0.14em] px-8 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all">
+          inicio
         </a>
-        <a href="/tienda" class="bg-white text-dark border-2 border-dark font-hand text-xl px-8 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all rounded-lg">
-          ver la tienda
+        <a href="/tienda" class="bg-white text-dark border border-dark font-hand text-xs uppercase tracking-[0.14em] px-8 py-4 no-underline shadow-hard hover:-translate-y-1 transition-all">
+          tienda
         </a>
       </div>
     </div>

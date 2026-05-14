@@ -3,18 +3,18 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout
-  title="Cómo Funciona — subliminal.es"
-  description="Descubre cómo creamos ropa con doble sentido y humor."
+  title="Visual Lab — subliminal.es"
+  description="Cómo funciona el laboratorio visual de subliminal.es."
 >
   <!-- Hero -->
-  <section class="bg-pink border-b-2 border-dark py-16 md:py-24">
+  <section class="surface-panel border-x-0 border-t-0 py-16 md:py-24">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <span class="bg-white border-2 border-dark text-dark font-hand text-xl px-4 py-1 inline-block mb-6 shadow-hard rotate-2">La Ciencia</span>
-      <h1 class="font-marker text-5xl md:text-7xl text-white mb-6 leading-none">
-        ¿Cómo funciona<br/>esto?
+      <span class="tag tag-mint inline-block mb-6 shadow-hard">lab process</span>
+      <h1 class="font-marker text-5xl md:text-7xl text-dark mb-6 leading-none glitch-text">
+        cómo funciona
       </h1>
-      <p class="font-hand text-2xl md:text-3xl text-white/90 leading-relaxed max-w-2xl mx-auto">
-        No somos una marca normal. Hacemos ropa que la gente tiene que mirar dos veces para entender el chiste.
+      <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed max-w-2xl mx-auto">
+        Convertimos ideas random, errores visuales, impresión, glitch y humor en piezas streetwear con identidad.
       </p>
     </div>
   </section>
@@ -22,59 +22,54 @@ import Layout from '../layouts/Layout.astro';
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 space-y-20">
     <!-- What are subliminales -->
     <section>
-      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-8">¿Qué es esto de la ropa con chiste?</h2>
-      <div class="bg-white border-2 border-dark shadow-hard p-8 md:p-10 rounded-xl">
-        <p class="font-hand text-2xl text-mid leading-relaxed mb-6">
-          Los mensajes "subliminales" son esos detalles que pasan desapercibidos a primera vista. Tu cerebro los procesa, pero tardas un par de segundos en pillar la gracia.
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-8">visual streetwear lab</h2>
+      <div class="bg-white border border-dark shadow-hard p-8 md:p-10">
+        <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed mb-6">
+          Cada diseño nace como una señal: frase corta, símbolo, error gráfico o broma absurda. Luego lo empujamos hasta que se vuelve memorable.
         </p>
-        <p class="font-hand text-2xl text-mid leading-relaxed m-0">
-          En nuestras prendas, combinamos diseños aparentemente inocentes o elegantes con textos y gráficos que ocultan un doble sentido, una ironía o simplemente algo absurdo.
+        <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed m-0">
+          La regla no es limpiar el caos. La regla es controlarlo: contraste, jerarquía, textura, iconos, barcode y micro glitch CMYK.
         </p>
       </div>
     </section>
 
     <!-- Steps -->
     <section>
-      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10">El proceso creativo</h2>
+      <h2 class="font-marker text-4xl md:text-5xl text-dark mb-10">el proceso creativo</h2>
       <div class="space-y-8">
         {[
           {
             num: '01',
-            title: 'La Idea Absurda',
-            desc: 'Alguien del equipo dice una tontería durante un café. Si nos reímos durante más de 10 segundos, se convierte en un posible diseño.',
-            icon: '☕',
+            title: 'señal',
+            desc: 'Detectamos una frase, una imagen o una contradicción que pueda quedarse pegada.',
           },
           {
             num: '02',
-            title: 'El Camuflaje',
-            desc: 'Diseñamos el chiste para que parezca el logo de una universidad de élite, una marca de lujo o un mensaje inspiracional genérico.',
-            icon: '🥸',
+            title: 'ruido',
+            desc: 'Construimos capas: glitch lines, offset CMYK, stickers, warning labels y textura urbana.',
           },
           {
             num: '03',
-            title: 'Fabricación',
-            desc: 'Imprimimos en prendas de alta calidad. El chiste puede ser malo, pero la camiseta no. Algodón orgánico, suave y duradero.',
-            icon: '👕',
+            title: 'prenda',
+            desc: 'Frente controlado, espalda protagonista. Base negra, oversized, washed black o carbón.',
           },
           {
             num: '04',
-            title: 'La Doble Mirada',
-            desc: 'Te pones la camiseta. Sales a la calle. Alguien te mira. Sigue caminando. Se para. Se gira. Se ríe. Objetivo conseguido.',
-            icon: '👀',
+            title: 'impacto',
+            desc: 'Si se recuerda y provoca una segunda mirada, entra al drop.',
           },
         ].map((step, i) => (
-          <div class={`flex flex-col md:flex-row gap-6 md:gap-8 bg-mint-light border-2 border-dark p-6 md:p-8 shadow-hard rounded-xl transform ${i % 2 === 0 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-all`}>
+          <div class="flex flex-col md:flex-row gap-6 md:gap-8 bg-mint-light border border-dark p-6 md:p-8 shadow-hard hover:-translate-y-1 transition-all">
             <div class="shrink-0">
-              <div class="w-16 h-16 rounded-xl bg-white border-2 border-dark flex items-center justify-center text-4xl shadow-hard">
-                {step.icon}
+              <div class="w-16 h-16 bg-white border border-dark flex items-center justify-center shadow-hard">
+                <span class="font-marker text-3xl text-pink">{step.num}</span>
               </div>
             </div>
             <div>
               <div class="flex items-center gap-4 mb-3">
-                <span class="font-marker text-3xl text-pink">{step.num}</span>
                 <h3 class="font-marker text-3xl md:text-4xl text-dark">{step.title}</h3>
               </div>
-              <p class="font-hand text-2xl text-mid leading-relaxed m-0">{step.desc}</p>
+              <p class="font-hand text-sm md:text-base text-mid uppercase tracking-[0.08em] leading-relaxed m-0">{step.desc}</p>
             </div>
           </div>
         ))}
@@ -82,10 +77,10 @@ import Layout from '../layouts/Layout.astro';
     </section>
 
     <!-- CTA -->
-    <section class="text-center bg-dark border-2 border-dark p-12 md:p-16 shadow-hard rounded-xl transform -rotate-1">
+    <section class="text-center bg-dark border border-dark p-12 md:p-16 shadow-hard">
       <h2 class="font-marker text-5xl text-mint mb-6">¿Listo para ponértelo?</h2>
-      <p class="font-hand text-3xl text-white/80 mb-10">Explora la tienda y encuentra el diseño que va contigo.</p>
-      <a href="/tienda" class="btn-primary text-2xl px-10 py-5 shadow-hard hover:-translate-y-1 transition-all rounded-lg inline-block bg-pink text-white border-white">
+      <p class="font-hand text-sm md:text-base text-white/80 uppercase tracking-[0.08em] mb-10">Explora la tienda y encuentra la señal que va contigo.</p>
+      <a href="/tienda" class="btn-primary px-10 py-5 shadow-hard hover:-translate-y-1 transition-all inline-block bg-pink text-white border-white">
         Ver tienda
       </a>
     </section>

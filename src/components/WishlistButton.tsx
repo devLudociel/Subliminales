@@ -74,8 +74,8 @@ export default function WishlistButton({ productId, productName, productSlug, pr
   }
 
   const btnBase = size === 'lg'
-    ? 'flex items-center gap-2 font-hand text-xl border-2 border-dark px-5 py-3 cursor-pointer shadow-hard hover:-translate-y-1 transition-all rounded-lg bg-white'
-    : 'w-8 h-8 flex items-center justify-center cursor-pointer border-2 border-dark rounded-full bg-white shadow-hard hover:scale-110 transition-all';
+    ? 'flex items-center gap-2 font-hand text-xs uppercase tracking-[0.14em] border border-dark px-5 py-3 cursor-pointer shadow-hard hover:-translate-y-1 transition-all bg-white'
+    : 'w-8 h-8 flex items-center justify-center cursor-pointer border border-dark bg-white shadow-hard hover:scale-110 transition-all';
 
   return (
     <button
@@ -85,7 +85,7 @@ export default function WishlistButton({ productId, productName, productSlug, pr
       title={inWishlist ? 'Quitar de favoritos' : 'Añadir a favoritos'}
       className={`${btnBase} ${loading ? 'opacity-60' : ''}`}
     >
-      <span className="text-xl leading-none">{inWishlist ? '❤️' : '🤍'}</span>
+      <span className="text-pink leading-none">{inWishlist ? 'X' : '+'}</span>
       {size === 'lg' && <span>{inWishlist ? 'En favoritos' : 'Añadir a favoritos'}</span>}
     </button>
   );
