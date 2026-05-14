@@ -3,7 +3,7 @@ import CartIcon from './CartIcon';
 import UserMenu from './UserMenu';
 ---
 
-<header class="sticky top-0 z-50 flex flex-col border-b border-dark bg-bg/95 backdrop-blur">
+<header class="sticky top-0 z-50 flex flex-col border-b border-dark bg-bg/95 backdrop-blur overflow-visible">
   <!-- Signal strip -->
   <div class="hidden md:block border-b border-dark/40 bg-dark">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-1.5 flex items-center justify-between gap-6 font-hand text-[11px] uppercase tracking-[0.18em] text-mid">
@@ -14,7 +14,7 @@ import UserMenu from './UserMenu';
   </div>
 
   <!-- Main navigation -->
-  <div class="surface-panel border-x-0 border-t-0 px-4 py-3 md:py-4 flex justify-between items-center">
+  <div class="surface-panel header-panel relative z-30 border-x-0 border-t-0 px-4 py-3 md:py-4 flex justify-between items-center overflow-visible">
 
     <!-- Logo -->
     <a href="/" class="group no-underline shrink-0 inline-flex items-center gap-3">
@@ -62,7 +62,7 @@ import UserMenu from './UserMenu';
   </div>
 
   <!-- Level 2: mint ticker -->
-  <div class="bg-pink border-b border-dark py-2 overflow-hidden">
+  <div class="relative z-10 bg-pink border-b border-dark py-2 overflow-hidden">
     <div class="ticker-track flex whitespace-nowrap">
       <span class="font-hand text-xs md:text-sm text-white tracking-[0.22em] px-4 font-semibold uppercase">visual signal detected · ideas que se quedan pegadas · nuevos drops · envíos a toda españa · </span>
       <span class="font-hand text-xs md:text-sm text-white tracking-[0.22em] px-4 font-semibold uppercase">visual signal detected · ideas que se quedan pegadas · nuevos drops · envíos a toda españa · </span>

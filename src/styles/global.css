@@ -181,6 +181,10 @@
     z-index: 1;
   }
 
+  .header-panel {
+    overflow: visible;
+  }
+
   .ui-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
