@@ -1,32 +1,36 @@
 import type { APIRoute } from 'astro';
 import { sendShippingNotification } from '../../../lib/emails';
-import { auth } from '../../../lib/firebase/client';
-import { ADMIN_EMAIL } from '../../../lib/firebase/client';
-
-// Note: this endpoint is called client-side from the admin panel.
-// It relies on the request body containing order data.
-// The admin auth check is done via the ADMIN_EMAIL guard in the body.
+import { verifyAdmin } from '../../../lib/auth';
+import { rateLimit, clientIp, maybeGc } from '../../../lib/rate-limit';
 
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json();
-    const { stripeSessionId, trackingNumber, carrier, customerName, customerEmail, adminSecret } = body;
+    maybeGc();
+    const ip = clientIp(request);
+    const rl = rateLimit(`shipemail:${ip}`, 30, 60_000);
+    if (!rl.ok) return json({ error: 'Demasiadas peticiones' }, 429);
 
-    // Simple guard — only callable with the admin email confirmed client-side
-    // Real protection is Firestore rules; this is a soft server check
-    if (!adminSecret || adminSecret !== (import.meta.env.RESEND_API_KEY as string).slice(-8)) {
-      return json({ error: 'No autorizado' }, 403);
-    }
+    const auth = await verifyAdmin(request);
+    if (!auth.ok) return json({ error: auth.error }, auth.status);
+
+    const body = await request.json();
+    const { stripeSessionId, trackingNumber, carrier, customerName, customerEmail } = body ?? {};
 
     if (!trackingNumber || !carrier || !customerEmail) {
       return json({ error: 'Faltan datos de envío' }, 400);
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(customerEmail))) {
+      return json({ error: 'Email inválido' }, 400);
+    }
+    if (String(trackingNumber).length > 80 || String(carrier).length > 40) {
+      return json({ error: 'Datos demasiado largos' }, 400);
+    }
 
     await sendShippingNotification({
-      stripeSessionId,
-      trackingNumber,
-      carrier,
-      customer: { name: customerName, email: customerEmail },
+      stripeSessionId: String(stripeSessionId ?? ''),
+      trackingNumber: String(trackingNumber),
+      carrier: String(carrier),
+      customer: { name: String(customerName ?? ''), email: String(customerEmail) },
     });
 
     return json({ ok: true });

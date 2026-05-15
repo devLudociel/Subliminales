@@ -3,7 +3,7 @@ import {
   collection, query, orderBy, getDocs,
   doc, updateDoc, serverTimestamp,
 } from 'firebase/firestore';
-import { db } from '../../lib/firebase/client';
+import { db, auth } from '../../lib/firebase/client';
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -386,18 +386,21 @@ export default function OrdersManager() {
                             type="button"
                             disabled={emailSent[order.id]}
                             onClick={async () => {
-                              const secret = import.meta.env.PUBLIC_RESEND_GUARD ?? '';
                               try {
+                                const token = await auth.currentUser?.getIdToken();
+                                if (!token) { alert('Sesión expirada — vuelve a iniciar sesión.'); return; }
                                 const res = await fetch('/api/admin/send-shipping-email', {
                                   method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`,
+                                  },
                                   body: JSON.stringify({
                                     stripeSessionId: order.stripeSessionId,
                                     trackingNumber:  editTracking[order.id],
                                     carrier:         editCarrier[order.id],
                                     customerName:    order.customer.name,
                                     customerEmail:   order.customer.email,
-                                    adminSecret:     secret,
                                   }),
                                 });
                                 if (res.ok) setEmailSent(p => ({ ...p, [order.id]: true }));

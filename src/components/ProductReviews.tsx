@@ -79,18 +79,25 @@ export default function ProductReviews({ productId }: { productId: string }) {
       setFormError('Nombre y reseña son obligatorios');
       return;
     }
+    if (!user) {
+      setFormError('Inicia sesión para dejar una reseña');
+      return;
+    }
     setSaving(true);
     setFormError('');
     try {
+      const token = await user.getIdToken();
       const res = await fetch('/api/reviews', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({
           productId,
           rating: form.rating,
           body: form.body,
           authorName: form.authorName,
-          userUid: user?.uid ?? null,
         }),
       });
       const data = await res.json();

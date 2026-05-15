@@ -1,10 +1,12 @@
 import type { APIRoute } from 'astro';
 import Stripe from 'stripe';
-import { db } from '../../../lib/firebase/client';
-import { collection, addDoc, serverTimestamp, doc, runTransaction } from 'firebase/firestore';
+import { adminDb } from '../../../lib/firebase/admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { sendOrderConfirmation, sendAdminNewOrder } from '../../../lib/emails';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string);
+
+export const prerender = false;
 
 export const POST: APIRoute = async ({ request }) => {
   const sig = request.headers.get('stripe-signature');
@@ -27,12 +29,24 @@ export const POST: APIRoute = async ({ request }) => {
     const session = event.data.object as Stripe.Checkout.Session;
 
     try {
+      // ── Idempotency: skip if this session already produced an order ───
+      const existing = await adminDb()
+        .collection('orders')
+        .where('stripeSessionId', '==', session.id)
+        .limit(1)
+        .get();
+      if (!existing.empty) {
+        console.log('Duplicate webhook ignored for session', session.id);
+        return new Response(JSON.stringify({ received: true, duplicate: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+
       const meta = session.metadata ?? {};
-      // format: "productId:variantId:size:color:qty"
       const itemPairs = (meta.item_ids ?? '').split(',').filter(Boolean);
       const items = itemPairs.map(pair => {
         const parts = pair.split(':');
-        // support old format "productId:qty" and new "productId:variantId:size:color:qty"
         if (parts.length <= 2) {
           return { productId: parts[0], quantity: Number(parts[1] ?? 1) };
         }
@@ -46,7 +60,7 @@ export const POST: APIRoute = async ({ request }) => {
         };
       });
 
-      await addDoc(collection(db, 'orders'), {
+      await adminDb().collection('orders').add({
         stripeSessionId: session.id,
         paymentStatus: session.payment_status,
         amountTotal: (session.amount_total ?? 0) / 100,
@@ -64,12 +78,12 @@ export const POST: APIRoute = async ({ request }) => {
         userUid: meta.user_uid || null,
         customerEmail: (meta.customer_email ?? session.customer_email ?? '').toLowerCase(),
         items,
-        createdAt: serverTimestamp(),
+        couponCode: meta.coupon_code || null,
+        createdAt: FieldValue.serverTimestamp(),
       });
 
       console.log('Order saved:', session.id);
 
-      // Send transactional emails (non-fatal if they fail)
       const emailOrder = {
         stripeSessionId: session.id,
         amountTotal: (session.amount_total ?? 0) / 100,
@@ -90,18 +104,17 @@ export const POST: APIRoute = async ({ request }) => {
         sendAdminNewOrder(emailOrder),
       ]);
 
-      // Decrement stock for each item using transactions
+      // Decrement stock atomically using Admin SDK transactions
       for (const item of items) {
         if (!item.productId) continue;
         try {
-          const productRef = doc(db, 'products', item.productId);
-          await runTransaction(db, async (tx) => {
+          const productRef = adminDb().collection('products').doc(item.productId);
+          await adminDb().runTransaction(async (tx) => {
             const snap = await tx.get(productRef);
-            if (!snap.exists()) return;
-            const data = snap.data();
+            if (!snap.exists) return;
+            const data = snap.data()!;
 
             if (data.variants?.length) {
-              // Find matching variant and decrement its stock
               const variants = [...data.variants];
               const idx = variants.findIndex((v: any) =>
                 item.variantId
@@ -117,18 +130,35 @@ export const POST: APIRoute = async ({ request }) => {
                 tx.update(productRef, { variants });
               }
             } else if (typeof data.stock === 'number') {
-              // Product without variants
               tx.update(productRef, { stock: Math.max(0, data.stock - item.quantity) });
             }
           });
         } catch (stockErr) {
           console.error(`Error decrementing stock for ${item.productId}:`, stockErr);
-          // Non-fatal — order is saved, log for manual review
+        }
+      }
+
+      // Increment coupon usage counter
+      if (meta.coupon_code) {
+        try {
+          const code = meta.coupon_code.trim().toUpperCase();
+          const couponSnap = await adminDb()
+            .collection('coupons')
+            .where('code', '==', code)
+            .limit(1)
+            .get();
+          if (!couponSnap.empty) {
+            await couponSnap.docs[0].ref.update({
+              uses: FieldValue.increment(1),
+              lastUsedAt: FieldValue.serverTimestamp(),
+            });
+          }
+        } catch (couponErr) {
+          console.error('Error incrementing coupon uses:', couponErr);
         }
       }
     } catch (err) {
       console.error('Error saving order to Firestore:', err);
-      // Still return 200 so Stripe doesn't retry — log and investigate manually
     }
   }
 

@@ -1,13 +1,14 @@
 import type { APIRoute } from 'astro';
 import Stripe from 'stripe';
-import { db } from '../../lib/firebase/client';
-import { doc, getDoc } from 'firebase/firestore';
+import { adminDb } from '../../lib/firebase/admin';
+import { rateLimit, clientIp, maybeGc } from '../../lib/rate-limit';
 import type { ProductVariant } from '../../data/products';
 
 const stripe = new Stripe(import.meta.env.STRIPE_SECRET_KEY as string);
 
 const FREE_THRESHOLD_CENTS = 6000; // 60€ gross
 const IVA_DIVISOR          = 1.21;  // prices stored with IVA 21% included
+const SITE_URL = (import.meta.env.PUBLIC_SITE_URL as string) || 'https://subliminal.es';
 
 const SHIPPING_RATES = {
   standard: { display_name: 'Envío estándar 📦', amount: 699 },
@@ -32,12 +33,13 @@ interface Customer {
   zip: string;
 }
 
-function isCanarias(zip: string) {
-  return /^(35|38)\d{3}$/.test(zip.trim());
-}
-
 export const POST: APIRoute = async ({ request }) => {
   try {
+    maybeGc();
+    const ip = clientIp(request);
+    const rl = rateLimit(`checkout:${ip}`, 10, 60_000);
+    if (!rl.ok) return json({ error: 'Demasiadas peticiones' }, 429);
+
     const body = await request.json();
     const {
       items,
@@ -50,8 +52,11 @@ export const POST: APIRoute = async ({ request }) => {
     }: { items: OrderItem[]; customer: Customer; shippingMethod: string; isCanarias: boolean; userUid?: string; couponCode?: string; couponDiscount?: number } = body;
 
     // ── Validate input ──────────────────────────────────────────
-    if (!items?.length) {
+    if (!Array.isArray(items) || !items.length) {
       return json({ error: 'El carrito está vacío' }, 400);
+    }
+    if (items.length > 50) {
+      return json({ error: 'Demasiados productos' }, 400);
     }
     if (
       !customer?.email ||
@@ -66,37 +71,45 @@ export const POST: APIRoute = async ({ request }) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customer.email)) {
       return json({ error: 'Email inválido' }, 400);
     }
-    if (!/^\d{4,5}$/.test(customer.zip.trim())) {
+    if (!/^\d{4,5}$/.test(String(customer.zip).trim())) {
       return json({ error: 'Código postal inválido' }, 400);
     }
+    // Length caps to bound metadata size (Stripe limits 500 chars per value)
+    const cap = (s: string, n: number) => String(s ?? '').slice(0, n);
+    customer.email     = cap(customer.email, 254);
+    customer.firstName = cap(customer.firstName, 80);
+    customer.lastName  = cap(customer.lastName, 80);
+    customer.address   = cap(customer.address, 200);
+    customer.city      = cap(customer.city, 80);
+    customer.province  = cap(customer.province, 80);
+    customer.zip       = cap(customer.zip, 10);
 
-    // ── Fetch verified prices from Firestore ────────────────────
+    // ── Fetch verified prices from Firestore (Admin SDK) ─────────
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-    // Encode: "productId:variantId:size:color:qty" — variantId/size/color may be empty
     const itemMeta: string[] = [];
 
     for (const item of items) {
-      if (!item.id || item.quantity < 1) continue;
+      if (!item?.id || typeof item.id !== 'string' || item.id.length > 64) continue;
+      const qty = Number(item.quantity);
+      if (!Number.isInteger(qty) || qty < 1 || qty > 99) continue;
 
-      const snap = await getDoc(doc(db, 'products', item.id));
-      if (!snap.exists()) {
+      const snap = await adminDb().collection('products').doc(item.id).get();
+      if (!snap.exists) {
         return json({ error: `Producto no encontrado: ${item.id}` }, 400);
       }
 
-      const product = snap.data();
+      const product = snap.data()!;
       const basePrice = Number(product.price);
       if (!basePrice || basePrice <= 0) {
         return json({ error: `Precio inválido para: ${product.name}` }, 400);
       }
 
-      // Resolve variant price override
       let finalPrice = isCanarias ? basePrice / IVA_DIVISOR : basePrice;
       let resolvedVariantId = item.variantId ?? '';
 
       if (product.variants?.length) {
         const variants: ProductVariant[] = product.variants;
 
-        // Find matching variant by ID first, then by size+color
         const variant =
           variants.find(v => v.id === item.variantId) ??
           variants.find(v =>
@@ -105,8 +118,7 @@ export const POST: APIRoute = async ({ request }) => {
           );
 
         if (variant) {
-          // Stock check
-          if (variant.stock < item.quantity) {
+          if (variant.stock < qty) {
             const available = variant.stock;
             const varLabel = [item.size, item.color].filter(Boolean).join(' / ');
             if (available <= 0) {
@@ -119,19 +131,16 @@ export const POST: APIRoute = async ({ request }) => {
             finalPrice = isCanarias ? grossOverride / IVA_DIVISOR : grossOverride;
           }
           resolvedVariantId = variant.id;
-        } else if (product.variants?.length) {
-          // Variant expected but not found
+        } else {
           return json({ error: `Variante no encontrada para: ${product.name}` }, 400);
-        } else if (typeof product.stock === 'number' && product.stock < item.quantity) {
-          // Product without variants — check base stock
-          if (product.stock <= 0) {
-            return json({ error: `"${product.name}" está agotado.` }, 400);
-          }
-          return json({ error: `Solo quedan ${product.stock} unidades de "${product.name}".` }, 400);
         }
+      } else if (typeof product.stock === 'number' && product.stock < qty) {
+        if (product.stock <= 0) {
+          return json({ error: `"${product.name}" está agotado.` }, 400);
+        }
+        return json({ error: `Solo quedan ${product.stock} unidades de "${product.name}".` }, 400);
       }
 
-      // Build human-readable variant suffix for Stripe line item name
       const variantParts = [item.size, item.color].filter(Boolean);
       const displayName = variantParts.length
         ? `${product.name} — ${variantParts.join(' / ')}`
@@ -142,21 +151,21 @@ export const POST: APIRoute = async ({ request }) => {
           currency: 'eur',
           product_data: {
             name: displayName,
-            ...(product.image ? { images: [String(product.image)] } : {}),
+            ...(product.image && /^https?:\/\//.test(String(product.image)) ? { images: [String(product.image)] } : {}),
             metadata: {
               productId: item.id,
               variantId: resolvedVariantId,
-              size: item.size ?? '',
-              color: item.color ?? '',
+              size: cap(item.size ?? '', 40),
+              color: cap(item.color ?? '', 40),
             },
           },
           unit_amount: Math.round(finalPrice * 100),
         },
-        quantity: Math.min(item.quantity, 99),
+        quantity: qty,
       });
 
       itemMeta.push(
-        [item.id, resolvedVariantId, item.size ?? '', item.color ?? '', item.quantity].join(':')
+        [item.id, resolvedVariantId, cap(item.size ?? '', 40), cap(item.color ?? '', 40), qty].join(':')
       );
     }
 
@@ -164,17 +173,44 @@ export const POST: APIRoute = async ({ request }) => {
       return json({ error: 'No hay productos válidos en el carrito' }, 400);
     }
 
-    // Add coupon discount as a negative line item
-    if (couponCode && couponDiscount && couponDiscount > 0) {
-      const discountCents = Math.round(couponDiscount * 100);
-      lineItems.push({
-        price_data: {
-          currency: 'eur',
-          product_data: { name: `Descuento (${couponCode})` },
-          unit_amount: -discountCents,
-        },
-        quantity: 1,
-      });
+    // ── Coupon: re-validate server-side, never trust client discount ─────
+    let appliedCoupon: { code: string; discountCents: number } | null = null;
+    if (couponCode && typeof couponCode === 'string') {
+      const code = couponCode.trim().toUpperCase().slice(0, 32);
+      const subtotalCents = lineItems.reduce(
+        (s, li) => s + (li.price_data!.unit_amount! as number) * (li.quantity as number),
+        0
+      );
+      const couponSnap = await adminDb()
+        .collection('coupons')
+        .where('code', '==', code)
+        .limit(1)
+        .get();
+      if (!couponSnap.empty) {
+        const c = couponSnap.docs[0].data();
+        const expired = c.expiresAt && new Date(c.expiresAt) < new Date();
+        const exhausted = c.maxUses && (c.uses ?? 0) >= c.maxUses;
+        const subtotalEur = subtotalCents / 100;
+        const meetsMin = !c.minOrder || subtotalEur >= c.minOrder;
+        if (c.active && !expired && !exhausted && meetsMin) {
+          const value = Number(c.value);
+          const discountEur = c.type === 'percent'
+            ? Math.round(subtotalEur * (value / 100) * 100) / 100
+            : Math.min(value, subtotalEur);
+          const discountCents = Math.round(discountEur * 100);
+          if (discountCents > 0) {
+            appliedCoupon = { code, discountCents };
+            lineItems.push({
+              price_data: {
+                currency: 'eur',
+                product_data: { name: `Descuento (${code})` },
+                unit_amount: -discountCents,
+              },
+              quantity: 1,
+            });
+          }
+        }
+      }
     }
 
     // ── Shipping ────────────────────────────────────────────────
@@ -186,7 +222,6 @@ export const POST: APIRoute = async ({ request }) => {
 
     let shippingOption: Stripe.Checkout.SessionCreateParams.ShippingOption;
 
-    // Adjust shipping cost for Canarias (remove IVA)
     const stdCents = isCanarias
       ? Math.round(SHIPPING_RATES.standard.amount / IVA_DIVISOR)
       : SHIPPING_RATES.standard.amount;
@@ -219,7 +254,6 @@ export const POST: APIRoute = async ({ request }) => {
         },
       };
     } else {
-      // standard — or free fallback if not eligible
       shippingOption = {
         shipping_rate_data: {
           type: 'fixed_amount',
@@ -236,10 +270,9 @@ export const POST: APIRoute = async ({ request }) => {
       };
     }
 
-    const origin = request.headers.get('origin') || 'https://subliminal.es';
+    // Use server-side fixed origin to prevent open-redirect via spoofed Origin header
     const taxNote = isCanarias ? 'Exento IVA (Canarias)' : 'IVA 21% incluido';
 
-    // ── Create Stripe Checkout Session ─────────────────────────
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
@@ -253,17 +286,16 @@ export const POST: APIRoute = async ({ request }) => {
         shipping_city:     customer.city,
         shipping_province: customer.province,
         shipping_zip:      customer.zip,
-        shipping_method:   shippingMethod,
+        shipping_method:   String(shippingMethod ?? '').slice(0, 20),
         tax_note:          taxNote,
-        user_uid:          userUid ?? '',
-        coupon_code:       couponCode ?? '',
-        coupon_discount:   couponDiscount ? String(couponDiscount) : '',
-        // format: "productId:variantId:size:color:qty" comma-separated
-        item_ids:          itemMeta.join(','),
+        user_uid:          cap(userUid ?? '', 64),
+        coupon_code:       appliedCoupon?.code ?? '',
+        coupon_discount:   appliedCoupon ? (appliedCoupon.discountCents / 100).toFixed(2) : '',
+        item_ids:          itemMeta.join(',').slice(0, 500),
       },
       locale: 'es',
-      success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url:  `${origin}/carrito`,
+      success_url: `${SITE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url:  `${SITE_URL}/carrito`,
       expires_at:  Math.floor(Date.now() / 1000) + 30 * 60,
     });
 

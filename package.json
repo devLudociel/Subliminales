@@ -15,6 +15,7 @@
     "@nanostores/react": "^0.7.2",
     "astro": "^4.5.0",
     "firebase": "^12.12.0",
+    "firebase-admin": "^13.10.0",
     "nanostores": "^0.10.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -377,15 +377,17 @@ export default function CustomerDashboard() {
     setReturnSaving(true);
     setReturnError('');
     try {
+      const token = await user.getIdToken();
       const res = await fetch('/api/returns', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({
           orderId: returnForm.orderId,
           reason: returnForm.reason,
           details: returnForm.details,
-          userUid: user.uid,
-          userEmail: user.email,
         }),
       });
       const data = await res.json();

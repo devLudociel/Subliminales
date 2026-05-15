@@ -1,35 +1,45 @@
 import type { APIRoute } from 'astro';
-import { db } from '../../lib/firebase/client';
-import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { adminDb } from '../../lib/firebase/admin';
+import { FieldValue } from 'firebase-admin/firestore';
 import { Resend } from 'resend';
+import { rateLimit, clientIp, maybeGc } from '../../lib/rate-limit';
+import { escapeHtml } from '../../lib/escape';
 
 const resend = new Resend(import.meta.env.RESEND_API_KEY as string);
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    maybeGc();
+    const ip = clientIp(request);
+    const rl = rateLimit(`newsletter:${ip}`, 5, 60_000);
+    if (!rl.ok) return json({ error: 'Demasiadas peticiones' }, 429);
+
     const { email } = await request.json();
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email || typeof email !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return json({ error: 'Email inválido' }, 400);
     }
 
-    const normalizedEmail = email.toLowerCase().trim();
+    const normalizedEmail = email.toLowerCase().trim().slice(0, 254);
 
-    // Check for duplicates
-    const existing = await getDocs(
-      query(collection(db, 'newsletter'), where('email', '==', normalizedEmail))
-    );
+    const existing = await adminDb()
+      .collection('newsletter')
+      .where('email', '==', normalizedEmail)
+      .limit(1)
+      .get();
     if (!existing.empty) {
       return json({ ok: true, alreadySubscribed: true });
     }
 
-    await addDoc(collection(db, 'newsletter'), {
+    await adminDb().collection('newsletter').add({
       email: normalizedEmail,
-      createdAt: serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       source: 'homepage',
+      ip,
     });
 
-    // Welcome email (non-fatal)
+    const safeEmail = escapeHtml(normalizedEmail);
+
     try {
       await resend.emails.send({
         from: 'Subliminal.es <onboarding@resend.dev>',
@@ -47,7 +57,7 @@ export const POST: APIRoute = async ({ request }) => {
         <tr><td style="background:#fff;padding:40px;border-left:2px solid #111;border-right:2px solid #111;">
           <h2 style="color:#f72585;font-size:24px;margin:0 0 16px;">¡Ya eres parte del chiste! 🤣</h2>
           <p style="color:#666;font-size:16px;line-height:1.6;margin:0 0 20px;">
-            A partir de ahora serás el/la primero/a en enterarte de los nuevos drops, ofertas exclusivas y... más chistes.
+            Hola ${safeEmail}, a partir de ahora serás el/la primero/a en enterarte de los nuevos drops, ofertas exclusivas y... más chistes.
           </p>
           <a href="https://subliminal.es/tienda" style="display:inline-block;background:#111;color:#4cc9a0;padding:14px 28px;border-radius:8px;font-size:16px;font-weight:bold;text-decoration:none;">
             Ver la tienda →
